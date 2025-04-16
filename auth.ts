@@ -33,7 +33,7 @@ export const authOptions: NextAuthOptions = {
         }
 
         // Check if user exists in database checking each user's email if it matches the email provided
-        const user = await prisma.adminUsers.findUnique({
+        const user = await prisma.admin.findUnique({
           where: {
             email: credentials.email,
           },
@@ -87,7 +87,7 @@ export const authOptions: NextAuthOptions = {
 
       if (account?.provider === "google") {
         // Check if user exists in database checking each user's email if it matches the email provided
-        const user = await prisma.adminUsers.findUnique({
+        const user = await prisma.admin.findUnique({
           where: {
             email: profile?.email,
           },
@@ -96,27 +96,28 @@ export const authOptions: NextAuthOptions = {
         // If user exists, return true to allow sign in
         if (user) {
           // Update emailVerified to true
-          await prisma.adminUsers.update({
-            where: {
-              id: user.id,
-            },
-            data: {
-              emailVerified: true,
-            },
-          });
+        //   await prisma.admin.update({
+        //     where: {
+        //       id: user.id,
+        //     },
+        //     data: {
+        //       emailVerified: true,
+        //     },
+        //   });
 
           return true; // Return true to allow sign in
         }
 
         // If user does not exist, create user
-        await prisma.adminUsers.create({
+        await prisma.admin.create({
           data: {
             email: profile?.email as string,
+            username: profile?.email as string,
             firstName: profile?.name?.split(" ")[0] as string,
             lastName: profile?.name?.split(" ")[1] as string,
             password: "google-signup-no-password",
-            profilePhoto: profile?.picture as string, 
-            emailVerified: true,
+            profileImage: profile?.picture as string, 
+            // emailVerified: true,
           },
         });
 
@@ -142,7 +143,7 @@ export const authOptions: NextAuthOptions = {
       // console.log("JWT Callback", { token, user, trigger, session });
 
       // Check prisma for user with email gotten in token
-      const exisitingUser = await prisma.adminUsers.findUnique({
+      const exisitingUser = await prisma.admin.findUnique({
         where: {
           email: token.email as string,
         },
@@ -180,7 +181,7 @@ export const authOptions: NextAuthOptions = {
     //   console.log("Session Callback", { session, token });
 
       // Fetch user details from database
-      const user = await prisma.adminUsers.findUnique({
+      const user = await prisma.admin.findUnique({
         where: {
           id: token.id as string,
         },
@@ -194,7 +195,7 @@ export const authOptions: NextAuthOptions = {
           id: token.id,
           accessToken: token.accessToken,
           idToken: token.idToken,
-          image: user?.profilePhoto,
+          image: user?.profileImage,
           name: user?.firstName + " " + user?.lastName,
           email: user?.email,
           //   image: token.image as string ?? user?.profilePhoto,
