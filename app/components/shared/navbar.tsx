@@ -223,7 +223,7 @@ export function Navbar() {
                   </DropdownMenuItem>
                   <DropdownMenuItem
                     className="cursor-pointer"
-                    onClick={() => router.push("/stake")}
+                    onClick={() => router.push("/#plans")}
                   >
                     <Wallet className="mr-2 h-4 w-4" />
                     <span>Stake</span>
@@ -262,7 +262,7 @@ export function Navbar() {
               <MobileNavLink href="/" onClick={() => setIsOpen(false)}>
                 Home
               </MobileNavLink>
-              <MobileNavLink href="/stake" onClick={() => setIsOpen(false)}>
+              <MobileNavLink href="/#plans" onClick={() => setIsOpen(false)}>
                 Stake
               </MobileNavLink>
               <MobileNavLink href="/rewards" onClick={() => setIsOpen(false)}>

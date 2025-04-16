@@ -72,7 +72,7 @@ const OverviewTab = () => {
               </div>
 
               <Button variant="outline" className="w-full mt-2" asChild>
-                <Link href="/stake">
+                <Link href="/#plans">
                   Stake More <ChevronRight className="ml-2 h-4 w-4" />
                 </Link>
               </Button>
