@@ -6,7 +6,7 @@ import { Check, ChevronRight } from "lucide-react"
 import { Button } from "@/app/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/app/components/ui/card"
 import { Badge } from "@/app/components/ui/badge"
-import { StakeModal } from "@/app/components/stake-modal"
+import { StakeModal } from "@/app/components/homepage/stake-modal"
 
 const STAKING_PLANS = [
   {

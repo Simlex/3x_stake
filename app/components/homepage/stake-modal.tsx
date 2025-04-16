@@ -1,97 +1,135 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import { motion, AnimatePresence } from "framer-motion"
-import { X, AlertCircle, Check } from "lucide-react"
-import { Button } from "@/app/components/ui/button"
-import { Input } from "@/app/components/ui/input"
-import { Slider } from "@/app/components/ui/slider"
-import { Tabs, TabsList, TabsTrigger } from "@/app/components/ui/tabs"
-import { cn } from "@/lib/utils"
+import { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { X, AlertCircle, Check } from "lucide-react";
+import { Button } from "@/app/components/ui/button";
+import { Input } from "@/app/components/ui/input";
+import { Slider } from "@/app/components/ui/slider";
+import { Tabs, TabsList, TabsTrigger } from "@/app/components/ui/tabs";
+import { cn } from "@/lib/utils";
+import { useRouter } from "next/navigation";
 
-type Network = "SOL" | "TRX" | "BEP20" | "TON"
+type Network = "SOL" | "TRX" | "BEP20" | "TON";
 
 type StakePlan = {
-  name: string
-  tier: string
-  minAmount: number
-  maxAmount: number
-  apr: number
-  features: string[]
-  popular: boolean
-  color: string
-  bgColor: string
-  borderColor: string
-}
+  name: string;
+  tier: string;
+  minAmount: number;
+  maxAmount: number;
+  apr: number;
+  features: string[];
+  popular: boolean;
+  color: string;
+  bgColor: string;
+  borderColor: string;
+};
 
 const NETWORKS: { id: Network; name: string; icon: string }[] = [
   { id: "SOL", name: "Solana", icon: "🟣" },
   { id: "TRX", name: "Tron", icon: "🔴" },
   { id: "BEP20", name: "BNB Smart Chain", icon: "🟡" },
   { id: "TON", name: "TON", icon: "💎" },
-]
+];
 
 export function StakeModal({
   plan,
   isOpen,
   onClose,
 }: {
-  plan: StakePlan
-  isOpen: boolean
-  onClose: () => void
+  plan: StakePlan;
+  isOpen: boolean;
+  onClose: () => void;
 }) {
-  const [amount, setAmount] = useState(plan.minAmount)
-  const [network, setNetwork] = useState<Network>("BEP20")
-  const [step, setStep] = useState(1)
-  const [isProcessing, setIsProcessing] = useState(false)
-  const [isSuccess, setIsSuccess] = useState(false)
+  const [amount, setAmount] = useState(plan.minAmount);
+  const [network, setNetwork] = useState<Network>("BEP20");
+  const [step, setStep] = useState(1);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
+
+  // Check if user is authenticated
+  const router = useRouter();
+  const [isAuthenticated, setIsAuthenticated] = useState(true); // Replace with actual auth check
+
+  // In a real app, check authentication status
+  useEffect(() => {
+    // Mock authentication check - replace with actual auth check
+    const checkAuth = async () => {
+      try {
+        // const authStatus = await someAuthCheckFunction()
+        // setIsAuthenticated(authStatus)
+
+        // Using mock data for now
+        setIsAuthenticated(true); // Set to false to test the redirect
+      } catch (error) {
+        console.error("Auth check failed:", error);
+        setIsAuthenticated(false);
+      }
+    };
+
+    if (isOpen) {
+      checkAuth();
+    }
+  }, [isOpen]);
+
+  // Redirect to login if not authenticated
+  const handleUnauthenticatedAction = () => {
+    onClose();
+    // Show login modal or redirect to login page
+    router.push("/login");
+  };
 
   // Reset state when modal opens
   useEffect(() => {
     if (isOpen) {
-      setAmount(plan.minAmount)
-      setStep(1)
-      setIsProcessing(false)
-      setIsSuccess(false)
+      setAmount(plan.minAmount);
+      setStep(1);
+      setIsProcessing(false);
+      setIsSuccess(false);
     }
-  }, [isOpen, plan])
+  }, [isOpen, plan]);
 
   const handleAmountChange = (value: number[]) => {
-    setAmount(value[0])
-  }
+    setAmount(value[0]);
+  };
 
   const handleNetworkChange = (value: string) => {
-    setNetwork(value as Network)
-  }
+    setNetwork(value as Network);
+  };
 
   const handleSubmit = () => {
-    setIsProcessing(true)
+    // Check if user is authenticated
+    if (!isAuthenticated) {
+      handleUnauthenticatedAction();
+      return;
+    }
+    setIsProcessing(true);
 
     // Simulate processing
     setTimeout(() => {
-      setIsProcessing(false)
-      setIsSuccess(true)
+      setIsProcessing(false);
+      setIsSuccess(true);
 
       // Close modal after success
       setTimeout(() => {
-        onClose()
-      }, 2000)
-    }, 2000)
-  }
+        onClose();
+      }, 2000);
+    }, 2000);
+  };
 
   const calculateReward = () => {
-    return ((amount * plan.apr) / 100).toFixed(2)
-  }
+    return ((amount * plan.apr) / 100).toFixed(2);
+  };
 
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat("en-US", {
       style: "currency",
       currency: "USD",
       maximumFractionDigits: 0,
-    }).format(value)
-  }
+    }).format(value);
+  };
 
-  if (!isOpen) return null
+  if (!isOpen) return null;
 
   return (
     <AnimatePresence>
@@ -107,7 +145,11 @@ export function StakeModal({
           <div className="flex items-center justify-between p-4 border-b border-white/10">
             <h3 className="text-lg font-medium">
               Stake with{" "}
-              <span className={`text-transparent bg-clip-text bg-gradient-to-r ${plan.color}`}>{plan.name} Plan</span>
+              <span
+                className={`text-transparent bg-clip-text bg-gradient-to-r ${plan.color}`}
+              >
+                {plan.name} Plan
+              </span>
             </h3>
             <Button variant="ghost" size="icon" onClick={onClose}>
               <X className="h-4 w-4" />
@@ -119,7 +161,9 @@ export function StakeModal({
             {step === 1 && (
               <div className="space-y-6">
                 <div>
-                  <label className="block text-sm font-medium text-gray-400 mb-2">Select Amount (USDT)</label>
+                  <label className="block text-sm font-medium text-gray-400 mb-2">
+                    Select Amount (USDT)
+                  </label>
                   <div className="mb-6">
                     <Slider
                       defaultValue={[amount]}
@@ -130,7 +174,9 @@ export function StakeModal({
                       className="my-6"
                     />
                     <div className="flex items-center justify-between">
-                      <span className="text-sm text-gray-400">Min: ${plan.minAmount}</span>
+                      <span className="text-sm text-gray-400">
+                        Min: ${plan.minAmount}
+                      </span>
                       <Input
                         type="number"
                         value={amount}
@@ -139,14 +185,21 @@ export function StakeModal({
                         max={plan.maxAmount}
                         className="w-24 text-right"
                       />
-                      <span className="text-sm text-gray-400">Max: ${plan.maxAmount}</span>
+                      <span className="text-sm text-gray-400">
+                        Max: ${plan.maxAmount}
+                      </span>
                     </div>
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-400 mb-2">Select Network</label>
-                  <Tabs defaultValue="BEP20" onValueChange={handleNetworkChange}>
+                  <label className="block text-sm font-medium text-gray-400 mb-2">
+                    Select Network
+                  </label>
+                  <Tabs
+                    defaultValue="BEP20"
+                    onValueChange={handleNetworkChange}
+                  >
                     <TabsList className="grid grid-cols-4 mb-2">
                       {NETWORKS.map((net) => (
                         <TabsTrigger key={net.id} value={net.id}>
@@ -163,7 +216,9 @@ export function StakeModal({
                 <div className="bg-gray-800/50 rounded-lg p-4 space-y-3">
                   <div className="flex justify-between">
                     <span className="text-gray-400">Amount to stake:</span>
-                    <span className="font-medium">{formatCurrency(amount)} USDT</span>
+                    <span className="font-medium">
+                      {formatCurrency(amount)} USDT
+                    </span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-400">APR:</span>
@@ -173,12 +228,16 @@ export function StakeModal({
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-400">Annual reward:</span>
-                    <span className="font-medium">${calculateReward()} USDT</span>
+                    <span className="font-medium">
+                      ${calculateReward()} USDT
+                    </span>
                   </div>
                 </div>
 
                 <Button
-                  onClick={() => setStep(2)}
+                  onClick={() =>
+                    isAuthenticated ? setStep(2) : handleUnauthenticatedAction()
+                  }
                   className="w-full bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700"
                 >
                   Continue
@@ -189,7 +248,9 @@ export function StakeModal({
             {step === 2 && (
               <div className="space-y-6">
                 <div className="text-center mb-4">
-                  <h4 className="text-lg font-medium mb-2">Confirm Your Stake</h4>
+                  <h4 className="text-lg font-medium mb-2">
+                    Confirm Your Stake
+                  </h4>
                   <p className="text-sm text-gray-400">
                     You are about to stake {formatCurrency(amount)} USDT on the{" "}
                     {NETWORKS.find((n) => n.id === network)?.name} network.
@@ -203,11 +264,15 @@ export function StakeModal({
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-400">Amount:</span>
-                    <span className="font-medium">{formatCurrency(amount)} USDT</span>
+                    <span className="font-medium">
+                      {formatCurrency(amount)} USDT
+                    </span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-400">Network:</span>
-                    <span className="font-medium">{NETWORKS.find((n) => n.id === network)?.name}</span>
+                    <span className="font-medium">
+                      {NETWORKS.find((n) => n.id === network)?.name}
+                    </span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-400">APR:</span>
@@ -220,19 +285,24 @@ export function StakeModal({
                 <div className="flex items-center p-3 bg-amber-900/20 border border-amber-500/20 rounded-lg">
                   <AlertCircle className="h-5 w-5 text-amber-500 mr-2 flex-shrink-0" />
                   <p className="text-xs text-amber-200">
-                    Make sure you're sending USDT on the {NETWORKS.find((n) => n.id === network)?.name} network. Sending
-                    other assets will result in permanent loss.
+                    Make sure you're sending USDT on the{" "}
+                    {NETWORKS.find((n) => n.id === network)?.name} network.
+                    Sending other assets will result in permanent loss.
                   </p>
                 </div>
 
                 <div className="flex gap-4">
-                  <Button variant="outline" className="flex-1 border-gray-700" onClick={() => setStep(1)}>
+                  <Button
+                    variant="outline"
+                    className="flex-1 border-gray-700"
+                    onClick={() => setStep(1)}
+                  >
                     Back
                   </Button>
                   <Button
                     className={cn(
                       "flex-1 bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700",
-                      isProcessing && "opacity-80 pointer-events-none",
+                      isProcessing && "opacity-80 pointer-events-none"
                     )}
                     onClick={handleSubmit}
                     disabled={isProcessing || isSuccess}
@@ -276,5 +346,5 @@ export function StakeModal({
         </motion.div>
       </div>
     </AnimatePresence>
-  )
+  );
 }

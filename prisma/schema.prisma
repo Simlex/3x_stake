@@ -1,0 +1,244 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+//   output   = "../lib/generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+// Regular user model
+model User {
+  id                String            @id @default(uuid())
+  username          String            @unique
+  email             String            @unique
+  password          String
+  firstName         String?
+  lastName          String?
+  profileImage      String?
+  isEmailVerified   Boolean           @default(false)
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+  lastLoginAt       DateTime?
+  sessions          Session[]
+  passwordResets    PasswordReset[]
+  referralCode      String?           @unique
+  referredBy        String?
+  stakingPositions  StakingPosition[]
+  rewards           Reward[]
+  notifications     Notification[]
+  userPreferences   UserPreference?
+}
+
+// Admin user model
+model Admin {
+  id                String         @id @default(uuid())
+  username          String         @unique
+  email             String         @unique
+  password          String
+  firstName         String?
+  lastName          String?
+  profileImage      String?
+  role              AdminRole      @default(MODERATOR)
+  permissions       Permission[]
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
+  lastLoginAt       DateTime?
+  sessions          AdminSession[]
+  passwordResets    PasswordReset[]
+}
+
+// User session model
+model Session {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  token     String   @unique @db.VarChar(512)
+  userAgent String?
+  ipAddress String?
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+}
+
+// Admin session model
+model AdminSession {
+  id        String   @id @default(uuid())
+  adminId   String
+  admin     Admin    @relation(fields: [adminId], references: [id], onDelete: Cascade)
+  token     String   @unique
+  userAgent String?
+  ipAddress String?
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([adminId])
+}
+
+// Password reset model
+model PasswordReset {
+  id        String    @id @default(uuid())
+  token     String    @unique
+  userId    String?
+  user      User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  adminId   String?
+  admin     Admin?    @relation(fields: [adminId], references: [id], onDelete: Cascade)
+  email     String
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  @@index([userId])
+  @@index([adminId])
+  @@index([token])
+}
+
+// Email verification model
+model EmailVerification {
+  id        String    @id @default(uuid())
+  email     String
+  token     String    @unique
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  @@index([token])
+  @@index([email])
+}
+
+// Staking position model
+model StakingPosition {
+  id            String      @id @default(uuid())
+  userId        String
+  user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  planId        String
+  stakingPlan   StakingPlan @relation(fields: [planId], references: [id])
+  amount        Float
+  network       Network
+  startDate     DateTime    @default(now())
+  endDate       DateTime?
+  isActive      Boolean     @default(true)
+  rewards       Reward[]
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  @@index([userId])
+  @@index([planId])
+}
+
+// Staking plan model
+model StakingPlan {
+  id            String            @id @default(uuid())
+  name          String
+  tier          String
+  minAmount     Float
+  maxAmount     Float
+  apr           Float
+//   features      String[]
+  popular       Boolean           @default(false)
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+  positions     StakingPosition[]
+}
+
+// Reward model
+model Reward {
+  id                String          @id @default(uuid())
+  userId            String
+  user              User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  stakingPositionId String
+  stakingPosition   StakingPosition @relation(fields: [stakingPositionId], references: [id], onDelete: Cascade)
+  amount            Float
+  status            RewardStatus    @default(PENDING)
+  claimedAt         DateTime?
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+
+  @@index([userId])
+  @@index([stakingPositionId])
+}
+
+// Notification model
+model Notification {
+  id        String             @id @default(uuid())
+  userId    String
+  user      User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type      NotificationType
+  title     String
+  message   String
+  isRead    Boolean            @default(false)
+  data      Json?
+  createdAt DateTime           @default(now())
+  updatedAt DateTime           @updatedAt
+
+  @@index([userId])
+}
+
+// User preferences model
+model UserPreference {
+  id                  String    @id @default(uuid())
+  userId              String    @unique
+  user                User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  theme               Theme     @default(DARK)
+  emailNotifications  Boolean   @default(true)
+  pushNotifications   Boolean   @default(true)
+  marketingEmails     Boolean   @default(true)
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+}
+
+// Permission model for admin roles
+model Permission {
+  id        String   @id @default(uuid())
+  name      String   @unique
+  adminId   String
+  admin     Admin    @relation(fields: [adminId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([adminId])
+}
+
+// Enums
+enum AdminRole {
+  SUPER_ADMIN
+  ADMIN
+  MODERATOR
+}
+
+enum Network {
+  SOL
+  TRX
+  BEP20
+  TON
+}
+
+enum RewardStatus {
+  PENDING
+  CLAIMED
+  FAILED
+}
+
+enum NotificationType {
+  REWARD
+  SYSTEM
+  STAKING
+  SECURITY
+  MARKETING
+}
+
+enum Theme {
+  LIGHT
+  DARK
+  SYSTEM
+}

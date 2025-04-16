@@ -51,7 +51,7 @@ export function RecentRewards() {
   }, [currentIndex, users])
 
   return (
-    <section className="py-20 relative">
+    <section className="py-20 relative" id="rewards">
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
           <motion.h2

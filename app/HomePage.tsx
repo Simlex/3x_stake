@@ -1,22 +1,21 @@
 "use client"
 
 import React from 'react'
-import { Navbar } from './components/navbar'
-import { Hero } from './components/hero'
-import { Stats } from './components/stats'
-import { StakingPlans } from './components/staking-plans'
-import { StakingPool } from './components/staking-pool'
-import { RecentRewards } from './components/recent-rewards'
-import { NewsCarousel } from './components/news-carousel'
-import { FAQ } from './components/faq'
-import { Footer } from './components/footer'
+import { Navbar } from './components/shared/navbar'
+import { Hero } from './components/homepage/hero'
+import { Stats } from './components/homepage/stats'
+import { StakingPlans } from './components/homepage/staking-plans'
+import { StakingPool } from './components/homepage/staking-pool'
+import { RecentRewards } from './components/homepage/recent-rewards'
+import { NewsCarousel } from './components/homepage/news-carousel'
+import { FAQ } from './components/homepage/faq'
+import { Footer } from './components/shared/footer'
 
 type Props = {}
 
 export default function HomePage({}: Props) {
   return (
-    <main className="min-h-screen bg-gradient-to-b from-black via-purple-950/20 to-black dark:from-black dark:via-purple-950/20 dark:to-black">
-      <Navbar />
+    <div className="">
       <Hero />
       <Stats />
       <StakingPlans />
@@ -24,7 +23,6 @@ export default function HomePage({}: Props) {
       <RecentRewards />
       <NewsCarousel />
       <FAQ />
-      <Footer />
-    </main>
+    </div>
   )
 }
