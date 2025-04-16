@@ -195,7 +195,7 @@ export function HeroBackground3D() {
   }
 
   return (
-    <div className="absolute inset-0 z-0 size-full opacity-20" onMouseMove={handleMouseMove} onTouchMove={handleTouchMove}>
+    <div className="absolute inset-0 z-0 size-full opacity-5" onMouseMove={handleMouseMove} onTouchMove={handleTouchMove}>
       <Canvas camera={{ position: [0, 0, 10], fov: 45 }}>
         <Scene mouseX={smoothMouseX} mouseY={smoothMouseY} />
       </Canvas>
