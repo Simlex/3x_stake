@@ -134,54 +134,58 @@ export function Navbar() {
           {!isLoading && (
             <>
               {user?.isLoggedIn ? (
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button
-                      variant="outline"
-                      className="border-purple-500/50 hover:border-purple-500 flex items-center gap-2"
+                <div className="hidden md:flex">
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button
+                        variant="outline"
+                        className="border-purple-500/50 hover:border-purple-500 flex items-center gap-2"
+                      >
+                        <div className="w-6 h-6 rounded-full bg-gradient-to-br from-pink-500 to-purple-600 flex items-center justify-center text-xs font-bold text-white">
+                          {getUserInitials()}
+                        </div>
+                        <span className="hidden sm:inline">
+                          {user.username}
+                        </span>
+                        <ChevronDown className="h-4 w-4 opacity-70" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent
+                      align="end"
+                      className="w-56 bg-gray-900 border border-white/10"
                     >
-                      <div className="w-6 h-6 rounded-full bg-gradient-to-br from-pink-500 to-purple-600 flex items-center justify-center text-xs font-bold text-white">
-                        {getUserInitials()}
-                      </div>
-                      <span className="hidden sm:inline">{user.username}</span>
-                      <ChevronDown className="h-4 w-4 opacity-70" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent
-                    align="end"
-                    className="w-56 bg-gray-900 border border-white/10"
-                  >
-                    <DropdownMenuItem
-                      className="cursor-pointer"
-                      onClick={() => router.push("/profile")}
-                    >
-                      <User className="mr-2 h-4 w-4" />
-                      <span>Profile</span>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                      className="cursor-pointer"
-                      onClick={() => router.push("/stake")}
-                    >
-                      <Wallet className="mr-2 h-4 w-4" />
-                      <span>Stake</span>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                      className="cursor-pointer"
-                      onClick={() => router.push("/profile?tab=settings")}
-                    >
-                      <Settings className="mr-2 h-4 w-4" />
-                      <span>Settings</span>
-                    </DropdownMenuItem>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem
-                      className="cursor-pointer text-red-400 focus:text-red-400"
-                      onClick={handleLogout}
-                    >
-                      <LogOut className="mr-2 h-4 w-4" />
-                      <span>Logout</span>
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
+                      <DropdownMenuItem
+                        className="cursor-pointer"
+                        onClick={() => router.push("/profile")}
+                      >
+                        <User className="mr-2 h-4 w-4" />
+                        <span>Profile</span>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        className="cursor-pointer"
+                        onClick={() => router.push("/stake")}
+                      >
+                        <Wallet className="mr-2 h-4 w-4" />
+                        <span>Stake</span>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        className="cursor-pointer"
+                        onClick={() => router.push("/profile?tab=settings")}
+                      >
+                        <Settings className="mr-2 h-4 w-4" />
+                        <span>Settings</span>
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem
+                        className="cursor-pointer text-red-400 focus:text-red-400"
+                        onClick={handleLogout}
+                      >
+                        <LogOut className="mr-2 h-4 w-4" />
+                        <span>Logout</span>
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </div>
               ) : (
                 <Button
                   onClick={() => setIsLoginModalOpen(true)}
