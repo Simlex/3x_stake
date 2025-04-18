@@ -10,12 +10,12 @@ export class ApiRoutes {
     /**
      * The test base url for the application
      */
-    static BASE_URL_TEST = "https://3x-stake.vercel.app/"
+    static BASE_URL_TEST = "https://3x-stake.vercel.app/api/"
   
     /**
      * The live base url for the application
      */
-    static BASE_URL_LIVE = "https://3x-stake.vercel.app/"
+    static BASE_URL_LIVE = "https://3x-stake.vercel.app/api/"
   
     /**
      * The base url being used for the application
