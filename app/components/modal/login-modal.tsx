@@ -10,11 +10,10 @@ import { Input } from "@/app/components/ui/input";
 import { Label } from "@/app/components/ui/label";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
-import { signIn, useSession } from "next-auth/react";
-import { StatusCodes } from "@/app/model/IStatusCodes";
-import { LoginRequest, useAuth } from "@/app/api/apiClient";
 import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
+import { useAuthContext } from "@/app/context/AuthContext";
+import { LoginRequest } from "@/app/api/apiClient";
 
 interface LoginModalProps {
   isOpen: boolean;
@@ -31,45 +30,44 @@ export function LoginModal({
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
-  const [message, setMessage] = useState('');
+  const [message, setMessage] = useState("");
 
   const router = useRouter();
-
-  const auth = useAuth()
+  const { login } = useAuthContext();
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setError("")
+    e.preventDefault();
+    setError("");
 
     if (!username || !password) {
-      setError("Please enter both username and password")
-      return
+      setError("Please enter both username and password");
+      return;
     }
 
-    setIsLoading(true)
+    setIsLoading(true);
 
     try {
       const loginData: LoginRequest = {
         username,
         password,
-      }
+      };
 
-      await auth.login(loginData)
-      onClose()
+      await login(loginData);
+      onClose();
 
       // Handle redirect after successful login
-      const redirectPath = Cookies.get("redirect_after_login")
-      if (redirectPath) {
-        Cookies.remove("redirect_after_login")
-        router.push(redirectPath)
-      }
+      //   const redirectPath = Cookies.get("redirect_after_login")
+      //   if (redirectPath) {
+      //     Cookies.remove("redirect_after_login")
+      //     router.push(redirectPath)
+      //   }
     } catch (error: any) {
-      setError(error.message || "Invalid username or password")
+      setError(error.message || "Invalid username or password");
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
-  
+  };
+
   const overlayVariants = {
     hidden: { opacity: 0 },
     visible: { opacity: 1 },

@@ -25,15 +25,8 @@ import {
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 import { useRouter } from "next/navigation";
-import { useAuth } from "@/app/api/apiClient";
 import { useModalContext } from "@/app/context/ModalContext";
-
-// Mock user data - replace with actual authentication state
-const mockUser = {
-  id: "user-123",
-  username: "cryptotrader",
-  isLoggedIn: true,
-};
+import { useAuthContext } from "@/app/context/AuthContext";
 
 export function Navbar() {
   const {
@@ -44,45 +37,13 @@ export function Navbar() {
   } = useModalContext();
 
   const [isOpen, setIsOpen] = useState(false);
-  const [user, setUser] = useState<{
-    id: string;
-    username: string;
-    isLoggedIn: boolean;
-  } | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const { user, isLoading, logout } = useAuthContext()
 
   const router = useRouter();
-  const auth = useAuth();
-
-  // Check authentication status
-  useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        setIsLoading(true);
-        // In a real app, you would check auth status from API or local storage
-        // const userData = await auth.validateSession()
-        // setUser(userData)
-
-        // Using mock data for now
-        setTimeout(() => {
-          setUser(mockUser);
-          setIsLoading(false);
-        }, 500);
-      } catch (error) {
-        console.error("Auth check failed:", error);
-        setUser(null);
-        setIsLoading(false);
-      }
-    };
-
-    checkAuth();
-  }, []);
 
   const handleLogout = async () => {
     try {
-      await auth.logout();
-      setUser(null);
-      router.push("/");
+      await logout();
     } catch (error) {
       console.error("Logout failed:", error);
     }
@@ -133,7 +94,7 @@ export function Navbar() {
         </div> */}
           {!isLoading && (
             <>
-              {user?.isLoggedIn ? (
+              {user ? (
                 <div className="hidden md:flex">
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
@@ -201,7 +162,7 @@ export function Navbar() {
           <div className="flex md:hidden items-center gap-4">
             {/* <ThemeSwitcher /> */}
 
-            {!isLoading && user?.isLoggedIn && (
+            {!isLoading && user && (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button

@@ -2,13 +2,13 @@
 import React, { ReactNode, useEffect } from "react";
 import NextTopLoader from "nextjs-toploader";
 import { ThemeProvider } from "../theme-provider";
-import { Navbar } from "./navbar";
 import { Footer } from "./footer";
 import { Session } from "next-auth";
 import { LoginModal } from "../modal/login-modal";
 import { SignupModal } from "../modal/signup-modal";
 import { useModalContext } from "@/app/context/ModalContext";
 import { AuthGuard } from "./auth-guard";
+import { Navbar } from "./navbar";
 
 interface LayoutProps {
   children?: ReactNode;

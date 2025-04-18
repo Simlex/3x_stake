@@ -1,38 +1,60 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import { motion } from "framer-motion"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/app/components/ui/tabs"
-import { Loader2 } from "lucide-react"
-import OverviewTab from "@/app/components/profile/OverviewTab"
-import StakingTab from "@/app/components/profile/StakingTab"
-import ActivityTab from "@/app/components/profile/ActivityTab"
-import SettingsTab from "@/app/components/profile/SettingsTab"
-import SecurityTab from "@/app/components/profile/SecurityTab"
-import { useRouter, useSearchParams } from "next/navigation"
+import { useState, useEffect } from "react";
+import { motion } from "framer-motion";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@/app/components/ui/tabs";
+import { Loader2 } from "lucide-react";
+import OverviewTab from "@/app/components/profile/OverviewTab";
+import StakingTab from "@/app/components/profile/StakingTab";
+import ActivityTab from "@/app/components/profile/ActivityTab";
+import SettingsTab from "@/app/components/profile/SettingsTab";
+import SecurityTab from "@/app/components/profile/SecurityTab";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useAuthContext } from "../context/AuthContext";
 
 export default function ProfilePage() {
-  const [isLoading, setIsLoading] = useState(true)
-  const router = useRouter()
-  const searchParams = useSearchParams()
-  const tabParam = searchParams?.get("tab")
-  const [activeTab, setActiveTab] = useState(tabParam || "overview")
+  const { user, isLoading: authLoading } = useAuthContext();
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const tabParam = searchParams?.get("tab");
 
-  // Simulate loading user data
+  const [isLoading, setIsLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState(tabParam || "overview");
+
+  // Update the isLoading effect to consider auth state:
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsLoading(false)
-    }, 1000)
+    if (!authLoading) {
+      // If not authenticated, redirect to login
+      if (!user) {
+        router.push("/");
+        return;
+      }
 
-    return () => clearTimeout(timer)
-  }, [])
+      // Otherwise, simulate loading user profile data
+      const timer = setTimeout(() => {
+        setIsLoading(false);
+      }, 1000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [authLoading, user, router]);
 
   // Set active tab based on URL parameter
   useEffect(() => {
-    if (tabParam && ["overview", "staking", "activity", "settings", "security"].includes(tabParam)) {
-      setActiveTab(tabParam)
+    if (
+      tabParam &&
+      ["overview", "staking", "activity", "settings", "security"].includes(
+        tabParam
+      )
+    ) {
+      setActiveTab(tabParam);
     }
-  }, [tabParam])
+  }, [tabParam]);
 
   if (isLoading) {
     return (
@@ -40,11 +62,13 @@ export default function ProfilePage() {
         <div className="container mx-auto px-4 pt-32 pb-20 flex items-center justify-center">
           <div className="flex flex-col items-center">
             <Loader2 className="h-12 w-12 animate-spin text-purple-500" />
-            <p className="mt-4 text-lg text-gray-400">Loading your profile...</p>
+            <p className="mt-4 text-lg text-gray-400">
+              Loading your profile...
+            </p>
           </div>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -59,22 +83,51 @@ export default function ProfilePage() {
             Your Profile
           </motion.h1>
 
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
             <Tabs defaultValue={activeTab} className="w-full">
               <TabsList className="grid grid-cols-5 mb-8">
-                <TabsTrigger value="overview" onClick={() => router.push("/profile?tab=overview", { scroll: false })}>
+                <TabsTrigger
+                  value="overview"
+                  onClick={() =>
+                    router.push("/profile?tab=overview", { scroll: false })
+                  }
+                >
                   Overview
                 </TabsTrigger>
-                <TabsTrigger value="staking" onClick={() => router.push("/profile?tab=staking", { scroll: false })}>
+                <TabsTrigger
+                  value="staking"
+                  onClick={() =>
+                    router.push("/profile?tab=staking", { scroll: false })
+                  }
+                >
                   Staking
                 </TabsTrigger>
-                <TabsTrigger value="activity" onClick={() => router.push("/profile?tab=activity", { scroll: false })}>
+                <TabsTrigger
+                  value="activity"
+                  onClick={() =>
+                    router.push("/profile?tab=activity", { scroll: false })
+                  }
+                >
                   Activity
                 </TabsTrigger>
-                <TabsTrigger value="settings" onClick={() => router.push("/profile?tab=settings", { scroll: false })}>
+                <TabsTrigger
+                  value="settings"
+                  onClick={() =>
+                    router.push("/profile?tab=settings", { scroll: false })
+                  }
+                >
                   Settings
                 </TabsTrigger>
-                <TabsTrigger value="security" onClick={() => router.push("/profile?tab=security", { scroll: false })}>
+                <TabsTrigger
+                  value="security"
+                  onClick={() =>
+                    router.push("/profile?tab=security", { scroll: false })
+                  }
+                >
                   Security
                 </TabsTrigger>
               </TabsList>
@@ -103,5 +156,5 @@ export default function ProfilePage() {
         </div>
       </div>
     </div>
-  )
+  );
 }

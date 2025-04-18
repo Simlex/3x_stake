@@ -2,6 +2,7 @@
 import React from 'react';
 import { SessionProvider } from 'next-auth/react';
 import { ModalProvider } from '../context/ModalContext';
+import { AuthProvider } from '../context/AuthContext';
 
 type Props = {
     children?: React.ReactNode
@@ -9,11 +10,11 @@ type Props = {
 
 const GlobalProvider = ({ children }: Props) => {
     return (
-        <SessionProvider>
+        <AuthProvider>
             <ModalProvider>
                 {children}
             </ModalProvider>
-        </SessionProvider>
+        </AuthProvider>
     );
 };
 
