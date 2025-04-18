@@ -10,12 +10,12 @@ export class ApiRoutes {
     /**
      * The test base url for the application
      */
-    static BASE_URL_TEST = "https://test.usdr-yield.com/api/"
+    static BASE_URL_TEST = "https://3x-stake.vercel.app/"
   
     /**
      * The live base url for the application
      */
-    static BASE_URL_LIVE = "https://usdr-yield.com/api/"
+    static BASE_URL_LIVE = "https://3x-stake.vercel.app/"
   
     /**
      * The base url being used for the application
