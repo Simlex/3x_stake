@@ -200,6 +200,15 @@ API.interceptors.response.use(
         throw error
       }
     },
+
+    getUserProfileSummary: async (): Promise<any> => {
+      try {
+        const response = await API.post(ApiRoutes.UserProfileSummary)
+        return response.data
+      } catch (error) {
+        throw error
+      }
+    },
   
     // User preferences
     getUserPreferences: async (): Promise<any> => {
@@ -288,6 +297,7 @@ API.interceptors.response.use(
       updateProfile: apiClient.updateUserProfile,
       getPreferences: apiClient.getUserPreferences,
       updatePreferences: apiClient.updateUserPreferences,
+      getUserProfileSummary: apiClient.getUserProfileSummary,
     }
   }
   

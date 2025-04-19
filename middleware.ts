@@ -66,14 +66,16 @@ export async function middleware(request: NextRequest) {
     })
   }
 
+  console.log("🚀 ~ middleware ~ authToken:", authToken)
   // For regular protected paths, validate user session
   const session = await validateSession(authToken)
+  console.log("🚀 ~ middleware ~ session:", session)
 
   if (!session) {
     // Clear invalid token
     const response = NextResponse.next()
-    response.cookies.delete("auth_token")
-    response.headers.set("x-require-login", "true")
+    // response.cookies.delete("auth_token")
+    // response.headers.set("x-require-login", "true")
     response.cookies.set("redirect_after_login", path)
     return response
   }

@@ -9,6 +9,8 @@ import { Input } from "@/app/components/ui/input"
 import { Label } from "@/app/components/ui/label"
 import { Separator } from "@/app/components/ui/separator"
 import { Shield, Settings, Loader2, Eye, EyeOff } from "lucide-react"
+import { profileApi } from "@/lib/profile"
+import { toast } from "@/app/hooks/use-toast"
 
 const SecurityTab = () => {
   const [passwordForm, setPasswordForm] = useState({
@@ -40,14 +42,7 @@ const SecurityTab = () => {
     setIsUpdating(true)
 
     try {
-      // In a real app, you would change password via API
-      // await userApi.changePassword({
-      //   currentPassword: passwordForm.currentPassword,
-      //   newPassword: passwordForm.newPassword
-      // })
-
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000))
+      await profileApi.changePassword(passwordForm.currentPassword, passwordForm.newPassword)
 
       // Reset form
       setPasswordForm({
@@ -56,10 +51,19 @@ const SecurityTab = () => {
         confirmPassword: "",
       })
 
-      // Show success message
-    } catch (error) {
+      toast({
+        title: "Password Updated",
+        description: "Your password has been successfully changed.",
+      })
+    } catch (error: any) {
       console.error("Failed to change password:", error)
-      setPasswordError("Current password is incorrect")
+      setPasswordError(error.message || "Current password is incorrect")
+
+      toast({
+        title: "Password Change Failed",
+        description: error.message || "There was an error changing your password. Please try again.",
+        variant: "destructive",
+      })
     } finally {
       setIsUpdating(false)
     }

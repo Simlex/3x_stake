@@ -35,6 +35,7 @@ model User {
   rewards           Reward[]
   notifications     Notification[]
   userPreferences   UserPreference?
+  activities        Activity[]
 }
 
 // Admin user model
@@ -180,6 +181,20 @@ model Notification {
   data      Json?
   createdAt DateTime           @default(now())
   updatedAt DateTime           @updatedAt
+
+  @@index([userId])
+}
+
+// Add the Activity model after the Notification model
+model Activity {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type      String
+  amount    Float
+  data      Json?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([userId])
 }

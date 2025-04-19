@@ -48,6 +48,7 @@ export class ApiRoutes {
     static ChangePassword = "user/change-password"
     static UserPreferences = "user/preferences"
     static UpdatePreferences = "user/preferences"
+    static UserProfileSummary = "user/profile/summary"
   
     /**
      * Admin Routes
