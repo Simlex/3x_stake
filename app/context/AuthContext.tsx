@@ -54,7 +54,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   // Login function
   const login = async (data: LoginRequest) => {
-    const {username, password} = data;
+    const { username, password } = data;
     setIsLoading(true);
     try {
       const response = await apiClient.login({ username, password });
@@ -78,12 +78,15 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   // Refresh user data
   const refreshUser = async () => {
+    setIsLoading(true);
     try {
       const response = await apiClient.validateSession();
       setUser(response.user);
     } catch (error) {
       console.error("Failed to refresh user:", error);
       setUser(null);
+    } finally {
+      setIsLoading(false);
     }
   };
 
