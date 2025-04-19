@@ -2,7 +2,14 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, AlertCircle, Check, Copy, ExternalLink, Loader2 } from "lucide-react";
+import {
+  X,
+  AlertCircle,
+  Check,
+  Copy,
+  ExternalLink,
+  Loader2,
+} from "lucide-react";
 import { Button } from "@/app/components/ui/button";
 import { Input } from "@/app/components/ui/input";
 import { Slider } from "@/app/components/ui/slider";
@@ -11,7 +18,7 @@ import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 import { useModalContext } from "@/app/context/ModalContext";
 import { useAuthContext } from "@/app/context/AuthContext";
-import QRCode from "react-qr-code"
+import QRCode from "react-qr-code";
 
 type Network = "SOL" | "TRX" | "BEP20" | "TON";
 
@@ -79,22 +86,12 @@ export function StakeModal({
 
   // In a real app, check authentication status
   useEffect(() => {
-    // Mock authentication check - replace with actual auth check
-    const checkAuth = async () => {
-      try {
-        // const authStatus = await someAuthCheckFunction()
-        // setIsAuthenticated(authStatus)
-
-        // Using mock data for now
-        setIsAuthenticated(true); // Set to false to test the redirect
-      } catch (error) {
-        console.error("Auth check failed:", error);
-        setIsAuthenticated(false);
-      }
-    };
-
     if (isOpen) {
-      checkAuth();
+      if (user) {
+        setIsAuthenticated(true);
+        return;
+      }
+      setIsAuthenticated(false);
     }
   }, [isOpen]);
 
