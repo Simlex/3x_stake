@@ -62,7 +62,8 @@ export function LoginModal({
       //     router.push(redirectPath)
       //   }
     } catch (error: any) {
-      setError(error.message || "Invalid username or password");
+    //   setError(error.message || "Invalid username or password");
+      setError("An error ocurred. Please check your credentials and try again.");
     } finally {
       setIsLoading(false);
     }
