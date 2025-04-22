@@ -9,6 +9,8 @@ import { SignupModal } from "../modal/signup-modal";
 import { useModalContext } from "@/app/context/ModalContext";
 import { AuthGuard } from "./auth-guard";
 import { Navbar } from "./navbar";
+import { useAuthContext } from "@/app/context/AuthContext";
+import { usePathname, useRouter } from "next/navigation";
 
 interface LayoutProps {
   children?: ReactNode;
@@ -16,20 +18,31 @@ interface LayoutProps {
 }
 
 export default function LayoutWrapper({ children, session }: LayoutProps) {
+  const pathname = usePathname();
+  const router = useRouter();
   const {
     loginModalVisibility,
     setLoginModalVisibility,
     signupModalVisibility,
     setSignupModalVisibility,
   } = useModalContext();
+  const { user } = useAuthContext();
 
   // Check for login requirement header
   useEffect(() => {
-    const requireLogin = document.documentElement.getAttribute("data-require-login") === "true";
+    const requireLogin =
+      document.documentElement.getAttribute("data-require-login") === "true";
     if (requireLogin) {
       setLoginModalVisibility(true);
     }
   }, [setLoginModalVisibility]);
+
+  useEffect(() => {
+    if (user && user.isAdmin && !pathname.includes("/admin")) {
+      console.log("🚀 ~ useEffect ~ isAdmin: true");
+      router.push("/admin");
+    }
+  }, [user, pathname]);
 
   return (
     <>

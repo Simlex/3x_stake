@@ -2,7 +2,7 @@
 
 import type React from "react";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Loader2 } from "lucide-react";
 import { Button } from "@/app/components/ui/button";
@@ -33,7 +33,7 @@ export function LoginModal({
   const [message, setMessage] = useState("");
 
   const router = useRouter();
-  const { login } = useAuthContext();
+  const { login, user } = useAuthContext();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

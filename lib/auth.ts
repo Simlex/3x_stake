@@ -57,15 +57,72 @@ export async function signIn({
   password: string;
 }) {
   // Find user
-  const user = await prisma.user.findFirst({
-    where: {
-      OR: [{ email: username }, { username }],
-    },
-  });
+  const [user, adminUser] = await prisma.$transaction([
+    prisma.user.findFirst({
+      where: {
+        OR: [{ email: username }, { username }],
+      },
+    }),
+    prisma.admin.findFirst({
+      where: {
+        OR: [{ email: username }, { username }],
+      },
+    }),
+  ]);
 
-  if (!user) {
+  //   const user = await prisma.user.findFirst({
+  //     where: {
+  //       OR: [{ email: username }, { username }],
+  //     },
+  //   });
+
+  if (!user || !adminUser) {
     throw new Error("Invalid credentials");
   }
+
+  if (adminUser) {
+    // Verify password
+    const passwordValid = await compare(password, adminUser.password);
+
+    if (!passwordValid) {
+      throw new Error("Invalid credentials");
+    }
+
+    const token = await new SignJWT({
+      userId: adminUser.id,
+      role: "SUPER_ADMIN",
+    })
+      .setProtectedHeader({ alg: "HS256" })
+      .setIssuedAt()
+      .setExpirationTime("7d")
+      .sign(new TextEncoder().encode(JWT_SECRET));
+
+    await prisma.adminSession.create({
+      data: {
+        adminId: adminUser.id,
+        token,
+        expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days
+      },
+    });
+
+    // Update last login
+    await prisma.admin.update({
+      where: { id: adminUser.id },
+      data: { lastLoginAt: new Date() },
+    });
+
+    return {
+      token,
+      user: {
+        id: adminUser.id,
+        username: adminUser.username,
+        email: adminUser.email,
+        isAdmin: true
+      },
+    };
+  }
+
+  // If we get here, it means the person is not an admin...
 
   // Verify password
   const passwordValid = await compare(password, user.password);

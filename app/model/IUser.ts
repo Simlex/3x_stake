@@ -4,5 +4,6 @@ export type User = {
   username: string;
   email: string;
   isEmailVerified: boolean;
+  isAdmin?: boolean
   profileImage?: string | null;
 };

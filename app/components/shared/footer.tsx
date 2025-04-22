@@ -37,7 +37,7 @@ export function Footer() {
             <h3 className="font-semibold text-lg mb-4">Platform</h3>
             <ul className="space-y-2">
               <FooterLink href="/">Home</FooterLink>
-              <FooterLink href="/stake">Stake</FooterLink>
+              <FooterLink href="/#plans">Stake</FooterLink>
               <FooterLink href="/rewards">Rewards</FooterLink>
               <FooterLink href="/referrals">Referrals</FooterLink>
             </ul>

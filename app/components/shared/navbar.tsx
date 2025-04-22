@@ -37,7 +37,7 @@ export function Navbar() {
   } = useModalContext();
 
   const [isOpen, setIsOpen] = useState(false);
-  const { user, isLoading, logout } = useAuthContext()
+  const { user, isLoading, logout } = useAuthContext();
 
   const router = useRouter();
 
@@ -54,6 +54,8 @@ export function Navbar() {
     if (!user?.username) return "U";
     return user.username.substring(0, 2).toUpperCase();
   };
+
+  if (user?.isAdmin) return <></>
 
   return (
     <>
@@ -124,7 +126,7 @@ export function Navbar() {
                       </DropdownMenuItem>
                       <DropdownMenuItem
                         className="cursor-pointer"
-                        onClick={() => router.push("/stake")}
+                        onClick={() => router.push("/#plans")}
                       >
                         <Wallet className="mr-2 h-4 w-4" />
                         <span>Stake</span>

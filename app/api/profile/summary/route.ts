@@ -64,6 +64,9 @@ export async function GET(req: NextRequest) {
     const recentActivity = await prisma.activity.findMany({
         where: {
             userId
+        },
+        orderBy: {
+            createdAt: 'desc'
         }
     })
     // const recentActivity = await prisma.$queryRaw<Activity[]>`

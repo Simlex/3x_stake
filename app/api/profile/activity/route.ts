@@ -40,6 +40,9 @@ export async function GET(req: NextRequest) {
     const activityHistory = await prisma.activity.findMany({
         where: {
             userId
+        },
+        orderBy: {
+            createdAt: 'desc'
         }
     })
 

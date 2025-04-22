@@ -19,21 +19,11 @@ import { useRouter } from "next/navigation";
 import { useModalContext } from "@/app/context/ModalContext";
 import { useAuthContext } from "@/app/context/AuthContext";
 import QRCode from "react-qr-code";
+import { stakingApi } from "@/lib/staking";
+import { toast } from "@/app/hooks/use-toast"
+import { Network as NetworkEnum, StakingPlan } from "@/app/model";
 
 type Network = "SOL" | "TRX" | "BEP20" | "TON";
-
-type StakePlan = {
-  name: string;
-  tier: string;
-  minAmount: number;
-  maxAmount: number;
-  apr: number;
-  features: string[];
-  popular: boolean;
-  color: string;
-  bgColor: string;
-  borderColor: string;
-};
 
 const NETWORKS: { id: Network; name: string; icon: string }[] = [
   { id: "SOL", name: "Solana", icon: "🟣" },
@@ -63,7 +53,7 @@ export function StakeModal({
   isOpen,
   onClose,
 }: {
-  plan: StakePlan;
+  plan: StakingPlan;
   isOpen: boolean;
   onClose: () => void;
 }) {
@@ -169,14 +159,41 @@ export function StakeModal({
     }, 2000);
   };
 
-  const handleVerifyDeposit = () => {
+  const getSelctedNetwork = () => {
+    switch(network) {
+        case "BEP20":
+            return NetworkEnum.BEP20;
+        case "SOL":
+            return NetworkEnum.SOL;
+        case "TON":
+            return NetworkEnum.TON;
+        case "TRX":
+            return NetworkEnum.TRX;
+        default:
+            return NetworkEnum.BEP20;
+    }
+  }
+
+  const handleVerifyDeposit = async () => {
     setIsVerifying(true);
 
-    // Simulate verification process
-    setTimeout(() => {
-      setIsVerifying(false);
-      setDepositVerified(true);
+    try {
+        const createdStakingPoisition = await stakingApi.createStakingPoisition({
+            amount, 
+            planId: plan.id, 
+            network: getSelctedNetwork()
+        })
+        
+        console.log("🚀 ~ handleVerifyDeposit ~ createdStakingPoisition:", createdStakingPoisition)
+  
+        toast({
+          title: "Staking position created",
+          description: "Your staking position has been successfully created.",
+        })
 
+        // setIsVerifying(false);
+        setDepositVerified(true);
+        
       // Show success message
       setTimeout(() => {
         setIsSuccess(true);
@@ -186,7 +203,32 @@ export function StakeModal({
           onClose();
         }, 2000);
       }, 1000);
-    }, 3000);
+      } catch (err) {
+        console.error("Failed to create staking position:", err)
+        toast({
+            title: "Staking position creation failed",
+          description: "There was an error creating your staking position. Please try again.",
+          variant: "destructive",
+        })
+      } finally {
+        setIsVerifying(false);
+      }
+
+    // Simulate verification process
+    // setTimeout(() => {
+    //   setIsVerifying(false);
+    //   setDepositVerified(true);
+
+    //   // Show success message
+    //   setTimeout(() => {
+    //     setIsSuccess(true);
+
+    //     // Close modal after success
+    //     setTimeout(() => {
+    //       onClose();
+    //     }, 2000);
+    //   }, 1000);
+    // }, 3000);
   };
 
   const calculateReward = () => {
