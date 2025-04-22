@@ -76,7 +76,7 @@ export async function signIn({
   //     },
   //   });
 
-  if (!user || !adminUser) {
+  if (!user && !adminUser) {
     throw new Error("Invalid credentials");
   }
 
@@ -120,6 +120,10 @@ export async function signIn({
         isAdmin: true
       },
     };
+  }
+
+  if (!user) {
+    throw new Error("Invalid user credentials");
   }
 
   // If we get here, it means the person is not an admin...
