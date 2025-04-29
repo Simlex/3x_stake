@@ -302,7 +302,11 @@ export function StakeModal({
                       <Input
                         type="number"
                         value={amount}
-                        onChange={(e) => setAmount(Number(e.target.value))}
+                        onChange={(e) => {
+                            const value = Number(e.target.value);
+                            if (value > plan.maxAmount) return;
+                                setAmount(Number(e.target.value))
+                        }}
                         min={plan.minAmount}
                         max={plan.maxAmount}
                         className="w-24 text-right"

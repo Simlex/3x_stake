@@ -1,7 +1,7 @@
 // Create a new API route to validate the session
 
 import { type NextRequest, NextResponse } from "next/server"
-import { validateSession } from "@/lib/auth"
+import { validateSession } from "@/app/api/services/auth"
 import { cookies } from "next/headers"
 
 export async function GET(req: NextRequest) {

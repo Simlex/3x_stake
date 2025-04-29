@@ -11,7 +11,7 @@ import { Label } from "@/app/components/ui/label";
 import Link from "next/link";
 import { Navbar } from "@/app/components/shared/navbar";
 import { Footer } from "@/app/components/shared/footer";
-import { ForgotPasswordRequest, useAuth } from "../api/apiClient";
+import { ForgotPasswordRequest, useAuth } from "../../api/apiClient";
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState("");

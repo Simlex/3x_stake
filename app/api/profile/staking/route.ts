@@ -1,6 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
-import { validateSession } from "@/lib/auth"
+import { validateSession } from "@/app/api/services/auth"
 import { cookies } from "next/headers"
 
 export async function GET(req: NextRequest) {

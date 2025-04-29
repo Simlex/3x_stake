@@ -1,5 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server"
-import { requestPasswordReset } from "@/lib/auth"
+import { requestPasswordReset } from "@/app/api/services/auth"
 
 export async function POST(req: NextRequest) {
   try {

@@ -1,7 +1,10 @@
+"use server"
+
 import { PrismaClient } from "@prisma/client";
 import { hash, compare } from "bcryptjs";
 import { SignJWT, jwtVerify } from "jose";
 import crypto from "crypto";
+import { compileAccountCreationTemplate, sendMail, sendVerificationEmail } from "../../../lib/mail";
 
 const prisma = new PrismaClient();
 const JWT_SECRET = process.env.JWT_SECRET || "your-secret-key";
@@ -45,6 +48,17 @@ export async function signUp({
 
   // Send verification email (implementation depends on your email service)
   // await sendVerificationEmail(email, verificationToken)
+
+  // Send email to the new customer & send verification email concurrently
+  await Promise.all([
+    sendMail({
+      to: user.email,
+      name: "Account Created",
+      subject: "Welcome to 3xStake",
+      body: compileAccountCreationTemplate(`${user.username}`),
+    }),
+    sendVerificationEmail(user.email, verificationToken),
+  ]);
 
   return { userId: user.id };
 }
@@ -411,58 +425,6 @@ export async function validateSession(token: string) {
     return { user: session.user };
   } catch (error) {
     console.log("🚀 ~ validateSession ~ error:", error);
-    return null;
-  }
-}
-
-export async function validateAdminSession(token: string) {
-  try {
-    // Verify JWT
-    const { payload } = await jwtVerify(
-      token,
-      new TextEncoder().encode(JWT_SECRET)
-    );
-    const userId = payload.userId as string;
-    // const decoded = verify(token, JWT_SECRET) as {
-    //   adminId: string;
-    //   role: string;
-    //   permissions: string[];
-    // };
-
-    // Check if session exists
-    const session = await prisma.adminSession.findFirst({
-      where: {
-        token,
-        expiresAt: { gt: new Date() },
-      },
-      include: {
-        admin: {
-          select: {
-            id: true,
-            username: true,
-            email: true,
-            role: true,
-            permissions: {
-              select: {
-                name: true,
-              },
-            },
-          },
-        },
-      },
-    });
-
-    if (!session) {
-      return null;
-    }
-
-    return {
-      admin: {
-        ...session.admin,
-        permissions: session.admin.permissions.map((p) => p.name),
-      },
-    };
-  } catch (error) {
     return null;
   }
 }

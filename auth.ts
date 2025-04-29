@@ -121,16 +121,6 @@ export const authOptions: NextAuthOptions = {
           },
         });
 
-        // Send email to the subscriber
-        // await sendMail({
-        //   to: profile?.email as string,
-        //   name: "Account Created",
-        //   subject: "Welcome to Ticketsdeck",
-        //   body: compileAccountCreationTemplate(
-        //     `${profile?.name?.split(" ")[0]} ${profile?.name?.split(" ")[1]}`
-        //   ),
-        // });
-
         return true; // Return true to allow sign in
       }
       return true; // Return true to allow sign in

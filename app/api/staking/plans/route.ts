@@ -1,6 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
-import { validateSession } from "@/lib/auth"
+import { validateSession } from "@/app/api/services/auth"
 import { cookies } from "next/headers"
 
 export async function GET(req: NextRequest) {
@@ -13,11 +13,11 @@ export async function GET(req: NextRequest) {
     }
 
     // Validate the session
-    const session = await validateSession(authToken)
+    // const session = await validateSession(authToken)
 
-    if (!session) {
-      return NextResponse.json({ success: false, message: "Invalid session" }, { status: 401 })
-    }
+    // if (!session) {
+    //   return NextResponse.json({ success: false, message: "Invalid session" }, { status: 401 })
+    // }
 
     // Get staking plans
     const stakingPlans = await prisma.stakingPlan.findMany();

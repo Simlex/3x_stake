@@ -39,6 +39,7 @@ export interface StakingPlan {
   minAmount: number;
   maxAmount: number;
   apr: number;
+  aprMax: number;
   features: string[];
   popular: boolean;
   color: string;

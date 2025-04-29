@@ -36,6 +36,8 @@ model User {
     notifications    Notification[]
     userPreferences  UserPreference?
     activities       Activity[]
+
+    @@map("users")
 }
 
 // Admin user model
@@ -54,6 +56,8 @@ model Admin {
     lastLoginAt    DateTime?
     sessions       AdminSession[]
     passwordResets PasswordReset[]
+
+    @@map("admin_users")
 }
 
 // User session model
@@ -69,6 +73,7 @@ model Session {
     updatedAt DateTime @updatedAt
 
     @@index([userId])
+    @@map("sessions")
 }
 
 // Admin session model
@@ -84,6 +89,8 @@ model AdminSession {
     updatedAt DateTime @updatedAt
 
     @@index([adminId])
+
+    @@map("admin_sessions")
 }
 
 // Password reset model
@@ -102,6 +109,8 @@ model PasswordReset {
     @@index([userId])
     @@index([adminId])
     @@index([token])
+
+    @@map("password_resets")
 }
 
 // Email verification model
@@ -115,6 +124,8 @@ model EmailVerification {
 
     @@index([token])
     @@index([email])
+
+    @@map("email_verifications")
 }
 
 // Staking position model
@@ -136,6 +147,8 @@ model StakingPosition {
 
     @@index([userId])
     @@index([planId])
+
+    @@map("staking_positions")
 }
 
 // Staking plan model
@@ -146,11 +159,14 @@ model StakingPlan {
     minAmount Float
     maxAmount Float
     apr       Float
+    aprMax    Float
     //   features      String[]
     popular   Boolean           @default(false)
     createdAt DateTime          @default(now())
     updatedAt DateTime          @updatedAt
     positions StakingPosition[]
+
+    @@map("staking_plans")
 }
 
 // Reward model
@@ -168,6 +184,8 @@ model Reward {
 
     @@index([userId])
     @@index([stakingPositionId])
+
+    @@map("rewards")
 }
 
 // Notification model
@@ -184,6 +202,8 @@ model Notification {
     updatedAt DateTime         @updatedAt
 
     @@index([userId])
+
+    @@map("notifications")
 }
 
 // Add the Activity model after the Notification model
@@ -198,6 +218,8 @@ model Activity {
     updatedAt DateTime @updatedAt
 
     @@index([userId])
+
+    @@map("activities")
 }
 
 // User preferences model
@@ -211,6 +233,8 @@ model UserPreference {
     marketingEmails    Boolean  @default(true)
     createdAt          DateTime @default(now())
     updatedAt          DateTime @updatedAt
+
+    @@map("user_preferences")
 }
 
 // Permission model for admin roles
@@ -223,6 +247,8 @@ model Permission {
     updatedAt DateTime @updatedAt
 
     @@index([adminId])
+
+    @@map("permissions")
 }
 
 // Enums

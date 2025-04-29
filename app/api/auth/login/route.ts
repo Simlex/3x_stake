@@ -1,5 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server"
-import { signIn } from "@/lib/auth"
+import { signIn } from "@/app/api/services/auth"
 import { cookies } from "next/headers"
 
 export async function POST(req: NextRequest) {

@@ -126,7 +126,7 @@ export function StakingPlans() {
   useEffect(() => {
     if (user && user.isAdmin) return;
     handleFetchStakingPlans();
-  }, []);
+  }, [user]);
 
   if (isFetchingStakingPlans || !stakingPlans) {
     return <></>;
@@ -202,7 +202,7 @@ export function StakingPlans() {
                         Annual Percentage Rate
                       </p>
                       <p className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-purple-600">
-                        {fetchedPlan.apr}%
+                        {fetchedPlan.apr}% ~ {fetchedPlan.aprMax}%
                       </p>
                     </div>
                     <ul className="space-y-2">
@@ -244,7 +244,7 @@ export function StakingPlans() {
 
       {selectedPlan && (
         <StakeModal
-          plan={selectedPlan}
+          plan={{...selectedPlan, color: STAKING_PLANS.find(p => p.name == selectedPlan.name)?.color || ''}}
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
         />
