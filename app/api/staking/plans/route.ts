@@ -6,11 +6,11 @@ import { cookies } from "next/headers"
 export async function GET(req: NextRequest) {
   try {
     // Get auth token from cookies
-    const authToken = cookies().get("auth_token")?.value
+    // const authToken = cookies().get("auth_token")?.value
 
-    if (!authToken) {
-      return NextResponse.json({ success: false, message: "Unauthorized" }, { status: 401 })
-    }
+    // if (!authToken) {
+    //   return NextResponse.json({ success: false, message: "Unauthorized" }, { status: 401 })
+    // }
 
     // Validate the session
     // const session = await validateSession(authToken)

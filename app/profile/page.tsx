@@ -16,6 +16,8 @@ import SettingsTab from "@/app/components/profile/SettingsTab";
 import SecurityTab from "@/app/components/profile/SecurityTab";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAuthContext } from "../context/AuthContext";
+import { Button } from "../components/ui/button";
+import { Card, CardContent } from "../components/ui/card";
 
 export default function ProfilePage() {
   const { user, isLoading: authLoading } = useAuthContext();
@@ -132,23 +134,39 @@ export default function ProfilePage() {
                 </TabsTrigger>
               </TabsList>
 
-              <TabsContent value="overview">
+              <Card className="border-0 glass-effect mb-10">
+                <CardContent className="!p-0">
+                  <div className="w-full flex flex-row justify-between items-center p-5 rounded-lg">
+                    <div className="flex flex-col gap-2">
+                      <h4 className="text-2xl font-medium">Total Assets</h4>
+                      <h2 className="text-4xl font-bold">${user?.balance.toLocaleString()}</h2>
+                    </div>
+                    <div className="h-fit">
+                      <Button className="bg-gradient-to-r from-pink-500 to-purple-600">
+                        Witdraw
+                      </Button>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <TabsContent value="overview" key={"overview"}>
                 <OverviewTab />
               </TabsContent>
 
-              <TabsContent value="staking">
+              <TabsContent value="staking" key={"staking"}>
                 <StakingTab />
               </TabsContent>
 
-              <TabsContent value="activity">
+              <TabsContent value="activity" key={"activity"}>
                 <ActivityTab />
               </TabsContent>
 
-              <TabsContent value="settings">
+              <TabsContent value="settings" key={"settings"}>
                 <SettingsTab />
               </TabsContent>
 
-              <TabsContent value="security">
+              <TabsContent value="security" key={"security"}>
                 <SecurityTab />
               </TabsContent>
             </Tabs>

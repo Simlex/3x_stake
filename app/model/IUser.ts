@@ -6,4 +6,5 @@ export type User = {
   isEmailVerified: boolean;
   isAdmin?: boolean
   profileImage?: string | null;
+  balance: number;
 };

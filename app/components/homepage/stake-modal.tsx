@@ -20,7 +20,7 @@ import { useModalContext } from "@/app/context/ModalContext";
 import { useAuthContext } from "@/app/context/AuthContext";
 import QRCode from "react-qr-code";
 import { stakingApi } from "@/lib/staking";
-import { toast } from "@/app/hooks/use-toast"
+import { toast } from "@/app/hooks/use-toast";
 import { Network as NetworkEnum, StakingPlan } from "@/app/model";
 
 type Network = "SOL" | "TRX" | "BEP20" | "TON";
@@ -160,40 +160,44 @@ export function StakeModal({
   };
 
   const getSelctedNetwork = () => {
-    switch(network) {
-        case "BEP20":
-            return NetworkEnum.BEP20;
-        case "SOL":
-            return NetworkEnum.SOL;
-        case "TON":
-            return NetworkEnum.TON;
-        case "TRX":
-            return NetworkEnum.TRX;
-        default:
-            return NetworkEnum.BEP20;
+    switch (network) {
+      case "BEP20":
+        return NetworkEnum.BEP20;
+      case "SOL":
+        return NetworkEnum.SOL;
+      case "TON":
+        return NetworkEnum.TON;
+      case "TRX":
+        return NetworkEnum.TRX;
+      default:
+        return NetworkEnum.BEP20;
     }
-  }
+  };
 
   const handleVerifyDeposit = async () => {
     setIsVerifying(true);
 
     try {
-        const createdStakingPoisition = await stakingApi.createStakingPoisition({
-            amount, 
-            planId: plan.id, 
-            network: getSelctedNetwork()
-        })
-        
-        console.log("🚀 ~ handleVerifyDeposit ~ createdStakingPoisition:", createdStakingPoisition)
-  
-        toast({
-          title: "Staking position created",
-          description: "Your staking position has been successfully created.",
-        })
+      const createdStakingPoisition = await stakingApi.createStakingPosition({
+        amount,
+        planId: plan.id,
+        network: getSelctedNetwork(),
+        apr: plan.apr
+      });
 
-        // setIsVerifying(false);
-        setDepositVerified(true);
-        
+      console.log(
+        "🚀 ~ handleVerifyDeposit ~ createdStakingPoisition:",
+        createdStakingPoisition
+      );
+
+      toast({
+        title: "Staking position created",
+        description: "Your staking position has been successfully created.",
+      });
+
+      // setIsVerifying(false);
+      setDepositVerified(true);
+
       // Show success message
       setTimeout(() => {
         setIsSuccess(true);
@@ -203,16 +207,17 @@ export function StakeModal({
           onClose();
         }, 2000);
       }, 1000);
-      } catch (err) {
-        console.error("Failed to create staking position:", err)
-        toast({
-            title: "Staking position creation failed",
-          description: "There was an error creating your staking position. Please try again.",
-          variant: "destructive",
-        })
-      } finally {
-        setIsVerifying(false);
-      }
+    } catch (err) {
+      console.error("Failed to create staking position:", err);
+      toast({
+        title: "Staking position creation failed",
+        description:
+          "There was an error creating your staking position. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsVerifying(false);
+    }
 
     // Simulate verification process
     // setTimeout(() => {
@@ -231,7 +236,10 @@ export function StakeModal({
     // }, 3000);
   };
 
-  const calculateReward = () => {
+  const calculateReward = (max?: boolean) => {
+    if (max == true) {
+      return ((amount * plan.aprMax) / 100).toFixed(2);
+    }
     return ((amount * plan.apr) / 100).toFixed(2);
   };
 
@@ -303,9 +311,9 @@ export function StakeModal({
                         type="number"
                         value={amount}
                         onChange={(e) => {
-                            const value = Number(e.target.value);
-                            if (value > plan.maxAmount) return;
-                                setAmount(Number(e.target.value))
+                          const value = Number(e.target.value);
+                          if (value > plan.maxAmount) return;
+                          setAmount(Number(e.target.value));
                         }}
                         min={plan.minAmount}
                         max={plan.maxAmount}
@@ -359,7 +367,7 @@ export function StakeModal({
                   <div className="flex justify-between">
                     <span className="text-gray-400">Annual reward:</span>
                     <span className="font-medium">
-                      ${calculateReward()} USDT
+                      ${calculateReward()} USDT ~ ${calculateReward(true)} USDT
                     </span>
                   </div>
                 </div>

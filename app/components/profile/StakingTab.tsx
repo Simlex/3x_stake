@@ -1,92 +1,173 @@
-"use client"
+"use client";
 
-import { useEffect, useState } from "react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/app/components/ui/card"
-import { Button } from "@/app/components/ui/button"
-import { Badge } from "@/app/components/ui/badge"
-import { Separator } from "@/app/components/ui/separator"
-import { Loader2 } from "lucide-react"
-import Link from "next/link"
-import { profileApi } from "@/lib/profile"
-import type { StakingPosition } from "@/app/model"
-import { Skeleton } from "@/app/components/ui/skeleton"
-import { toast } from "@/app/hooks/use-toast"
+import { useEffect, useState } from "react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/app/components/ui/card";
+import { Button } from "@/app/components/ui/button";
+import { Badge } from "@/app/components/ui/badge";
+import { Separator } from "@/app/components/ui/separator";
+import { Loader2 } from "lucide-react";
+import Link from "next/link";
+import { profileApi } from "@/lib/profile";
+import type { Reward, StakingPosition } from "@/app/model";
+import { Skeleton } from "@/app/components/ui/skeleton";
+import { toast } from "@/app/hooks/use-toast";
+import { rewardApi } from "@/lib/reward";
+import { getTimeRemainingToClaim } from "@/lib/utils";
+import { useAuthContext } from "@/app/context/AuthContext";
 
 const StakingTab = () => {
-  const [stakingPositions, setStakingPositions] = useState<StakingPosition[]>([])
-  const [isLoading, setIsLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-  const [processingPositions, setProcessingPositions] = useState<Record<string, boolean>>({})
+  const { user, refreshUser } = useAuthContext();
+  const [stakingPositions, setStakingPositions] = useState<StakingPosition[]>(
+    []
+  );
+  const [isFetchingStakedPositions, setIsFetchingStakedPositions] =
+    useState(true);
+  const [isFetchingUserRewards, setIsFetchingUserRewards] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [processingPositions, setProcessingPositions] = useState<
+    Record<string, boolean>
+  >({});
+  const [isClaimingReward, setIsClaimingReward] = useState(false);
+  const [selectedPositionId, setSelectedPositionId] =
+    useState<StakingPosition>();
+const [userRewards, setUserRewards] = useState<Reward[]>();
+
+  const handleFetchStakingPositions = async () => {
+    try {
+      setIsFetchingStakedPositions(true);
+      const data = await profileApi.getStakingPositions();
+      setStakingPositions(data);
+      setError(null);
+    } catch (err) {
+      console.error("Failed to fetch staking positions:", err);
+      setError("Failed to load staking positions. Please try again.");
+    } finally {
+      setIsFetchingStakedPositions(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchStakingPositions = async () => {
-      try {
-        setIsLoading(true)
-        const data = await profileApi.getStakingPositions()
-        setStakingPositions(data)
-        setError(null)
-      } catch (err) {
-        console.error("Failed to fetch staking positions:", err)
-        setError("Failed to load staking positions. Please try again.")
-      } finally {
-        setIsLoading(false)
-      }
-    }
-
-    fetchStakingPositions()
-  }, [])
+    handleFetchStakingPositions();
+    user && handleFetchUserRewards(user.id);
+  }, []);
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("en-US", {
       year: "numeric",
       month: "short",
       day: "numeric",
-    })
-  }
+    });
+  };
 
   const handleClaimRewards = async (positionId: string) => {
-    // In a real implementation, you would call an API to claim rewards
-    // For now, we'll just show a toast
-    toast({
-      title: "Rewards Claimed",
-      description: "Your rewards have been successfully claimed.",
-    })
-  }
+    setIsClaimingReward(true);
+
+    try {
+      const fetchedStakingPlans = await rewardApi.claimReward(positionId);
+
+      setIsClaimingReward(false);
+
+      console.log(
+        "🚀 ~ handleFetchStakingPlans ~ fetchedStakingPlans:",
+        fetchedStakingPlans
+      );
+
+      handleFetchStakingPositions();
+      refreshUser();
+
+      toast({
+        title: "Rewards Claimed",
+        description: "Your rewards have been successfully claimed.",
+      });
+    } catch (err) {
+      console.error("Failed to claim reward:", err);
+
+      toast({
+        title: "Error claiming reward",
+        description: "An error occurred while claiming rewards",
+      });
+    } finally {
+      setIsClaimingReward(false);
+    }
+  };
+
+  const handleFetchUserRewards = async (userId: string) => {
+    setIsFetchingUserRewards(true);
+
+    try {
+      const fetchedUserRewards = await rewardApi.getUserRewards(userId);
+
+      setIsFetchingUserRewards(false);
+
+      console.log(
+        "🚀 ~ handleFetchUserRewards ~ fetchedUserRewards:",
+        fetchedUserRewards
+      );
+
+      setUserRewards(fetchedUserRewards)
+    } catch (err) {
+      console.error("Failed to fetch rewards:", err);
+
+      toast({
+        title: "Error fetching rewards",
+        description: "An error occurred while fetching rewards",
+      });
+    } finally {
+      setIsFetchingUserRewards(false);
+    }
+  };
 
   const handleUnstake = async (positionId: string) => {
     try {
-      setProcessingPositions((prev) => ({ ...prev, [positionId]: true }))
+      setProcessingPositions((prev) => ({ ...prev, [positionId]: true }));
 
-      await profileApi.unstakePosition(positionId)
+      await profileApi.unstakePosition(positionId);
 
       // Update the local state to reflect the change
-      setStakingPositions((prev) => prev.map((pos) => (pos.id === positionId ? { ...pos, isActive: false } : pos)))
+      setStakingPositions((prev) =>
+        prev.map((pos) =>
+          pos.id === positionId ? { ...pos, isActive: false } : pos
+        )
+      );
+    //   handleFetchStakingPositions();
+      refreshUser();
 
       toast({
         title: "Position Unstaked",
         description: "Your staking position has been successfully unstaked.",
-      })
+      });
     } catch (err) {
-      console.error("Failed to unstake position:", err)
+      console.error("Failed to unstake position:", err);
       toast({
         title: "Unstake Failed",
-        description: "There was an error unstaking your position. Please try again.",
+        description:
+          "There was an error unstaking your position. Please try again.",
         variant: "destructive",
-      })
+      });
     } finally {
-      setProcessingPositions((prev) => ({ ...prev, [positionId]: false }))
+      setProcessingPositions((prev) => ({ ...prev, [positionId]: false }));
     }
-  }
+  };
 
   if (error) {
     return (
       <div className="p-6 bg-red-900/20 border border-red-500/20 rounded-lg text-center">
         <p className="text-red-200">{error}</p>
-        <Button variant="outline" className="mt-4" onClick={() => window.location.reload()}>
+        <Button
+          variant="outline"
+          className="mt-4"
+          onClick={() => window.location.reload()}
+        >
           Try Again
         </Button>
       </div>
-    )
+    );
   }
 
   return (
@@ -94,16 +175,21 @@ const StakingTab = () => {
       <Card className="border-0 glass-effect">
         <CardHeader>
           <CardTitle>Your Staking Positions</CardTitle>
-          <CardDescription>Manage your active staking positions</CardDescription>
+          <CardDescription>
+            Manage your active staking positions
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            {isLoading ? (
+            {isFetchingStakedPositions ? (
               // Loading skeleton
               Array(2)
                 .fill(0)
                 .map((_, index) => (
-                  <div key={index} className="p-4 rounded-lg bg-black/30 border border-white/5">
+                  <div
+                    key={index}
+                    className="p-4 rounded-lg bg-black/30 border border-white/5"
+                  >
                     <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
                       <div>
                         <div className="flex items-center gap-2 mb-2">
@@ -135,12 +221,18 @@ const StakingTab = () => {
               stakingPositions.map((position) => (
                 <div
                   key={position.id}
-                  className={`p-4 rounded-lg ${position.isActive ? "bg-black/30" : "bg-gray-900/20"} border ${position.isActive ? "border-white/5" : "border-gray-800/50"}`}
+                  className={`p-4 rounded-lg ${
+                    position.isActive ? "bg-black/30" : "bg-gray-900/20"
+                  } border ${
+                    position.isActive ? "border-white/5" : "border-gray-800/50"
+                  }`}
                 >
                   <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                     <div>
                       <div className="flex items-center gap-2 mb-2">
-                        <h4 className="font-medium">{position.planName} Plan</h4>
+                        <h4 className="font-medium">
+                          {position.planName} Plan
+                        </h4>
                         <Badge
                           className={
                             position.isActive
@@ -152,14 +244,20 @@ const StakingTab = () => {
                         </Badge>
                       </div>
                       <div className="text-sm text-gray-400">
-                        Started on {formatDate(position.startDate)} • Network: {position.network}
-                        {position.endDate && ` • Ended on ${formatDate(position.endDate)}`}
+                        Started on {formatDate(position.startDate)} • Network:{" "}
+                        {position.network}
+                        {position.endDate &&
+                          ` • Ends on ${formatDate(position.endDate)}`}
                       </div>
                     </div>
 
                     <div className="flex flex-col md:items-end">
-                      <div className="text-lg font-bold">${position.amount.toLocaleString()}</div>
-                      <div className="text-sm text-gray-400">APR: {position.apr}%</div>
+                      <div className="text-lg font-bold">
+                        ${position.amount.toLocaleString()}
+                      </div>
+                      <div className="text-sm text-gray-400">
+                        APR: {position.apr}%
+                      </div>
                     </div>
                   </div>
 
@@ -167,20 +265,39 @@ const StakingTab = () => {
 
                   <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                     <div>
-                      <div className="text-sm text-gray-400">Rewards earned</div>
-                      <div className="text-lg font-medium text-green-500">${position.rewards.toLocaleString()}</div>
+                      <div className="text-sm text-gray-400">
+                        Rewards earned
+                      </div>
+                      <div className="text-lg font-medium text-green-500">
+                        ${position.rewards.toLocaleString()}
+                      </div>
                     </div>
 
                     {position.isActive && (
                       <div className="flex gap-2">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => handleClaimRewards(position.id)}
-                          disabled={position.rewards <= 0}
-                        >
-                          Claim Rewards
-                        </Button>
+                        <div className="flex flex-row items-center space-x-2">
+                          {/* <p className="text-xs">
+                            {
+                              getTimeRemainingToClaim(
+                                new Date(position.nextClaimDeadline as string)
+                              ).hours
+                            }
+                          </p> */}
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => {
+                              setSelectedPositionId(position);
+                              handleClaimRewards(position.id);
+                            }}
+                            //   disabled={position.rewards <= 0}
+                          >
+                            {isClaimingReward &&
+                            selectedPositionId!.id == position.id
+                              ? "Claiming Rewards"
+                              : "Claim Rewards"}
+                          </Button>
+                        </div>
                         <Button
                           variant="outline"
                           size="sm"
@@ -190,7 +307,8 @@ const StakingTab = () => {
                         >
                           {processingPositions[position.id] ? (
                             <>
-                              <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Unstaking...
+                              <Loader2 className="mr-2 h-4 w-4 animate-spin" />{" "}
+                              Unstaking...
                             </>
                           ) : (
                             "Unstake"
@@ -210,7 +328,10 @@ const StakingTab = () => {
             )}
 
             <div className="flex justify-center mt-4">
-              <Button className="bg-gradient-to-r from-pink-500 to-purple-600" asChild>
+              <Button
+                className="bg-gradient-to-r from-pink-500 to-purple-600"
+                asChild
+              >
                 <Link href="/#plans">Stake More USDR</Link>
               </Button>
             </div>
@@ -224,7 +345,7 @@ const StakingTab = () => {
           <CardDescription>Track your staking rewards</CardDescription>
         </CardHeader>
         <CardContent>
-          {isLoading ? (
+          {isFetchingUserRewards ? (
             <div className="space-y-4">
               {Array(2)
                 .fill(0)
@@ -244,16 +365,39 @@ const StakingTab = () => {
                   </div>
                 ))}
             </div>
+          ) : userRewards && userRewards.length > 0 ? (
+            <div className="space-y-4">
+              {userRewards.map((reward: any) => (
+                <div
+                  key={reward.id}
+                  className="flex items-center justify-between p-3 rounded-lg bg-black/30 border border-white/5"
+                >
+                  <div>
+                    <p className="font-medium text-white">
+                      {reward.amount.toFixed(6)} tokens
+                    </p>
+                    <p className="text-sm text-gray-400 mt-1">
+                      From {reward.stakingPosition.network} staking |{" "}
+                      {reward.stakingPosition.amount} staked @ {reward.stakingPosition.apy}% APY
+                    </p>
+                  </div>
+                  <div className="text-sm text-right text-gray-300">
+                    <p>{new Date(reward.claimedAt).toLocaleDateString()}</p>
+                    <p className="text-xs">{new Date(reward.claimedAt).toLocaleTimeString()}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
           ) : (
             <div className="text-center py-8 text-gray-400">
               <p>No rewards have been claimed yet.</p>
-              <p className="mt-2">Rewards are automatically calculated daily.</p>
+              <p className="mt-2">Rewards are claimable daily.</p>
             </div>
           )}
         </CardContent>
       </Card>
     </div>
-  )
-}
+  );
+};
 
-export default StakingTab
+export default StakingTab;

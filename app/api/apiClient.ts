@@ -15,6 +15,7 @@ export interface LoginResponse {
     username: string;
     email: string;
     isEmailVerified: boolean;
+    balance: number;
   };
 }
 

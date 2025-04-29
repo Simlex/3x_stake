@@ -4,7 +4,7 @@ import type React from "react";
 
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Loader2 } from "lucide-react";
+import { X, Loader2, EyeClosedIcon, EyeIcon } from "lucide-react";
 import { Button } from "@/app/components/ui/button";
 import { Input } from "@/app/components/ui/input";
 import { Label } from "@/app/components/ui/label";
@@ -28,6 +28,7 @@ export function LoginModal({
 }: LoginModalProps) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
@@ -62,8 +63,10 @@ export function LoginModal({
       //     router.push(redirectPath)
       //   }
     } catch (error: any) {
-    //   setError(error.message || "Invalid username or password");
-      setError("An error ocurred. Please check your credentials and try again.");
+      //   setError(error.message || "Invalid username or password");
+      setError(
+        "An error ocurred. Please check your credentials and try again."
+      );
     } finally {
       setIsLoading(false);
     }
@@ -139,14 +142,36 @@ export function LoginModal({
                     Forgot password?
                   </Link>
                 </div>
-                <Input
+                {/* <Input
                   id="password"
                   type="password"
                   placeholder="Enter your password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   className="bg-gray-800/50 border-gray-700 focus:border-purple-500"
-                />
+                /> */}
+
+                <div className="relative">
+                  <input
+                    id="password"
+                    type={showPassword ? "text" : "password"}
+                    placeholder="Enter your password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="w-full bg-gray-800/50 border border-gray-700 focus:border-purple-500 rounded-md py-2 px-3 pr-10 text-white focus:outline-none focus:ring-1 focus:ring-purple-500 transition-colors"
+                  />
+                  <button
+                    type="button"
+                    className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-purple-400 transition-colors"
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
+                    {showPassword ? (
+                      <EyeIcon className="h-5 w-5" />
+                    ) : (
+                      <EyeClosedIcon className="h-5 w-5" />
+                    )}
+                  </button>
+                </div>
               </div>
 
               {error && (

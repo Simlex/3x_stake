@@ -24,6 +24,8 @@ export interface StakingPosition {
   network: Network;
   startDate: string;
   endDate?: string;
+  lastClaimedAt?: string;
+  nextClaimDeadline?: string;
   apr: number;
   rewards: number;
   isActive: boolean;
@@ -52,6 +54,7 @@ export interface Reward {
   id: string;
   userId: string;
   stakingPositionId: string;
+  stakingPosition?: Partial<StakingPosition>
   amount: number;
   status: RewardStatus;
   claimedAt?: string;

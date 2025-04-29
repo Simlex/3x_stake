@@ -412,6 +412,7 @@ export async function validateSession(token: string) {
             username: true,
             email: true,
             isEmailVerified: true,
+            balance: true
           },
         },
       },

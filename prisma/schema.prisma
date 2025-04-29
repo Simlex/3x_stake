@@ -23,6 +23,7 @@ model User {
     firstName        String?
     lastName         String?
     profileImage     String?
+    balance          Float             @default(0)
     isEmailVerified  Boolean           @default(false)
     createdAt        DateTime          @default(now())
     updatedAt        DateTime          @updatedAt
@@ -89,7 +90,6 @@ model AdminSession {
     updatedAt DateTime @updatedAt
 
     @@index([adminId])
-
     @@map("admin_sessions")
 }
 
@@ -109,7 +109,6 @@ model PasswordReset {
     @@index([userId])
     @@index([adminId])
     @@index([token])
-
     @@map("password_resets")
 }
 
@@ -124,30 +123,30 @@ model EmailVerification {
 
     @@index([token])
     @@index([email])
-
     @@map("email_verifications")
 }
 
 // Staking position model
 model StakingPosition {
-    id          String      @id @default(uuid())
-    userId      String
-    user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
-    planId      String
-    stakingPlan StakingPlan @relation(fields: [planId], references: [id])
-    amount      Float
-    network     Network
-    startDate   DateTime    @default(now())
-    endDate     DateTime?
-    isActive    Boolean     @default(true)
-    rewards     Reward[]
-    apy         Decimal     @db.Decimal(10, 2)
-    createdAt   DateTime    @default(now())
-    updatedAt   DateTime    @updatedAt
+    id                String      @id @default(uuid())
+    userId            String
+    user              User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+    planId            String
+    stakingPlan       StakingPlan @relation(fields: [planId], references: [id])
+    amount            Float
+    network           Network
+    startDate         DateTime    @default(now())
+    endDate           DateTime?
+    lastClaimedAt     DateTime?
+    nextClaimDeadline DateTime?
+    isActive          Boolean     @default(true)
+    rewards           Reward[]
+    apy               Decimal     @db.Decimal(10, 2)
+    createdAt         DateTime    @default(now())
+    updatedAt         DateTime    @updatedAt
 
     @@index([userId])
     @@index([planId])
-
     @@map("staking_positions")
 }
 
@@ -184,7 +183,6 @@ model Reward {
 
     @@index([userId])
     @@index([stakingPositionId])
-
     @@map("rewards")
 }
 
@@ -202,7 +200,6 @@ model Notification {
     updatedAt DateTime         @updatedAt
 
     @@index([userId])
-
     @@map("notifications")
 }
 
@@ -218,7 +215,6 @@ model Activity {
     updatedAt DateTime @updatedAt
 
     @@index([userId])
-
     @@map("activities")
 }
 
@@ -247,7 +243,6 @@ model Permission {
     updatedAt DateTime @updatedAt
 
     @@index([adminId])
-
     @@map("permissions")
 }
 
