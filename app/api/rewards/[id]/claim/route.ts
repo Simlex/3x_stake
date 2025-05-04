@@ -39,6 +39,14 @@ export async function POST(
       where: {
         id: stakingPositionId,
       },
+      include: {
+        stakingPlan: {
+            select: {
+                apr: true,
+                aprMax: true
+            }
+        }
+      }
     });
 
     if (!stakingPosition) {
@@ -72,9 +80,10 @@ export async function POST(
 
     const nextClaimDeadline = new Date(now.setDate(now.getDate() + 1));
 
-    const rewardAmount = calculateDailyReward(
-      stakingPosition.amount,
-      Number(stakingPosition.apy)
+    const {reward: rewardAmount, apr} = calculateDailyReward(
+      stakingPosition.amount, 
+      Number(stakingPosition.stakingPlan.apr),
+      Number(stakingPosition.stakingPlan.aprMax),
     );
 
     await prisma.$transaction([

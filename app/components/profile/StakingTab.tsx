@@ -18,8 +18,8 @@ import type { Reward, StakingPosition } from "@/app/model";
 import { Skeleton } from "@/app/components/ui/skeleton";
 import { toast } from "@/app/hooks/use-toast";
 import { rewardApi } from "@/lib/reward";
-import { getTimeRemainingToClaim } from "@/lib/utils";
 import { useAuthContext } from "@/app/context/AuthContext";
+import moment from "moment";
 
 const StakingTab = () => {
   const { user, refreshUser } = useAuthContext();
@@ -36,7 +36,7 @@ const StakingTab = () => {
   const [isClaimingReward, setIsClaimingReward] = useState(false);
   const [selectedPositionId, setSelectedPositionId] =
     useState<StakingPosition>();
-const [userRewards, setUserRewards] = useState<Reward[]>();
+  const [userRewards, setUserRewards] = useState<Reward[]>();
 
   const handleFetchStakingPositions = async () => {
     try {
@@ -65,6 +65,26 @@ const [userRewards, setUserRewards] = useState<Reward[]>();
     });
   };
 
+  const hasClaimsBegun = (dateString: string) => {
+    console.log("🚀 ~ hasClaimsBegun ~ dateString:", dateString);
+    const now = new Date();
+    // Difference in milliseconds
+    const diffMs = now.getTime() - new Date(dateString).getTime();
+    console.log(
+      "🚀 ~ hasClaimsBegun ~ new Date(dateString).getTime():",
+      new Date(dateString).getTime()
+    );
+    console.log("🚀 ~ hasClaimsBegun ~ now.getTime():", now.getTime());
+    console.log("🚀 ~ hasClaimsBegun ~ diffMs:", diffMs);
+    // Convert ms to full days
+    const diffDays = diffMs / (1000 * 60 * 60 * 24);
+    console.log("🚀 ~ hasClaimsBegun ~ diffDays:", diffDays);
+
+    const isMoreThanOneDay = diffDays > 1;
+
+    return isMoreThanOneDay;
+  };
+
   const handleClaimRewards = async (positionId: string) => {
     setIsClaimingReward(true);
 
@@ -79,6 +99,7 @@ const [userRewards, setUserRewards] = useState<Reward[]>();
       );
 
       handleFetchStakingPositions();
+      handleFetchUserRewards(user?.id as string);
       refreshUser();
 
       toast({
@@ -110,7 +131,7 @@ const [userRewards, setUserRewards] = useState<Reward[]>();
         fetchedUserRewards
       );
 
-      setUserRewards(fetchedUserRewards)
+      setUserRewards(fetchedUserRewards);
     } catch (err) {
       console.error("Failed to fetch rewards:", err);
 
@@ -135,7 +156,7 @@ const [userRewards, setUserRewards] = useState<Reward[]>();
           pos.id === positionId ? { ...pos, isActive: false } : pos
         )
       );
-    //   handleFetchStakingPositions();
+      //   handleFetchStakingPositions();
       refreshUser();
 
       toast({
@@ -283,20 +304,28 @@ const [userRewards, setUserRewards] = useState<Reward[]>();
                               ).hours
                             }
                           </p> */}
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => {
-                              setSelectedPositionId(position);
-                              handleClaimRewards(position.id);
-                            }}
-                            //   disabled={position.rewards <= 0}
-                          >
-                            {isClaimingReward &&
-                            selectedPositionId!.id == position.id
-                              ? "Claiming Rewards"
-                              : "Claim Rewards"}
-                          </Button>
+                          {!hasClaimsBegun(position.startDate) ? (
+                            <p className="text-sm text-white/70">
+                              {`Claiming starts on ${moment(position.startDate)
+                                .add(1, "day")
+                                .format("MMM D, YYYY | hh:mm a")}`}
+                            </p>
+                          ) : (
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => {
+                                setSelectedPositionId(position);
+                                handleClaimRewards(position.id);
+                              }}
+                              //   disabled={position.rewards <= 0} "Cannot claim yet."
+                            >
+                              {isClaimingReward &&
+                              selectedPositionId!.id == position.id
+                                ? "Claiming Rewards"
+                                : "Claim Rewards"}
+                            </Button>
+                          )}
                         </div>
                         <Button
                           variant="outline"
@@ -332,7 +361,7 @@ const [userRewards, setUserRewards] = useState<Reward[]>();
                 className="bg-gradient-to-r from-pink-500 to-purple-600"
                 asChild
               >
-                <Link href="/#plans">Stake More USDR</Link>
+                <Link href="/" scroll>Stake More USDR</Link>
               </Button>
             </div>
           </div>
@@ -374,16 +403,19 @@ const [userRewards, setUserRewards] = useState<Reward[]>();
                 >
                   <div>
                     <p className="font-medium text-white">
-                      {reward.amount.toFixed(6)} tokens
+                      ${reward.amount.toFixed(2)}
                     </p>
                     <p className="text-sm text-gray-400 mt-1">
                       From {reward.stakingPosition.network} staking |{" "}
-                      {reward.stakingPosition.amount} staked @ {reward.stakingPosition.apy}% APY
+                      {reward.stakingPosition.amount} staked @{" "}
+                      {reward.stakingPosition.apy}% APY
                     </p>
                   </div>
                   <div className="text-sm text-right text-gray-300">
                     <p>{new Date(reward.claimedAt).toLocaleDateString()}</p>
-                    <p className="text-xs">{new Date(reward.claimedAt).toLocaleTimeString()}</p>
+                    <p className="text-xs">
+                      {new Date(reward.claimedAt).toLocaleTimeString()}
+                    </p>
                   </div>
                 </div>
               ))}

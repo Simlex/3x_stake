@@ -26,9 +26,26 @@ export function htmlToPlainText(html: string) {
   return text;
 }
 
-export function calculateDailyReward(principal: number, apr: number): number {
-  const dailyRate = Math.pow(1 + apr / 100, 1 / 365) - 1;
-  return principal * dailyRate;
+// export function calculateDailyReward(principal: number, apr: number): number {
+//   const dailyRate = Math.pow(1 + apr / 100, 1 / 365) - 1;
+//   return principal * dailyRate;
+// }
+
+export function calculateDailyReward(
+  principal: number,
+  apr: number,
+  aprMax: number
+): { reward: number; apr: number } {
+  // Generate a random APR between apr and aprMax
+  const randomApr = Math.random() * (aprMax - apr) + apr;
+
+  // Calculate the reward based on the random APR
+  const reward = Number(((principal * randomApr) / 100).toFixed(2));
+
+  return {
+    reward,
+    apr: Number(randomApr.toFixed(2)), // rounded APR for clarity
+  };
 }
 
 export function getTimeRemainingToClaim(deadline: Date): {
@@ -47,7 +64,7 @@ export function getTimeRemainingToClaim(deadline: Date): {
   const hours = Math.floor(diff / (1000 * 60 * 60));
   const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
   const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-  console.log("🚀 ~ getTimeRemainingToClaim:", hours, minutes, seconds)
+  console.log("🚀 ~ getTimeRemainingToClaim:", hours, minutes, seconds);
 
   return { hours, minutes, seconds, isExpired: false };
 }

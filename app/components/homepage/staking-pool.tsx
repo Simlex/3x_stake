@@ -140,9 +140,9 @@ export function StakingPool() {
                 </div>
 
                 {/* Percentage indicator */}
-                <div className="absolute bottom-4 right-4 bg-black/60 backdrop-blur-sm px-3 py-1 rounded-full text-sm">
+                {/* <div className="absolute bottom-4 right-4 bg-black/60 backdrop-blur-sm px-3 py-1 rounded-full text-sm">
                   {Math.floor(poolFill)}% Full
-                </div>
+                </div> */}
               </div>
 
               <div className="mt-6 text-center text-sm text-gray-400">

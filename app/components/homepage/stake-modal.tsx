@@ -182,7 +182,7 @@ export function StakeModal({
         amount,
         planId: plan.id,
         network: getSelctedNetwork(),
-        apr: plan.apr
+        apr: plan.apr,
       });
 
       console.log(
@@ -358,14 +358,28 @@ export function StakeModal({
                       {formatCurrency(amount)} USDT
                     </span>
                   </div>
-                  <div className="flex justify-between">
+                  {/* <div className="flex justify-between">
                     <span className="text-gray-400">APR:</span>
                     <span className="font-medium text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-purple-600">
-                      {plan.apr}%
+                      {plan.apr}% - {plan.aprMax}%
+                    </span>
+                  </div> */}
+                  <div className="flex justify-between">
+                    <span className="text-gray-400">
+                      Daily Rewards [Percentage]:
+                    </span>
+                    <span className="font-medium text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-purple-600">
+                      {plan.apr}% - {plan.aprMax}%
                     </span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-400">Annual reward:</span>
+                    <span className="text-gray-400">Duration:</span>
+                    <span className="font-medium text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-purple-600">
+                      30 days
+                    </span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-400">Daily Rewards:</span>
                     <span className="font-medium">
                       ${calculateReward()} USDT ~ ${calculateReward(true)} USDT
                     </span>

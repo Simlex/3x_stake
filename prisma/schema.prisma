@@ -37,6 +37,7 @@ model User {
     notifications    Notification[]
     userPreferences  UserPreference?
     activities       Activity[]
+    withdrawal       Withdrawal[]
 
     @@map("users")
 }
@@ -246,6 +247,24 @@ model Permission {
     @@map("permissions")
 }
 
+model Withdrawal {
+    id              String           @id @default(uuid())
+    userId          String
+    user            User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+    amount          Float
+    status          WithdrawalStatus @default(PENDING)
+    network         Network
+    wallet          String // destination wallet address
+    transactionHash String? // blockchain transaction hash, if available
+    reason          String? // optional note from user
+    processedAt     DateTime? // when admin processed it
+    createdAt       DateTime         @default(now())
+    updatedAt       DateTime         @updatedAt
+
+    @@index([userId])
+    @@map("withdrawals")
+}
+
 // Enums
 enum AdminRole {
     SUPER_ADMIN
@@ -278,4 +297,11 @@ enum Theme {
     LIGHT
     DARK
     SYSTEM
+}
+
+enum WithdrawalStatus {
+    PENDING
+    APPROVED
+    REJECTED
+    FAILED
 }
