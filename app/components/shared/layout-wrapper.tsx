@@ -11,6 +11,8 @@ import { AuthGuard } from "./auth-guard";
 import { Navbar } from "./navbar";
 import { useAuthContext } from "@/app/context/AuthContext";
 import { usePathname, useRouter } from "next/navigation";
+import { useToast } from "@/app/hooks/use-toast";
+import { Toaster } from "./toaster";
 
 interface LayoutProps {
   children?: ReactNode;
@@ -46,6 +48,7 @@ export default function LayoutWrapper({ children, session }: LayoutProps) {
 
   return (
     <>
+      <Toaster />
       <NextTopLoader
         color="#ffffff"
         initialPosition={0.08}
