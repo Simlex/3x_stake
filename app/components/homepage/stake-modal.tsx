@@ -20,7 +20,7 @@ import { useModalContext } from "@/app/context/ModalContext";
 import { useAuthContext } from "@/app/context/AuthContext";
 import QRCode from "react-qr-code";
 import { stakingApi } from "@/lib/staking";
-import { toast } from "@/app/hooks/use-toast";
+import { toast } from "sonner";
 import { Network as NetworkEnum, StakingPlan } from "@/app/model";
 
 type Network = "SOL" | "TRX" | "BEP20" | "TON";
@@ -190,10 +190,10 @@ export function StakeModal({
         createdStakingPoisition
       );
 
-      toast({
-        title: "Staking position created",
-        description: "Your staking position has been successfully created.",
-      });
+      toast.success(
+        "Staking position created successfully. You can now view it in your dashboard.",
+        { description: "Your staking position has been successfully created." }
+      );
 
       // setIsVerifying(false);
       setDepositVerified(true);
@@ -209,11 +209,8 @@ export function StakeModal({
       }, 1000);
     } catch (err) {
       console.error("Failed to create staking position:", err);
-      toast({
-        title: "Staking position creation failed",
-        description:
-          "There was an error creating your staking position. Please try again.",
-        variant: "destructive",
+      toast.error("Staking position creation failed. Please try again.", {
+        description: "There was an error creating your staking position.",
       });
     } finally {
       setIsVerifying(false);

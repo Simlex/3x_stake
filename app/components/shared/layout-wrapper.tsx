@@ -11,8 +11,7 @@ import { AuthGuard } from "./auth-guard";
 import { Navbar } from "./navbar";
 import { useAuthContext } from "@/app/context/AuthContext";
 import { usePathname, useRouter } from "next/navigation";
-import { useToast } from "@/app/hooks/use-toast";
-import { Toaster } from "./toaster";
+import { Toaster } from "sonner";
 
 interface LayoutProps {
   children?: ReactNode;
@@ -48,7 +47,6 @@ export default function LayoutWrapper({ children, session }: LayoutProps) {
 
   return (
     <>
-      <Toaster />
       <NextTopLoader
         color="#ffffff"
         initialPosition={0.08}
@@ -60,6 +58,7 @@ export default function LayoutWrapper({ children, session }: LayoutProps) {
         speed={200}
         shadow="0 0 10px #f1fa9e,0 0 5px #ceb0fa"
       />
+      <Toaster richColors position="top-right" />
       <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
         <AuthGuard />
         <Navbar />

@@ -87,7 +87,7 @@ export function RecentRewards() {
             </CardHeader>
             <CardContent className="p-6">
               <div className="space-y-4">
-                {visibleUsers.map((user, index) => (
+                {visibleUsers.length > 0 && visibleUsers.map((user, index) => (
                   <motion.div
                     key={`${user.id}-${index}`}
                     initial={{ opacity: 0, x: -20 }}

@@ -13,7 +13,7 @@ import { User, Bell, Loader2 } from "lucide-react"
 import { profileApi } from "@/lib/profile"
 import type { User as UserModel, UserPreference } from "@/app/model"
 import { Skeleton } from "@/app/components/ui/skeleton"
-import { toast } from "@/app/hooks/use-toast"
+import { toast } from "sonner"
 
 const SettingsTab = () => {
   const [profileData, setProfileData] = useState<UserModel | null>(null)
@@ -80,16 +80,13 @@ const SettingsTab = () => {
       })
 
       setProfileData(updatedProfile)
-      toast({
-        title: "Profile Updated",
+      toast.success("Profile updated successfully", {
         description: "Your profile information has been successfully updated.",
       })
     } catch (err) {
       console.error("Failed to update profile:", err)
-      toast({
-        title: "Update Failed",
+      toast.error("Profile Update Failed", {
         description: "There was an error updating your profile. Please try again.",
-        variant: "destructive",
       })
     } finally {
       setIsUpdatingProfile(false)
@@ -125,10 +122,8 @@ const SettingsTab = () => {
         }
       })
 
-      toast({
-        title: "Update Failed",
+      toast.error("Notification Update Failed", {
         description: "There was an error updating your notification settings. Please try again.",
-        variant: "destructive",
       })
     }
   }

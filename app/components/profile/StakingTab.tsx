@@ -16,7 +16,7 @@ import Link from "next/link";
 import { profileApi } from "@/lib/profile";
 import type { Reward, StakingPosition } from "@/app/model";
 import { Skeleton } from "@/app/components/ui/skeleton";
-import { toast } from "@/app/hooks/use-toast";
+import { toast } from "sonner";
 import { rewardApi } from "@/lib/reward";
 import { useAuthContext } from "@/app/context/AuthContext";
 import moment from "moment";
@@ -102,17 +102,15 @@ const StakingTab = () => {
       handleFetchUserRewards(user?.id as string);
       refreshUser();
 
-      toast({
-        title: "Rewards Claimed",
+      toast.success("Rewards claimed successfully!", {
         description: "Your rewards have been successfully claimed.",
       });
     } catch (err) {
       console.error("Failed to claim reward:", err);
-
-      toast({
-        title: "Error claiming reward",
-        description: "An error occurred while claiming rewards",
+      toast.error("Failed to claim reward", {
+        description: "An error occurred while claiming rewards.",
       });
+      setError("Failed to claim reward. Please try again.");
     } finally {
       setIsClaimingReward(false);
     }
@@ -134,10 +132,8 @@ const StakingTab = () => {
       setUserRewards(fetchedUserRewards);
     } catch (err) {
       console.error("Failed to fetch rewards:", err);
-
-      toast({
-        title: "Error fetching rewards",
-        description: "An error occurred while fetching rewards",
+      toast.error("Failed to fetch rewards", {
+        description: "An error occurred while fetching rewards.",
       });
     } finally {
       setIsFetchingUserRewards(false);
@@ -158,18 +154,14 @@ const StakingTab = () => {
       );
       //   handleFetchStakingPositions();
       refreshUser();
-
-      toast({
-        title: "Position Unstaked",
+      toast.success("Position unstaked successfully!", {
         description: "Your staking position has been successfully unstaked.",
       });
     } catch (err) {
       console.error("Failed to unstake position:", err);
-      toast({
-        title: "Unstake Failed",
+      toast.error("Failed to unstake position", {
         description:
-          "There was an error unstaking your position. Please try again.",
-        variant: "destructive",
+          "An error occurred while unstaking your position. Please try again.",
       });
     } finally {
       setProcessingPositions((prev) => ({ ...prev, [positionId]: false }));
@@ -361,7 +353,9 @@ const StakingTab = () => {
                 className="bg-gradient-to-r from-pink-500 to-purple-600"
                 asChild
               >
-                <Link href="/" scroll>Stake More USDR</Link>
+                <Link href="/" scroll>
+                  Stake More USDR
+                </Link>
               </Button>
             </div>
           </div>

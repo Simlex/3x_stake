@@ -108,7 +108,7 @@ export function StakingPool() {
                 </div>
 
                 {/* Pool stats */}
-                <div className="absolute top-4 left-0 right-0 flex justify-center">
+                <div className="absolute bottom-8 left-0 right-0 flex justify-center">
                   <div className="bg-black/40 backdrop-blur-sm px-4 py-2 rounded-full">
                     <span className="text-lg font-bold text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-purple-600">
                       ${Math.floor(20000 + (poolFill - 65) * 1000).toLocaleString()} USDT
