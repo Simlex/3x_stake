@@ -19,6 +19,7 @@ import { useAuthContext } from "../context/AuthContext";
 import { Button } from "../components/ui/button";
 import { Card, CardContent } from "../components/ui/card";
 import { profileApi } from "@/lib/profile";
+import { WithdrawModal } from "../components/modal/withdraw-modal";
 
 export default function ProfilePage() {
   const { user, isLoading: authLoading } = useAuthContext();
@@ -27,6 +28,7 @@ export default function ProfilePage() {
   const tabParam = searchParams?.get("tab");
 
   const [isLoading, setIsLoading] = useState(true);
+  const [isWithdrawModalOpen, setIsWithdrawModalOpen] = useState(false);
   const [activeTab, setActiveTab] = useState(tabParam || "overview");
   const [
     isFetchingUserWithdrawableBalance,
@@ -131,7 +133,7 @@ export default function ProfilePage() {
                 >
                   Staking
                 </TabsTrigger>
-                {/* <TabsTrigger
+                <TabsTrigger
                   value="activity"
                   onClick={() =>
                     router.push("/profile?tab=activity", { scroll: false })
@@ -139,7 +141,7 @@ export default function ProfilePage() {
                 >
                   Activity
                 </TabsTrigger>
-                <TabsTrigger
+                {/* <TabsTrigger
                   value="settings"
                   onClick={() =>
                     router.push("/profile?tab=settings", { scroll: false })
@@ -175,7 +177,12 @@ export default function ProfilePage() {
                       )}
                     </div>
                     <div className="h-fit">
-                      <Button className="bg-gradient-to-r from-pink-500 to-purple-600">
+                      <Button
+                        onClick={() => setIsWithdrawModalOpen(true)}
+                        disabled={isFetchingUserWithdrawableBalance}
+                        variant="default"
+                        className="bg-gradient-to-r from-pink-500 to-purple-600"
+                      >
                         Witdraw
                       </Button>
                     </div>
@@ -206,6 +213,14 @@ export default function ProfilePage() {
           </motion.div>
         </div>
       </div>
+
+      {userWithdrawableBalance && (
+        <WithdrawModal
+          isOpen={isWithdrawModalOpen}
+          onClose={() => setIsWithdrawModalOpen(false)}
+          userBalance={Number(userWithdrawableBalance.toFixed(2))}
+        />
+      )}
     </div>
   );
 }

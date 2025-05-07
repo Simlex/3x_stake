@@ -7,6 +7,7 @@ import type {
   UserPreference,
   User,
 } from "@/app/model";
+import { RequestWithdrawal } from "@/app/model/IWithdrawal";
 
 type TWithdrawableBalance = {
   withdrawableBalance: number;
@@ -72,6 +73,22 @@ export const profileApi = {
       return response.data.data;
     } catch (error) {
       console.error("Failed to fetch user withdrawable balance:", error);
+      throw error;
+    }
+  },
+
+  // Initiate withdrawal
+  initiateWithdrawal: async (
+    data: RequestWithdrawal
+  ): Promise<{ success: boolean }> => {
+    try {
+      const response = await API.post<ApiResponse<{ success: boolean }>>(
+        "/profile/withdraw",
+        data
+      );
+      return response.data.data;
+    } catch (error) {
+      console.error("Failed to initiate withdrawal:", error);
       throw error;
     }
   },
