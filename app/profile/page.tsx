@@ -28,8 +28,12 @@ export default function ProfilePage() {
 
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState(tabParam || "overview");
-  const [isFetchingUserWithdrawableBalance, setIsFetchingUserWithdrawableBalance] = useState(true);
-  const [userWithdrawableBalance, setUserWithdrawableBalance] = useState<number>();
+  const [
+    isFetchingUserWithdrawableBalance,
+    setIsFetchingUserWithdrawableBalance,
+  ] = useState(true);
+  const [userWithdrawableBalance, setUserWithdrawableBalance] =
+    useState<number>();
 
   const handleFetchUserWithdrawableBalance = async () => {
     try {
@@ -74,8 +78,8 @@ export default function ProfilePage() {
   }, [tabParam]);
 
   useEffect(() => {
-    handleFetchUserWithdrawableBalance()
-  }, [])
+    handleFetchUserWithdrawableBalance();
+  }, []);
 
   if (isLoading) {
     return (
@@ -158,8 +162,17 @@ export default function ProfilePage() {
                   <div className="w-full flex flex-row justify-between items-center p-5 rounded-lg">
                     <div className="flex flex-col gap-2">
                       <h4 className="text-2xl font-medium">Total Assets</h4>
-                      <h2 className="text-4xl font-bold">${user?.balance.toLocaleString()}</h2>
-                      {userWithdrawableBalance && <p className="text-white/60">Withdrawable: {userWithdrawableBalance.toLocaleString()}</p>}
+                      <h2 className="text-4xl font-bold">
+                        ${user?.balance.toLocaleString()}
+                      </h2>
+                      {userWithdrawableBalance ? (
+                        <p className="text-white/60">
+                          Withdrawable:{" "}
+                          {userWithdrawableBalance.toLocaleString()}
+                        </p>
+                      ) : (
+                        <></>
+                      )}
                     </div>
                     <div className="h-fit">
                       <Button className="bg-gradient-to-r from-pink-500 to-purple-600">
