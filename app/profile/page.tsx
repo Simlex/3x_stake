@@ -131,7 +131,7 @@ export default function ProfilePage() {
                 >
                   Staking
                 </TabsTrigger>
-                <TabsTrigger
+                {/* <TabsTrigger
                   value="activity"
                   onClick={() =>
                     router.push("/profile?tab=activity", { scroll: false })
@@ -146,15 +146,15 @@ export default function ProfilePage() {
                   }
                 >
                   Settings
-                </TabsTrigger>
-                <TabsTrigger
+                </TabsTrigger> */}
+                {/* <TabsTrigger
                   value="security"
                   onClick={() =>
                     router.push("/profile?tab=security", { scroll: false })
                   }
                 >
                   Security
-                </TabsTrigger>
+                </TabsTrigger> */}
               </TabsList>
 
               <Card className="border-0 glass-effect mb-10">
@@ -195,13 +195,13 @@ export default function ProfilePage() {
                 <ActivityTab />
               </TabsContent>
 
-              <TabsContent value="settings" key={"settings"}>
+              {/* <TabsContent value="settings" key={"settings"}>
                 <SettingsTab />
-              </TabsContent>
+              </TabsContent> */}
 
-              <TabsContent value="security" key={"security"}>
+              {/* <TabsContent value="security" key={"security"}>
                 <SecurityTab />
-              </TabsContent>
+              </TabsContent> */}
             </Tabs>
           </motion.div>
         </div>
