@@ -168,7 +168,7 @@ export default function ProfilePage() {
                     <div className="flex flex-col gap-2">
                       <h4 className="text-2xl font-medium">Total Assets</h4>
                       <h2 className="text-4xl font-bold">
-                        ${user?.balance.toLocaleString()}
+                        ${(user?.balance || 0).toLocaleString()}
                       </h2>
                       {userWithdrawableBalance ? (
                         <p className="text-white/60">
