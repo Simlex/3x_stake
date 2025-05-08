@@ -8,6 +8,7 @@ export const referralApi = {
   getReferralData: async (): Promise<ReferralData> => {
     try {
       const response = await API.get<ApiResponse<ReferralData>>("/referrals");
+      console.log("🚀 ~ getReferralData: ~ response:", response)
       return response.data.data;
     } catch (error) {
       console.error("Failed to fetch referral data:", error);
