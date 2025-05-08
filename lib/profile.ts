@@ -11,6 +11,7 @@ import { RequestWithdrawal } from "@/app/model/IWithdrawal";
 
 type TWithdrawableBalance = {
   withdrawableBalance: number;
+  pendingWithdrawals: number;
 };
 
 // API functions for profile-related data

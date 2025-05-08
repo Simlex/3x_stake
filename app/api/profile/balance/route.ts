@@ -71,12 +71,23 @@ export async function GET(req: NextRequest) {
     console.log("🚀 ~ GET ~ lockedAmount:", lockedAmount)
 
     const withdrawableBalance = Math.max(user.balance - lockedAmount, 0);
-    console.log("🚀 ~ GET ~ withdrawableBalance:", withdrawableBalance)
+    
+    // fetch the sum amount of all pending withdrawals
+    const pendingWithdrawals = await prisma.withdrawal.aggregate({
+      where: {
+        userId,
+        status: "PENDING",
+      },
+      _sum: {
+        amount: true,
+      },
+    });
 
     return NextResponse.json({
       success: true,
       data: {
         withdrawableBalance,
+        pendingWithdrawals: pendingWithdrawals._sum.amount || 0,
       },
     });
   } catch (error) {

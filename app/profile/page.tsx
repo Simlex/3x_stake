@@ -36,12 +36,15 @@ export default function ProfilePage() {
   ] = useState(true);
   const [userWithdrawableBalance, setUserWithdrawableBalance] =
     useState<number>();
+  const [userPendingWithdrawals, setuserPendingWithdrawals] =
+    useState<number>();
 
   const handleFetchUserWithdrawableBalance = async () => {
     try {
       setIsFetchingUserWithdrawableBalance(true);
       const data = await profileApi.getWithdrawableBalance();
       setUserWithdrawableBalance(data.withdrawableBalance);
+      setuserPendingWithdrawals(data.pendingWithdrawals);
     } catch (err) {
       console.error("Failed to fetch staking positions:", err);
     } finally {
@@ -170,7 +173,15 @@ export default function ProfilePage() {
                       {userWithdrawableBalance ? (
                         <p className="text-white/60">
                           Withdrawable:{" "}
-                          {userWithdrawableBalance.toLocaleString()}
+                          ${userWithdrawableBalance.toLocaleString()}
+                        </p>
+                      ) : (
+                        <></>
+                      )}
+                      {userPendingWithdrawals ? (
+                        <p className="text-white/60">
+                          Pending Withdrawals:{" "}
+                          ${userPendingWithdrawals.toLocaleString()}
                         </p>
                       ) : (
                         <></>
