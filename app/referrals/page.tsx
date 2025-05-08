@@ -33,7 +33,8 @@ import {
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useAuthContext } from "../context/AuthContext";
-import { useReferrals } from "@/lib/useReferrals";
+import { referralApi } from "@/lib/referral";
+import { ReferralData } from "../model/IReferral";
 
 export default function ReferralsPage() {
   const [activeTab, setActiveTab] = useState("overview");
@@ -43,7 +44,11 @@ export default function ReferralsPage() {
   const { user, isLoading: authLoading } = useAuthContext();
   const router = useRouter();
 
-  const { referralData, isLoading, error, refreshReferrals } = useReferrals();
+  //   const { referralData, isLoading, error, refreshReferrals } = useReferrals();
+  const [referralData, setReferralData] = useState<ReferralData | null>(null);
+  console.log("🚀 ~ ReferralsPage ~ referralData:", referralData)
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   // Redirect if not authenticated
   useEffect(() => {
@@ -61,6 +66,23 @@ export default function ReferralsPage() {
     navigator.clipboard.writeText(referralLink);
     setIsCopied(true);
     setTimeout(() => setIsCopied(false), 2000);
+  };
+
+  const handleFetchReferrals = async () => {
+    if (!user) return;
+
+    try {
+      setIsLoading(true);
+      const data = await referralApi.getReferralData();
+      console.log("🚀 ~ handleFetchReferrals ~ data:", data)
+      setReferralData(data);
+      setError(null);
+    } catch (err) {
+      console.error("Failed to fetch referral data:", err);
+      setError("Failed to load referral data. Please try again later.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleShare = async () => {
@@ -92,6 +114,10 @@ export default function ReferralsPage() {
     }));
   };
 
+  useEffect(() => {
+    handleFetchReferrals();
+  }, [user]);
+
   if (authLoading || isLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-black via-purple-950/20 to-black">
@@ -115,7 +141,7 @@ export default function ReferralsPage() {
             <p className="text-red-200 mb-4">
               Failed to load referral data. Please try again later.
             </p>
-            <Button onClick={refreshReferrals}>Retry</Button>
+            <Button onClick={handleFetchReferrals}>Retry</Button>
           </div>
         </div>
       </div>
