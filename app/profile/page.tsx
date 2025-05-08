@@ -12,8 +12,6 @@ import { Loader2 } from "lucide-react";
 import OverviewTab from "@/app/components/profile/OverviewTab";
 import StakingTab from "@/app/components/profile/StakingTab";
 import ActivityTab from "@/app/components/profile/ActivityTab";
-import SettingsTab from "@/app/components/profile/SettingsTab";
-import SecurityTab from "@/app/components/profile/SecurityTab";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAuthContext } from "../context/AuthContext";
 import { Button } from "../components/ui/button";
