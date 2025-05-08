@@ -230,6 +230,7 @@ export default function ProfilePage() {
           isOpen={isWithdrawModalOpen}
           onClose={() => setIsWithdrawModalOpen(false)}
           userBalance={Number(userWithdrawableBalance.toFixed(2))}
+          postFn={handleFetchUserWithdrawableBalance}
         />
       )}
     </div>

@@ -19,6 +19,7 @@ interface WithdrawModalProps {
   isOpen: boolean;
   onClose: () => void;
   userBalance: number;
+  postFn?: () => Promise<void> 
 }
 
 const NETWORKS = [
@@ -32,6 +33,7 @@ export function WithdrawModal({
   isOpen,
   onClose,
   userBalance,
+  postFn,
 }: WithdrawModalProps) {
   const [step, setStep] = useState(1);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -159,6 +161,9 @@ export function WithdrawModal({
             description: "Failed to initiate withdrawal. Please try again.",
         })
       }
+
+      postFn && (await postFn());
+
       // Move to success state
       setIsSuccess(true);
 
