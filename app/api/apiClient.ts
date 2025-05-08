@@ -23,6 +23,7 @@ export interface SignupRequest {
   username: string;
   email: string;
   password: string;
+  referralCode?: string; // Optional referral code
 }
 
 export interface SignupResponse {
