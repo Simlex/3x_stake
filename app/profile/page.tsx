@@ -170,7 +170,7 @@ export default function ProfilePage() {
                       <h2 className="text-4xl font-bold">
                         ${(user?.balance || 0).toLocaleString()}
                       </h2>
-                      {userWithdrawableBalance ? (
+                      {userWithdrawableBalance || userWithdrawableBalance == 0 ? (
                         <p className="text-white/60">
                           Withdrawable:{" "}
                           ${userWithdrawableBalance.toLocaleString()}
@@ -178,7 +178,7 @@ export default function ProfilePage() {
                       ) : (
                         <></>
                       )}
-                      {userPendingWithdrawals ? (
+                      {userPendingWithdrawals || userPendingWithdrawals == 0 ? (
                         <p className="text-white/60">
                           Pending Withdrawals:{" "}
                           ${userPendingWithdrawals.toLocaleString()}
