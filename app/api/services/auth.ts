@@ -14,10 +14,12 @@ export async function signUp({
   username,
   email,
   password,
+  referralCode,
 }: {
   username: string;
   email: string;
   password: string;
+  referralCode: string;
 }) {
   // Check if user already exists
   const existingUser = await prisma.user.findFirst({
@@ -33,6 +35,18 @@ export async function signUp({
   // Hash password
   const hashedPassword = await hash(password, 10);
 
+      // Check if referral code is valid
+      let referrerId = null
+      if (referralCode) {
+        const referrer = await prisma.user.findUnique({
+          where: { referralCode },
+        })
+  
+        if (referrer) {
+          referrerId = referrer.id
+        }
+      }
+
   // Create user
   const user = await prisma.user.create({
     data: {
@@ -40,6 +54,7 @@ export async function signUp({
       email,
       password: hashedPassword,
       referralCode: generateReferralCode(),
+      referredBy: referrerId,
     },
   });
 

@@ -3,7 +3,7 @@ import { signUp } from "@/app/api/services/auth";
 
 export async function POST(req: NextRequest) {
   try {
-    const { username, email, password } = await req.json();
+    const { username, email, password, referralCode } = await req.json();
 
     // Validate input
     if (!username || !email || !password) {
@@ -30,7 +30,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const result = await signUp({ username, email, password });
+    const result = await signUp({ username, email, password, referralCode });
 
     return NextResponse.json(result);
   } catch (error: any) {

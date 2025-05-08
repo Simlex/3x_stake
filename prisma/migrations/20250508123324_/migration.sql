@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE `notifications` MODIFY `type` ENUM('REWARD', 'SYSTEM', 'STAKING', 'SECURITY', 'MARKETING', 'REFERRAL') NOT NULL;

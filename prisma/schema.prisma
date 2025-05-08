@@ -32,10 +32,13 @@ model User {
     passwordResets   PasswordReset[]
     referralCode     String?           @unique
     referredBy       String?
+    referredByUser   User?             @relation("UserReferrals", fields: [referredBy], references: [id])
+    referredUsers    User[]            @relation("UserReferrals")
     stakingPositions StakingPosition[]
     rewards          Reward[]
     notifications    Notification[]
     userPreferences  UserPreference?
+    referralBonuses  ReferralBonus[]
     activities       Activity[]
     withdrawal       Withdrawal[]
 
@@ -181,10 +184,29 @@ model Reward {
     claimedAt         DateTime?
     createdAt         DateTime        @default(now())
     updatedAt         DateTime        @updatedAt
+    referralBonuses   ReferralBonus[]
 
     @@index([userId])
     @@index([stakingPositionId])
     @@map("rewards")
+}
+
+// Referral bonus model
+model ReferralBonus {
+    id            String       @id @default(cuid())
+    userId        String // User receiving the bonus
+    user          User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+    rewardId      String // Original reward that generated this bonus
+    reward        Reward       @relation(fields: [rewardId], references: [id], onDelete: Cascade)
+    referralLevel Int // 1 for direct referral, 2 for second level, etc.
+    amount        Float // Bonus amount
+    status        RewardStatus @default(PENDING)
+    claimedAt     DateTime?
+    createdAt     DateTime     @default(now())
+    updatedAt     DateTime     @updatedAt
+
+    @@index([userId])
+    @@index([rewardId])
 }
 
 // Notification model
@@ -291,6 +313,7 @@ enum NotificationType {
     STAKING
     SECURITY
     MARKETING
+    REFERRAL
 }
 
 enum Theme {
