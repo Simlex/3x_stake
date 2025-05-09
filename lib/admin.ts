@@ -1,6 +1,6 @@
 import { API } from "@/app/api/apiClient";
 import { ApiResponse } from "@/app/model";
-import { AdminDashboardStats } from "@/app/model/IAdmin";
+import { AdminDashboardStats, UserStakingPosition } from "@/app/model/IAdmin";
 
 // API functions for admin-related data
 export const adminApi = {
@@ -67,4 +67,26 @@ export const adminApi = {
             throw error;
         }
     },
+
+    // Get all deposits
+    getAllDeposits: async () => {
+        try {
+            const response = await API.get<ApiResponse<UserStakingPosition[]>>("/admin/deposits");
+            return response.data.data;
+        } catch (error) {
+            console.error("Failed to fetch all deposits:", error);
+            throw error;
+        }
+    },
+    approveDeposit: async (depositId: string) => {
+        try {
+            const response = await API.post<ApiResponse<any>>(
+                `/admin/deposits/approve/${depositId}`
+            );
+            return response.data.data;
+        } catch (error) {
+            console.error("Failed to approve deposit:", error);
+            throw error;
+        }
+    }
 }

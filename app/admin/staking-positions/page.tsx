@@ -158,7 +158,7 @@ export default function AdminStakingPositionsPage() {
 
   useEffect(() => {
     handleFetchStakingPositions();
-  }, []);
+  }, [authLoading, user]);
 
   const filteredPositions = stakingPositions.filter(
     (position) =>

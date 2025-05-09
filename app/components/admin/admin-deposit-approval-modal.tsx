@@ -11,21 +11,13 @@ interface AdminDepositApprovalModalProps {
   isOpen: boolean
   onClose: () => void
   onConfirm: (depositId: string, approved: boolean) => void
+  isApprovingDeposit: boolean
+  handleApprove: () => Promise<void>
 }
 
-export function AdminDepositApprovalModal({ deposit, isOpen, onClose, onConfirm }: AdminDepositApprovalModalProps) {
-  const [isApproving, setIsApproving] = useState(false)
+export function AdminDepositApprovalModal({ deposit, isOpen, onClose, onConfirm, isApprovingDeposit: isApproving, handleApprove }: AdminDepositApprovalModalProps) {
   const [isRejecting, setIsRejecting] = useState(false)
   const [notes, setNotes] = useState("")
-
-  const handleApprove = async () => {
-    setIsApproving(true)
-    // Simulate API call
-    setTimeout(() => {
-      onConfirm(deposit.id, true)
-      setIsApproving(false)
-    }, 1500)
-  }
 
   const handleReject = async () => {
     setIsRejecting(true)
@@ -65,7 +57,7 @@ export function AdminDepositApprovalModal({ deposit, isOpen, onClose, onConfirm 
               <p className="text-gray-400">Please confirm if you want to approve or reject this deposit.</p>
             </div>
 
-            <div className="mb-6">
+            {/* <div className="mb-6">
               <label className="block text-sm font-medium text-gray-400 mb-2">Admin Notes (Optional)</label>
               <Textarea
                 placeholder="Add notes about this decision..."
@@ -73,7 +65,7 @@ export function AdminDepositApprovalModal({ deposit, isOpen, onClose, onConfirm 
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
               />
-            </div>
+            </div> */}
 
             <div className="flex flex-col gap-4">
               <Button
@@ -91,7 +83,7 @@ export function AdminDepositApprovalModal({ deposit, isOpen, onClose, onConfirm 
                   </>
                 )}
               </Button>
-              <Button
+              {/* <Button
                 onClick={handleReject}
                 className="bg-gradient-to-r from-red-500 to-red-700 hover:from-red-600 hover:to-red-800"
                 disabled={isApproving || isRejecting}
@@ -105,7 +97,7 @@ export function AdminDepositApprovalModal({ deposit, isOpen, onClose, onConfirm 
                     <XCircle className="mr-2 h-4 w-4" /> Reject Deposit
                   </>
                 )}
-              </Button>
+              </Button> */}
               <Button variant="outline" onClick={onClose} disabled={isApproving || isRejecting}>
                 Cancel
               </Button>

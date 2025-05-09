@@ -1,4 +1,4 @@
-import { StakingPosition } from "@prisma/client";
+import { StakingPosition, StakingPositionDepositStatus } from "@prisma/client";
 
 export type AdminDashboardStats = {
   totalUsers: number;
@@ -36,11 +36,13 @@ export type UserStakingPosition = {
   planName: string;
   network: string;
   amount: number;
+  createdAt: string;
   startDate: string;
   endDate: string;
   apr: number;
   rewards: number;
   isActive: boolean;
+  depositStatus: StakingPositionDepositStatus;
   lastClaimedAt: string | null;
 };
 

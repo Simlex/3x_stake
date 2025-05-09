@@ -4,10 +4,13 @@ import { type NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { cookies } from "next/headers";
 import { validateAdminSession } from "@/lib/auth_validator";
-import { is } from "cheerio/dist/commonjs/api/traversing";
+import { StakingPositionDepositStatus } from "@prisma/client";
 
 // The handler to get the users data for the admin
-export async function GET(req: NextRequest) {
+export async function POST(
+  req: NextRequest,
+  { params }: { params: { id: string } }
+) {
   try {
     // Get auth token from cookies
     const authToken = cookies().get("auth_token")?.value;
@@ -45,8 +48,13 @@ export async function GET(req: NextRequest) {
       );
     }
 
-    // Fetch all staking positions
-    const positions = await prisma.stakingPosition.findMany({
+    const stakingPositionId = params.id;
+
+    // Fetch the staking position data
+    const stakingPosition = await prisma.stakingPosition.findUnique({
+      where: {
+        id: stakingPositionId,
+      },
       include: {
         stakingPlan: {
           select: {
@@ -60,34 +68,31 @@ export async function GET(req: NextRequest) {
             username: true,
           },
         },
-        rewards: {
-          select: {
-            amount: true,
-          },
-        },
       },
     });
 
-    const formattedPositions = positions.map((position) => ({
-      id: position.id,
-      userId: position.userId,
-      username: position.user.username,
-      planName: position.stakingPlan.name,
-      amount: position.amount,
-      network: position.network,
-      startDate: new Date(position.startDate).toLocaleString(),
-      endDate: position.endDate
-        ? new Date(position.endDate).toLocaleString()
-        : null,
-      apr: position.apy,
-      rewards: position.rewards.reduce((acc, reward) => acc + reward.amount, 0),
-      isActive: position.isActive,
-      depositStatus: position.depositStatus,
-    }));
+    // Check if the staking position exists
+    if (!stakingPosition) {
+      return NextResponse.json(
+        { success: false, message: "Staking position not found" },
+        { status: 404 }
+      );
+    }
 
-    return NextResponse.json({ success: true, data: formattedPositions });
+    // Approve the deposit
+    const updatedStakingPosition = await prisma.stakingPosition.update({
+      where: {
+        id: stakingPositionId,
+      },
+      data: {
+        depositStatus: StakingPositionDepositStatus.APPROVED,
+        startDate: new Date(),
+      },
+    });
+
+    return NextResponse.json({ success: true, data: updatedStakingPosition });
   } catch (error) {
-    console.error("Error fetching staking positions data:", error);
+    console.error("Error fetching deposits data:", error);
     return NextResponse.json(
       { success: false, message: "Internal server error" },
       { status: 500 }
