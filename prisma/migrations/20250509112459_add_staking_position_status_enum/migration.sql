@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE `staking_positions` ADD COLUMN `status` ENUM('ACTIVE', 'INACTIVE', 'COMPLETED') NOT NULL DEFAULT 'ACTIVE';

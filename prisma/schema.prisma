@@ -144,6 +144,7 @@ model StakingPosition {
     lastClaimedAt     DateTime?
     nextClaimDeadline DateTime?
     isActive          Boolean     @default(true)
+    depositStatus     StakingPositionDepositStatus @default(PENDING)
     rewards           Reward[]
     apy               Decimal     @db.Decimal(10, 2)
     createdAt         DateTime    @default(now())
@@ -327,4 +328,11 @@ enum WithdrawalStatus {
     APPROVED
     REJECTED
     FAILED
+}
+
+enum StakingPositionDepositStatus {
+    APPROVED
+    REJECTED
+    PENDING
+    CANCELED
 }

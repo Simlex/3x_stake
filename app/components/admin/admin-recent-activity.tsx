@@ -1,46 +1,24 @@
 import { Skeleton } from "@/app/components/ui/skeleton"
+import { RecentAppActivity } from "@/app/model/IAdmin"
 import { Coins, User, CreditCard, AlertTriangle } from "lucide-react"
 
-// Mock data - replace with actual API calls
+type AdminRecentActivityProps = {
+    isLoading: boolean
+    recentActivities: RecentAppActivity[]
+}
+
 const mockActivity = [
-  {
-    id: "act-1",
-    type: "deposit",
-    user: "alice_crypto",
-    details: "Deposited $2,500 USDT",
-    time: "2 hours ago",
-  },
-  {
-    id: "act-2",
-    type: "user",
-    user: "bob_investor",
-    details: "New user registered",
-    time: "5 hours ago",
-  },
-  {
-    id: "act-3",
-    type: "stake",
-    user: "charlie_hodl",
-    details: "Created new staking position",
-    time: "6 hours ago",
-  },
-  {
-    id: "act-4",
-    type: "alert",
-    user: "dave_trader",
-    details: "Failed deposit attempt",
-    time: "1 day ago",
-  },
-  {
-    id: "act-5",
-    type: "deposit",
-    user: "eve_blockchain",
-    details: "Deposited $6,000 USDT",
-    time: "1 day ago",
-  },
+    {
+      id: "act-1",
+      type: "deposit",
+      user: "alice_crypto",
+      details: "Deposited $2,500 USDT",
+      time: "2 hours ago",
+    },
 ]
 
-export function AdminRecentActivity({ isLoading }: { isLoading: boolean }) {
+export function AdminRecentActivity({ isLoading, recentActivities }: AdminRecentActivityProps) {
+  console.log("🚀 ~ AdminRecentActivity ~ recentActivities:", recentActivities)
   const getActivityIcon = (type: string) => {
     switch (type) {
       case "deposit":
@@ -70,13 +48,13 @@ export function AdminRecentActivity({ isLoading }: { isLoading: boolean }) {
                 </div>
               </div>
             ))
-        : mockActivity.map((activity) => (
+        : recentActivities.map((activity) => (
             <div key={activity.id} className="flex items-start gap-3">
               <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-800">
                 {getActivityIcon(activity.type)}
               </div>
               <div>
-                <p className="font-medium">{activity.details}</p>
+                <p className="font-medium">{activity.data.details}</p>
                 <div className="flex items-center gap-2 text-xs text-gray-400">
                   <span>{activity.user}</span>
                   <span>•</span>

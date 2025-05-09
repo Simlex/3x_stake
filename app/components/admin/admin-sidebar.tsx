@@ -47,11 +47,11 @@ export function AdminSidebar() {
       href: "/admin/deposits",
       icon: CreditCard,
     },
-    {
-      title: "Settings",
-      href: "/admin/settings",
-      icon: Settings,
-    },
+    // {
+    //   title: "Settings",
+    //   href: "/admin/settings",
+    //   icon: Settings,
+    // },
   ];
 
   return (

@@ -1,11 +1,26 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/app/components/ui/card"
-import { Input } from "@/app/components/ui/input"
-import { Button } from "@/app/components/ui/button"
-import { Badge } from "@/app/components/ui/badge"
-import { MoreHorizontal, Search, UserPlus, Filter, ArrowUpDown, Eye, Ban, Mail } from "lucide-react"
+import { useState, useEffect } from "react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/app/components/ui/card";
+import { Input } from "@/app/components/ui/input";
+import { Button } from "@/app/components/ui/button";
+import { Badge } from "@/app/components/ui/badge";
+import {
+  MoreHorizontal,
+  Search,
+  UserPlus,
+  Filter,
+  ArrowUpDown,
+  Eye,
+  Ban,
+  Mail,
+} from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -13,9 +28,12 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/app/components/ui/dropdown-menu"
-import { Skeleton } from "@/app/components/ui/skeleton"
-import { AdminUserDetailsModal } from "@/app/components/admin/admin-user-details-modal"
+} from "@/app/components/ui/dropdown-menu";
+import { Skeleton } from "@/app/components/ui/skeleton";
+import { AdminUserDetailsModal } from "@/app/components/admin/admin-user-details-modal";
+import { AppUser } from "@/app/model/IAdmin";
+import { adminApi } from "@/lib/admin";
+import { useAuthContext } from "@/app/context/AuthContext";
 
 // Mock data - replace with actual API calls
 const mockUsers = [
@@ -96,55 +114,84 @@ const mockUsers = [
     joinedAt: "2023-02-15T00:00:00Z",
     lastLogin: "2023-04-09T13:45:00Z",
   },
-]
+];
 
 export default function AdminUsersPage() {
-  const [isLoading, setIsLoading] = useState(true)
-  const [users, setUsers] = useState(mockUsers)
-  const [searchQuery, setSearchQuery] = useState("")
-  const [selectedUser, setSelectedUser] = useState<any>(null)
-  const [isUserDetailsOpen, setIsUserDetailsOpen] = useState(false)
+  const [isLoading, setIsLoading] = useState(true);
+  const [users, setUsers] = useState<AppUser[] | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedUser, setSelectedUser] = useState<any>(null);
+  const [isUserDetailsOpen, setIsUserDetailsOpen] = useState(false);
+  const { user, isLoading: authLoading } = useAuthContext();
+
+  const handleFetchUsers = async () => {
+    if (authLoading || !user) return;
+
+    try {
+      setIsLoading(true);
+      const data = await adminApi.getAllUsers();
+      setUsers(data);
+      setError(null);
+    } catch (err) {
+      console.error("Failed to fetch users:", err);
+      setError("Failed to fetch users");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
-    // Simulate API call
-    const timer = setTimeout(() => {
-      setIsLoading(false)
-    }, 1000)
+    handleFetchUsers();
+  }, []);
 
-    return () => clearTimeout(timer)
-  }, [])
-
-  const filteredUsers = users.filter(
+  const filteredUsers = users?.filter(
     (user) =>
       user.username.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      user.email.toLowerCase().includes(searchQuery.toLowerCase()),
-  )
+      user.email.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   const handleViewUser = (user: any) => {
-    setSelectedUser(user)
-    setIsUserDetailsOpen(true)
-  }
+    setSelectedUser(user);
+    setIsUserDetailsOpen(true);
+  };
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("en-US", {
       year: "numeric",
       month: "short",
       day: "numeric",
-    })
-  }
+    });
+  };
 
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "active":
-        return <Badge className="bg-green-500/20 text-green-400 border-green-500/20">Active</Badge>
+        return (
+          <Badge className="bg-green-500/20 text-green-400 border-green-500/20">
+            Active
+          </Badge>
+        );
       case "inactive":
-        return <Badge className="bg-gray-500/20 text-gray-400 border-gray-500/20">Inactive</Badge>
+        return (
+          <Badge className="bg-gray-500/20 text-gray-400 border-gray-500/20">
+            Inactive
+          </Badge>
+        );
       case "suspended":
-        return <Badge className="bg-red-500/20 text-red-400 border-red-500/20">Suspended</Badge>
+        return (
+          <Badge className="bg-red-500/20 text-red-400 border-red-500/20">
+            Suspended
+          </Badge>
+        );
       default:
-        return <Badge className="bg-gray-500/20 text-gray-400 border-gray-500/20">{status}</Badge>
+        return (
+          <Badge className="bg-gray-500/20 text-gray-400 border-gray-500/20">
+            {status}
+          </Badge>
+        );
     }
-  }
+  };
 
   return (
     <div className="space-y-6">
@@ -185,14 +232,30 @@ export default function AdminUsersPage() {
             <table className="w-full border-collapse">
               <thead>
                 <tr className="border-b border-white/10">
-                  <th className="px-4 py-3 text-left text-sm font-medium text-gray-400">Username</th>
-                  <th className="px-4 py-3 text-left text-sm font-medium text-gray-400">Email</th>
-                  <th className="px-4 py-3 text-left text-sm font-medium text-gray-400">Status</th>
-                  <th className="px-4 py-3 text-left text-sm font-medium text-gray-400">Total Staked</th>
-                  <th className="px-4 py-3 text-left text-sm font-medium text-gray-400">Positions</th>
-                  <th className="px-4 py-3 text-left text-sm font-medium text-gray-400">Joined</th>
-                  <th className="px-4 py-3 text-left text-sm font-medium text-gray-400">Last Login</th>
-                  <th className="px-4 py-3 text-right text-sm font-medium text-gray-400">Actions</th>
+                  <th className="px-4 py-3 text-left text-sm font-medium text-gray-400">
+                    Username
+                  </th>
+                  <th className="px-4 py-3 text-left text-sm font-medium text-gray-400">
+                    Email
+                  </th>
+                  {/* <th className="px-4 py-3 text-left text-sm font-medium text-gray-400">
+                    Status
+                  </th> */}
+                  <th className="px-4 py-3 text-left text-sm font-medium text-gray-400">
+                    Total Staked
+                  </th>
+                  <th className="px-4 py-3 text-left text-sm font-medium text-gray-400">
+                    Positions
+                  </th>
+                  <th className="px-4 py-3 text-left text-sm font-medium text-gray-400">
+                    Joined
+                  </th>
+                  {/* <th className="px-4 py-3 text-left text-sm font-medium text-gray-400">
+                    Last Login
+                  </th> */}
+                  <th className="px-4 py-3 text-right text-sm font-medium text-gray-400">
+                    Actions
+                  </th>
                 </tr>
               </thead>
               <tbody>
@@ -227,26 +290,50 @@ export default function AdminUsersPage() {
                           </td>
                         </tr>
                       ))
-                  : filteredUsers.map((user) => (
-                      <tr key={user.id} className="border-b border-white/5 hover:bg-white/5">
-                        <td className="px-4 py-3 font-medium">{user.username}</td>
-                        <td className="px-4 py-3 text-gray-300">{user.email}</td>
-                        <td className="px-4 py-3">{getStatusBadge(user.status)}</td>
-                        <td className="px-4 py-3">${user.totalStaked.toLocaleString()}</td>
+                  : filteredUsers?.map((user) => (
+                      <tr
+                        key={user.id}
+                        className="border-b border-white/5 hover:bg-white/5"
+                      >
+                        <td className="px-4 py-3 font-medium">
+                          {user.username}
+                        </td>
+                        <td className="px-4 py-3 text-gray-300">
+                          {user.email}
+                        </td>
+                        {/* <td className="px-4 py-3">
+                          {getStatusBadge(user.status)}
+                        </td> */}
+                        <td className="px-4 py-3">
+                          ${user.totalStaked.toLocaleString()}
+                        </td>
                         <td className="px-4 py-3">{user.activePositions}</td>
-                        <td className="px-4 py-3 text-gray-300">{formatDate(user.joinedAt)}</td>
-                        <td className="px-4 py-3 text-gray-300">{formatDate(user.lastLogin)}</td>
+                        <td className="px-4 py-3 text-gray-300">
+                          {formatDate(user.joinedAt)}
+                        </td>
+                        {/* <td className="px-4 py-3 text-gray-300">
+                          {formatDate(user.lastLogin)}
+                        </td> */}
                         <td className="px-4 py-3 text-right">
                           <DropdownMenu>
                             <DropdownMenuTrigger asChild>
-                              <Button variant="ghost" size="icon" className="h-8 w-8">
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-8 w-8"
+                              >
                                 <MoreHorizontal className="h-4 w-4" />
                               </Button>
                             </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end" className="w-56 bg-gray-900 border border-white/10">
+                            <DropdownMenuContent
+                              align="end"
+                              className="w-56 bg-gray-900 border border-white/10"
+                            >
                               <DropdownMenuLabel>Actions</DropdownMenuLabel>
                               <DropdownMenuSeparator />
-                              <DropdownMenuItem onClick={() => handleViewUser(user)}>
+                              <DropdownMenuItem
+                                onClick={() => handleViewUser(user)}
+                              >
                                 <Eye className="mr-2 h-4 w-4" /> View Details
                               </DropdownMenuItem>
                               <DropdownMenuItem>
@@ -265,11 +352,11 @@ export default function AdminUsersPage() {
             </table>
           </div>
 
-          {!isLoading && filteredUsers.length === 0 && (
+          {!isLoading && filteredUsers && filteredUsers.length === 0 ? (
             <div className="py-8 text-center text-gray-400">
               <p>No users found matching your search criteria.</p>
             </div>
-          )}
+          ): null}
         </CardContent>
       </Card>
 
@@ -281,5 +368,5 @@ export default function AdminUsersPage() {
         />
       )}
     </div>
-  )
+  );
 }

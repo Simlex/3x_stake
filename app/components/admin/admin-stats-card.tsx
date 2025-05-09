@@ -27,7 +27,7 @@ export function AdminStatsCard({ title, value, icon, trend, isLoading, descripti
             {icon}
           </div>
         </div>
-        <div className="mt-4 flex items-center text-sm">
+        {/* <div className="mt-4 flex items-center text-sm">
           {isLoading ? (
             <Skeleton className="h-4 w-24" />
           ) : (
@@ -48,7 +48,7 @@ export function AdminStatsCard({ title, value, icon, trend, isLoading, descripti
               <span className="text-gray-400">{description}</span>
             </>
           )}
-        </div>
+        </div> */}
       </CardContent>
     </Card>
   )
