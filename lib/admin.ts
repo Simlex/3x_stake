@@ -54,4 +54,17 @@ export const adminApi = {
             throw error;
         }
     },
+
+    // Get all staking positions
+    getAllStakingPositions: async () => {
+        try {
+            const response = await API.get<ApiResponse<any[]>>(
+                "/admin/staking-positions"
+            );
+            return response.data.data;
+        } catch (error) {
+            console.error("Failed to fetch all staking positions:", error);
+            throw error;
+        }
+    },
 }

@@ -1,11 +1,25 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/app/components/ui/card"
-import { Input } from "@/app/components/ui/input"
-import { Button } from "@/app/components/ui/button"
-import { Badge } from "@/app/components/ui/badge"
-import { MoreHorizontal, Search, Filter, ArrowUpDown, Eye, AlertTriangle, ArrowUpRight } from "lucide-react"
+import { useState, useEffect } from "react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/app/components/ui/card";
+import { Input } from "@/app/components/ui/input";
+import { Button } from "@/app/components/ui/button";
+import { Badge } from "@/app/components/ui/badge";
+import {
+  MoreHorizontal,
+  Search,
+  Filter,
+  ArrowUpDown,
+  Eye,
+  AlertTriangle,
+  ArrowUpRight,
+} from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -13,9 +27,12 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/app/components/ui/dropdown-menu"
-import { Skeleton } from "@/app/components/ui/skeleton"
-import { AdminStakingDetailsModal } from "@/app/components/admin/admin-staking-details-modal"
+} from "@/app/components/ui/dropdown-menu";
+import { Skeleton } from "@/app/components/ui/skeleton";
+import { AdminStakingDetailsModal } from "@/app/components/admin/admin-staking-details-modal";
+import { UserStakingPosition } from "@/app/model/IAdmin";
+import { useAuthContext } from "@/app/context/AuthContext";
+import { adminApi } from "@/lib/admin";
 
 // Mock data - replace with actual API calls
 const mockStakingPositions = [
@@ -110,57 +127,94 @@ const mockStakingPositions = [
     rewards: 240,
     status: "active",
   },
-]
+];
 
 export default function AdminStakingPositionsPage() {
-  const [isLoading, setIsLoading] = useState(true)
-  const [stakingPositions, setStakingPositions] = useState(mockStakingPositions)
-  const [searchQuery, setSearchQuery] = useState("")
-  const [selectedPosition, setSelectedPosition] = useState<any>(null)
-  const [isDetailsOpen, setIsDetailsOpen] = useState(false)
+  const [isLoading, setIsLoading] = useState(true);
+  const [stakingPositions, setStakingPositions] = useState<
+    UserStakingPosition[]
+  >([]);
+  const [error, setError] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedPosition, setSelectedPosition] = useState<any>(null);
+  const [isDetailsOpen, setIsDetailsOpen] = useState(false);
+  const { user, isLoading: authLoading } = useAuthContext();
+
+  const handleFetchStakingPositions = async () => {
+    if (authLoading || !user) return;
+
+    try {
+      setIsLoading(true);
+      const data = await adminApi.getAllStakingPositions();
+      setStakingPositions(data);
+      setError(null);
+    } catch (err) {
+      console.error("Failed to fetch staking positions:", err);
+      setError("Failed to fetch staking positions");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
-    // Simulate API call
-    const timer = setTimeout(() => {
-      setIsLoading(false)
-    }, 1000)
-
-    return () => clearTimeout(timer)
-  }, [])
+    handleFetchStakingPositions();
+  }, []);
 
   const filteredPositions = stakingPositions.filter(
     (position) =>
       position.username.toLowerCase().includes(searchQuery.toLowerCase()) ||
       position.planName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      position.network.toLowerCase().includes(searchQuery.toLowerCase()),
-  )
+      position.network.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   const handleViewDetails = (position: any) => {
-    setSelectedPosition(position)
-    setIsDetailsOpen(true)
-  }
+    setSelectedPosition(position);
+    setIsDetailsOpen(true);
+  };
 
   const formatDate = (dateString: string | null) => {
-    if (!dateString) return "Active"
+    if (!dateString) return "Active";
     return new Date(dateString).toLocaleDateString("en-US", {
       year: "numeric",
       month: "short",
       day: "numeric",
-    })
-  }
+    });
+  };
 
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "active":
-        return <Badge className="bg-green-500/20 text-green-400 border-green-500/20">Active</Badge>
+        return (
+          <Badge className="bg-green-500/20 text-green-400 border-green-500/20">
+            Active
+          </Badge>
+        );
+      case "inactive":
+        return (
+          <Badge className="bg-red-500/20 text-red-400 border-red-500/20">
+            Inactive
+          </Badge>
+        );
       case "completed":
-        return <Badge className="bg-blue-500/20 text-blue-400 border-blue-500/20">Completed</Badge>
+        return (
+          <Badge className="bg-blue-500/20 text-blue-400 border-blue-500/20">
+            Completed
+          </Badge>
+        );
       case "pending":
-        return <Badge className="bg-amber-500/20 text-amber-400 border-amber-500/20">Pending</Badge>
+        return (
+          <Badge className="bg-amber-500/20 text-amber-400 border-amber-500/20">
+            Pending
+          </Badge>
+        );
       default:
-        return <Badge className="bg-gray-500/20 text-gray-400 border-gray-500/20">{status}</Badge>
+        return (
+          <Badge className="bg-gray-500/20 text-gray-400 border-gray-500/20">
+            {status}
+          </Badge>
+        );
     }
-  }
+  };
 
   return (
     <div className="space-y-6">
@@ -174,7 +228,9 @@ export default function AdminStakingPositionsPage() {
       <Card className="border-0 glass-effect">
         <CardHeader>
           <CardTitle>All Staking Positions</CardTitle>
-          <CardDescription>View and manage all staking positions across users</CardDescription>
+          <CardDescription>
+            View and manage all staking positions across users
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -201,16 +257,36 @@ export default function AdminStakingPositionsPage() {
             <table className="w-full border-collapse">
               <thead>
                 <tr className="border-b border-white/10">
-                  <th className="px-4 py-3 text-left text-sm font-medium text-gray-400">ID</th>
-                  <th className="px-4 py-3 text-left text-sm font-medium text-gray-400">User</th>
-                  <th className="px-4 py-3 text-left text-sm font-medium text-gray-400">Plan</th>
-                  <th className="px-4 py-3 text-left text-sm font-medium text-gray-400">Amount</th>
-                  <th className="px-4 py-3 text-left text-sm font-medium text-gray-400">Network</th>
-                  <th className="px-4 py-3 text-left text-sm font-medium text-gray-400">APR</th>
-                  <th className="px-4 py-3 text-left text-sm font-medium text-gray-400">Start Date</th>
-                  <th className="px-4 py-3 text-left text-sm font-medium text-gray-400">End Date</th>
-                  <th className="px-4 py-3 text-left text-sm font-medium text-gray-400">Status</th>
-                  <th className="px-4 py-3 text-right text-sm font-medium text-gray-400">Actions</th>
+                  <th className="px-4 py-3 text-left text-sm font-medium text-gray-400">
+                    ID
+                  </th>
+                  <th className="px-4 py-3 text-left text-sm font-medium text-gray-400">
+                    User
+                  </th>
+                  <th className="px-4 py-3 text-left text-sm font-medium text-gray-400">
+                    Plan
+                  </th>
+                  <th className="px-4 py-3 text-left text-sm font-medium text-gray-400">
+                    Amount
+                  </th>
+                  <th className="px-4 py-3 text-left text-sm font-medium text-gray-400">
+                    Network
+                  </th>
+                  <th className="px-4 py-3 text-left text-sm font-medium text-gray-400">
+                    APR
+                  </th>
+                  <th className="px-4 py-3 text-left text-sm font-medium text-gray-400">
+                    Start Date
+                  </th>
+                  <th className="px-4 py-3 text-left text-sm font-medium text-gray-400">
+                    End Date
+                  </th>
+                  <th className="px-4 py-3 text-left text-sm font-medium text-gray-400">
+                    Status
+                  </th>
+                  <th className="px-4 py-3 text-right text-sm font-medium text-gray-400">
+                    Actions
+                  </th>
                 </tr>
               </thead>
               <tbody>
@@ -252,35 +328,61 @@ export default function AdminStakingPositionsPage() {
                         </tr>
                       ))
                   : filteredPositions.map((position) => (
-                      <tr key={position.id} className="border-b border-white/5 hover:bg-white/5">
-                        <td className="px-4 py-3 font-medium">{position.id.substring(0, 8)}</td>
-                        <td className="px-4 py-3 text-gray-300">{position.username}</td>
+                      <tr
+                        key={position.id}
+                        className="border-b border-white/5 hover:bg-white/5"
+                      >
+                        <td className="px-4 py-3 font-medium">
+                          {position.id.substring(0, 8)}
+                        </td>
+                        <td className="px-4 py-3 text-gray-300">
+                          {position.username}
+                        </td>
                         <td className="px-4 py-3">{position.planName}</td>
-                        <td className="px-4 py-3">${position.amount.toLocaleString()}</td>
+                        <td className="px-4 py-3">
+                          ${position.amount.toLocaleString()}
+                        </td>
                         <td className="px-4 py-3">{position.network}</td>
                         <td className="px-4 py-3">{position.apr}%</td>
-                        <td className="px-4 py-3 text-gray-300">{formatDate(position.startDate)}</td>
-                        <td className="px-4 py-3 text-gray-300">{formatDate(position.endDate)}</td>
-                        <td className="px-4 py-3">{getStatusBadge(position.status)}</td>
+                        <td className="px-4 py-3 text-gray-300">
+                          {formatDate(position.startDate)}
+                        </td>
+                        <td className="px-4 py-3 text-gray-300">
+                          {formatDate(position.endDate)}
+                        </td>
+                        <td className="px-4 py-3">
+                          {getStatusBadge(position.isActive ? "active" : "inactive")}
+                        </td>
                         <td className="px-4 py-3 text-right">
                           <DropdownMenu>
                             <DropdownMenuTrigger asChild>
-                              <Button variant="ghost" size="icon" className="h-8 w-8">
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-8 w-8"
+                              >
                                 <MoreHorizontal className="h-4 w-4" />
                               </Button>
                             </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end" className="w-56 bg-gray-900 border border-white/10">
+                            <DropdownMenuContent
+                              align="end"
+                              className="w-56 bg-gray-900 border border-white/10"
+                            >
                               <DropdownMenuLabel>Actions</DropdownMenuLabel>
                               <DropdownMenuSeparator />
-                              <DropdownMenuItem onClick={() => handleViewDetails(position)}>
+                              <DropdownMenuItem
+                                onClick={() => handleViewDetails(position)}
+                              >
                                 <Eye className="mr-2 h-4 w-4" /> View Details
                               </DropdownMenuItem>
                               <DropdownMenuItem>
-                                <ArrowUpRight className="mr-2 h-4 w-4" /> View User
+                                <ArrowUpRight className="mr-2 h-4 w-4" /> View
+                                User
                               </DropdownMenuItem>
                               <DropdownMenuSeparator />
                               <DropdownMenuItem className="text-amber-400 focus:text-amber-400">
-                                <AlertTriangle className="mr-2 h-4 w-4" /> Flag for Review
+                                <AlertTriangle className="mr-2 h-4 w-4" /> Flag
+                                for Review
                               </DropdownMenuItem>
                             </DropdownMenuContent>
                           </DropdownMenu>
@@ -307,5 +409,5 @@ export default function AdminStakingPositionsPage() {
         />
       )}
     </div>
-  )
+  );
 }

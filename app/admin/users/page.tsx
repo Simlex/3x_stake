@@ -197,9 +197,9 @@ export default function AdminUsersPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-bold">Users</h1>
-        <Button className="bg-gradient-to-r from-pink-500 to-purple-600">
+        {/* <Button className="bg-gradient-to-r from-pink-500 to-purple-600">
           <UserPlus className="mr-2 h-4 w-4" /> Add User
-        </Button>
+        </Button> */}
       </div>
 
       <Card className="border-0 glass-effect">
@@ -302,7 +302,7 @@ export default function AdminUsersPage() {
                           {user.email}
                         </td>
                         {/* <td className="px-4 py-3">
-                          {getStatusBadge(user.status)}
+                          {getStatusBadge(user.isActive ? "active" : "inactive")}
                         </td> */}
                         <td className="px-4 py-3">
                           ${user.totalStaked.toLocaleString()}

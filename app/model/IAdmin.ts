@@ -31,6 +31,8 @@ export type AppUser = {
 
 export type UserStakingPosition = {
   id: string;
+  userId: string;
+  username: string;
   planName: string;
   network: string;
   amount: number;

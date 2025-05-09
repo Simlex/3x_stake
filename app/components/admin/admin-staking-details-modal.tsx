@@ -4,9 +4,10 @@ import { motion, AnimatePresence } from "framer-motion"
 import { X, User, AlertTriangle } from "lucide-react"
 import { Button } from "@/app/components/ui/button"
 import { Badge } from "@/app/components/ui/badge"
+import { UserStakingPosition } from "@/app/model/IAdmin"
 
 interface AdminStakingDetailsModalProps {
-  position: any
+  position: UserStakingPosition
   isOpen: boolean
   onClose: () => void
 }
@@ -59,7 +60,7 @@ export function AdminStakingDetailsModal({ position, isOpen, onClose }: AdminSta
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center gap-2">
                 <h2 className="text-xl font-bold">{position.planName} Plan</h2>
-                {getStatusBadge(position.status)}
+                {getStatusBadge(position.isActive ? "active" : "inactive")}
               </div>
               <div className="text-2xl font-bold">${position.amount.toLocaleString()}</div>
             </div>
@@ -113,9 +114,9 @@ export function AdminStakingDetailsModal({ position, isOpen, onClose }: AdminSta
             <div className="bg-gray-800/30 rounded-lg p-4 space-y-3 mb-6">
               <div className="flex items-center justify-between">
                 <h4 className="font-medium">User Information</h4>
-                <Button variant="outline" size="sm">
+                {/* <Button variant="outline" size="sm">
                   <User className="mr-2 h-4 w-4" /> View User
-                </Button>
+                </Button> */}
               </div>
               <div className="space-y-2">
                 <div className="flex justify-between">
@@ -129,7 +130,7 @@ export function AdminStakingDetailsModal({ position, isOpen, onClose }: AdminSta
               </div>
             </div>
 
-            {position.status === "active" && (
+            {position.isActive && (
               <div className="flex items-center p-4 bg-amber-900/20 border border-amber-500/20 rounded-lg mb-6">
                 <AlertTriangle className="h-5 w-5 text-amber-500 mr-3 flex-shrink-0" />
                 <div>
@@ -146,11 +147,11 @@ export function AdminStakingDetailsModal({ position, isOpen, onClose }: AdminSta
               <Button variant="outline" onClick={onClose}>
                 Close
               </Button>
-              {position.status === "active" && (
+              {position.isActive ? (
                 <Button variant="outline" className="border-red-500/50 text-red-400 hover:bg-red-950/20">
                   Terminate Position
                 </Button>
-              )}
+              ) : <></>}
             </div>
           </div>
         </motion.div>
