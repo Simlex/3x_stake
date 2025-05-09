@@ -383,7 +383,7 @@ export default function ReferralsPage() {
                             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                               <div>
                                 <div className="text-sm text-gray-400">
-                                  Your bonus (10%)
+                                  Your bonus (10% their profits)
                                 </div>
                                 <div className="text-lg font-medium text-green-500">
                                   ${referral.bonusEarned.toFixed(2)}

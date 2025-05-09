@@ -1,4 +1,4 @@
-// Create a new API route to validate the session
+export const dynamic = 'force-dynamic';
 
 import { type NextRequest, NextResponse } from "next/server"
 import { validateSession } from "@/app/api/services/auth"

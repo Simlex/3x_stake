@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import { type NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 import { validateSession } from "@/app/api/services/auth"
@@ -57,6 +59,7 @@ export async function GET(req: NextRequest) {
           network: position.network,
           startDate: position.startDate.toISOString(),
           endDate: position.endDate?.toISOString(),
+          lastClaimedAt: position.lastClaimedAt?.toISOString(),
           apr: position.stakingPlan.apr,
           rewards: rewards._sum.amount || 0,
           isActive: position.isActive,

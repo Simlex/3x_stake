@@ -26,6 +26,7 @@ const StakingTab = () => {
   const [stakingPositions, setStakingPositions] = useState<StakingPosition[]>(
     []
   );
+  console.log("🚀 ~ StakingTab ~ stakingPositions:", stakingPositions);
   const [isFetchingStakedPositions, setIsFetchingStakedPositions] =
     useState(true);
   const [isFetchingUserRewards, setIsFetchingUserRewards] = useState(true);
@@ -57,11 +58,13 @@ const StakingTab = () => {
     user && handleFetchUserRewards(user.id);
   }, []);
 
-  const formatDate = (dateString: string) => {
+  const formatDate = (dateString: string, includeTime?: boolean) => {
     return new Date(dateString).toLocaleDateString("en-US", {
       year: "numeric",
       month: "short",
       day: "numeric",
+      hour: includeTime ? "2-digit" : undefined,
+      minute: includeTime ? "2-digit" : undefined,
     });
   };
 
@@ -262,6 +265,11 @@ const StakingTab = () => {
                         {position.endDate &&
                           ` • Ends on ${formatDate(position.endDate)}`}
                       </div>
+                      {position.lastClaimedAt ? (
+                        <div className="text-sm text-gray-400">
+                          Last claimed: {formatDate(position.lastClaimedAt, true)}
+                        </div>
+                      ) : null}
                     </div>
 
                     <div className="flex flex-col md:items-end">

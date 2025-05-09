@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import { type NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { validateSession } from "@/app/api/services/auth";
@@ -45,9 +47,10 @@ export async function POST(req: NextRequest) {
     const endDate = new Date(now.setDate(now.getDate() + 30));
 
     const nextClaimDeadline = new Date(now.setDate(now.getDate() + 1));
+    console.log("🚀 ~ POST ~ amount:", amount)
 
     // Create staking position with transaction
-    const [stakingPosition] = await prisma.$transaction([
+    const [stakingPosition, updatedUser] = await prisma.$transaction([
       prisma.stakingPosition.create({
         data: {
           userId,
@@ -61,11 +64,12 @@ export async function POST(req: NextRequest) {
           network,
         },
       }),
-      //   prisma.user.update({
-      //     where: { id: userId },
-      //     data: { balance: { decrement: amount } }
-      //   })
+      prisma.user.update({
+        where: { id: userId },
+        data: { balance: { increment: amount } },
+      }),
     ]);
+    console.log("🚀 ~ POST ~ updatedUser:", updatedUser)
 
     // Log the activity
     await prisma.activity.create({
