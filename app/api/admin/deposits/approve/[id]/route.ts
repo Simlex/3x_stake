@@ -86,6 +86,8 @@ export async function POST(
       },
       data: {
         depositStatus: StakingPositionDepositStatus.APPROVED,
+        isActive: true,
+        endDate: new Date(new Date().setDate(new Date().getDate() + 30)),
         startDate: new Date(),
       },
     });
