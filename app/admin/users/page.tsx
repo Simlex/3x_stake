@@ -336,13 +336,13 @@ export default function AdminUsersPage() {
                               >
                                 <Eye className="mr-2 h-4 w-4" /> View Details
                               </DropdownMenuItem>
-                              <DropdownMenuItem>
+                              {/* <DropdownMenuItem>
                                 <Mail className="mr-2 h-4 w-4" /> Send Email
-                              </DropdownMenuItem>
-                              <DropdownMenuSeparator />
+                              </DropdownMenuItem> */}
+                              {/* <DropdownMenuSeparator />
                               <DropdownMenuItem className="text-red-400 focus:text-red-400">
                                 <Ban className="mr-2 h-4 w-4" /> Suspend User
-                              </DropdownMenuItem>
+                              </DropdownMenuItem> */}
                             </DropdownMenuContent>
                           </DropdownMenu>
                         </td>
