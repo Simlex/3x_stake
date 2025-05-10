@@ -11,7 +11,12 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/app/components/ui/tabs";
-import { AppUser, AppUserFullInfo, UserActivity, UserStakingPosition } from "@/app/model/IAdmin";
+import {
+  AppUser,
+  AppUserFullInfo,
+  UserActivity,
+  UserStakingPosition,
+} from "@/app/model/IAdmin";
 import { adminApi } from "@/lib/admin";
 
 interface AdminUserDetailsModalProps {
@@ -299,9 +304,15 @@ export function AdminUserDetailsModal({
                             <h4 className="font-medium">
                               {stake.planName} Plan
                             </h4>
-                            <Badge className="bg-green-500/20 text-green-400 border-green-500/20">
-                              Active
-                            </Badge>
+                            {stake.isActive ? (
+                              <Badge className="bg-green-500/20 text-green-400 border-green-500/20">
+                                Active
+                              </Badge>
+                            ) : (
+                              <Badge className="bg-gray-500/20 text-gray-400 border-gray-500/20">
+                                Inactive
+                              </Badge>
+                            )}
                           </div>
                           <div className="text-sm text-gray-400">
                             Started on {formatDate(stake.startDate)} • Network:{" "}
@@ -328,14 +339,19 @@ export function AdminUserDetailsModal({
                             ${stake.rewards.toLocaleString()}
                           </div>
                         </div>
-
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className="border-red-500/50 text-red-400 hover:bg-red-950/20"
-                        >
-                          Terminate Position
-                        </Button>
+                        {stake.isActive ? (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="border-red-500/50 text-red-400 hover:bg-red-950/20"
+                          >
+                            Terminate Position
+                          </Button>
+                        ) : (
+                          <Badge className="bg-gray-500/20 text-gray-400 border-gray-500/20">
+                            Inactive
+                          </Badge>
+                        )}
                       </div>
                     </div>
                   ))}
