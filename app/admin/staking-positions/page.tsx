@@ -243,14 +243,14 @@ export default function AdminStakingPositionsPage() {
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
             </div>
-            <div className="flex gap-2">
+            {/* <div className="flex gap-2">
               <Button variant="outline" size="sm">
                 <Filter className="mr-2 h-4 w-4" /> Filter
               </Button>
               <Button variant="outline" size="sm">
                 <ArrowUpDown className="mr-2 h-4 w-4" /> Sort
               </Button>
-            </div>
+            </div> */}
           </div>
 
           <div className="overflow-x-auto">
