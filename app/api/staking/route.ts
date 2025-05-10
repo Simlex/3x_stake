@@ -4,6 +4,7 @@ import { type NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { validateSession } from "@/app/api/services/auth";
 import { cookies } from "next/headers";
+import { StakingPositionDepositStatus } from "@prisma/client";
 
 export async function POST(req: NextRequest) {
   try {
@@ -59,6 +60,7 @@ export async function POST(req: NextRequest) {
           endDate,
           isActive: true,
           nextClaimDeadline,
+          depositStatus: StakingPositionDepositStatus.PENDING,
           apy: apr, // Set your APY here or get from config
           planId,
           network,
