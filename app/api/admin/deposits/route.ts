@@ -65,6 +65,9 @@ export async function GET(req: NextRequest) {
           },
         },
       },
+      orderBy: {
+        createdAt: "desc",
+      },
     });
 
     const formattedDeposits = positions.map((position) => ({
