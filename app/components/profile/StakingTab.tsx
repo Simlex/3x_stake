@@ -20,6 +20,7 @@ import { toast } from "sonner";
 import { rewardApi } from "@/lib/reward";
 import { useAuthContext } from "@/app/context/AuthContext";
 import moment from "moment";
+import { StakingPositionDepositStatus } from "@prisma/client";
 
 const StakingTab = () => {
   const { user, refreshUser } = useAuthContext();
@@ -259,15 +260,25 @@ const StakingTab = () => {
                           {position.isActive ? "Active" : "Unstaked"}
                         </Badge>
                       </div>
-                      <div className="text-sm text-gray-400">
-                        Started on {formatDate(position.startDate)} • Network:{" "}
-                        {position.network}
-                        {position.endDate &&
-                          ` • Ends on ${formatDate(position.endDate)}`}
-                      </div>
+
+                      {position.depositStatus ===
+                      StakingPositionDepositStatus.PENDING ? (
+                        <Badge className="bg-yellow-500/20 text-yellow-400 border-yellow-500/20">
+                          Pending
+                        </Badge>
+                      ) : position.depositStatus ===
+                        StakingPositionDepositStatus.APPROVED ? (
+                        <div className="text-sm text-gray-400">
+                          Started on {formatDate(position.startDate)} • Network:{" "}
+                          {position.network}
+                          {position.endDate &&
+                            ` • Ends on ${formatDate(position.endDate)}`}
+                        </div>
+                      ) : null}
                       {position.lastClaimedAt ? (
                         <div className="text-sm text-gray-400">
-                          Last claimed: {formatDate(position.lastClaimedAt, true)}
+                          Last claimed:{" "}
+                          {formatDate(position.lastClaimedAt, true)}
                         </div>
                       ) : null}
                     </div>
@@ -304,7 +315,12 @@ const StakingTab = () => {
                               ).hours
                             }
                           </p> */}
-                          {!hasClaimsBegun(position.startDate) ? (
+                          {position.depositStatus ===
+                          StakingPositionDepositStatus.PENDING ? (
+                            <p className="text-sm text-white/70">
+                              {`Pending approval`}
+                            </p>
+                          ) : !hasClaimsBegun(position.startDate) ? (
                             <p className="text-sm text-white/70">
                               {`Claiming starts on ${moment(position.startDate)
                                 .add(1, "day")
@@ -327,22 +343,25 @@ const StakingTab = () => {
                             </Button>
                           )}
                         </div>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className="border-red-500/50 text-red-400 hover:bg-red-950/20"
-                          onClick={() => handleUnstake(position.id)}
-                          disabled={processingPositions[position.id]}
-                        >
-                          {processingPositions[position.id] ? (
-                            <>
-                              <Loader2 className="mr-2 h-4 w-4 animate-spin" />{" "}
-                              Unstaking...
-                            </>
-                          ) : (
-                            "Unstake"
-                          )}
-                        </Button>
+                        {position.depositStatus ===
+                          StakingPositionDepositStatus.APPROVED && (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="border-red-500/50 text-red-400 hover:bg-red-950/20"
+                            onClick={() => handleUnstake(position.id)}
+                            disabled={processingPositions[position.id]}
+                          >
+                            {processingPositions[position.id] ? (
+                              <>
+                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />{" "}
+                                Unstaking...
+                              </>
+                            ) : (
+                              "Unstake"
+                            )}
+                          </Button>
+                        )}
                       </div>
                     )}
                   </div>

@@ -63,6 +63,7 @@ export async function GET(req: NextRequest) {
           apr: position.stakingPlan.apr,
           rewards: rewards._sum.amount || 0,
           isActive: position.isActive,
+          depositStatus: position.depositStatus,
           createdAt: position.createdAt.toISOString(),
           updatedAt: position.updatedAt.toISOString(),
         }

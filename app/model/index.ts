@@ -1,5 +1,7 @@
 // Core models for the application
 
+import { StakingPositionDepositStatus } from "@prisma/client";
+
 // User model
 export interface User {
   id: string;
@@ -29,6 +31,7 @@ export interface StakingPosition {
   apr: number;
   rewards: number;
   isActive: boolean;
+  depositStatus: StakingPositionDepositStatus;
   createdAt: string;
   updatedAt: string;
 }
