@@ -19,15 +19,6 @@ export function AdminDepositApprovalModal({ deposit, isOpen, onClose, onConfirm,
   const [isRejecting, setIsRejecting] = useState(false)
   const [notes, setNotes] = useState("")
 
-  const handleReject = async () => {
-    setIsRejecting(true)
-    // Simulate API call
-    setTimeout(() => {
-      onConfirm(deposit.id, false)
-      setIsRejecting(false)
-    }, 1500)
-  }
-
   if (!isOpen) return null
 
   return (

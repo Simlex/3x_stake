@@ -277,7 +277,7 @@ export default function ReferralsPage() {
                         2
                       </span>
                       <span>
-                        When they stake USDR, you earn 10% of their staking
+                        When they stake USDR, you can earn up to 25% of their staking
                         rewards
                       </span>
                     </li>
@@ -315,9 +315,10 @@ export default function ReferralsPage() {
               onValueChange={setActiveTab}
               className="w-full"
             >
-              <TabsList className="grid grid-cols-2 mb-8">
+              <TabsList className="grid grid-cols-3 mb-8">
                 <TabsTrigger value="overview">Direct Referrals</TabsTrigger>
                 <TabsTrigger value="downline">Downline Referrals</TabsTrigger>
+                <TabsTrigger value="downline-2">3rd downline Referrals</TabsTrigger>
               </TabsList>
 
               <TabsContent value="overview">
@@ -383,7 +384,7 @@ export default function ReferralsPage() {
                             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                               <div>
                                 <div className="text-sm text-gray-400">
-                                  Your bonus (10% their profits)
+                                  Your bonus (Up to 25% their profits)
                                 </div>
                                 <div className="text-lg font-medium text-green-500">
                                   ${referral.bonusEarned.toFixed(2)}
@@ -422,7 +423,7 @@ export default function ReferralsPage() {
               <TabsContent value="downline">
                 <Card className="border-0 glass-effect">
                   <CardHeader>
-                    <CardTitle>Your Downline Referrals</CardTitle>
+                    <CardTitle>Your 2nd level Referrals</CardTitle>
                     <CardDescription>
                       Second-level referrals from your direct referrals
                     </CardDescription>
@@ -515,7 +516,126 @@ export default function ReferralsPage() {
                                             </div>
                                             <div>
                                               <div className="text-xs text-gray-400">
-                                                Your Bonus (8%)
+                                                Your Bonus (Up to 15% their profits)
+                                              </div>
+                                              <div className="font-medium text-green-500">
+                                                $
+                                                {downline.bonusEarned.toFixed(
+                                                  2
+                                                )}
+                                              </div>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    ))}
+                                </div>
+                              )}
+                            </div>
+                          ))}
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              </TabsContent>
+
+              <TabsContent value="downline-2">
+                <Card className="border-0 glass-effect">
+                  <CardHeader>
+                    <CardTitle>Your 3rd level Referrals</CardTitle>
+                    <CardDescription>
+                      Third-level referrals from your direct referrals
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    {referralData?.secondDownlineReferrals.length === 0 ? (
+                      <div className="text-center py-8 text-gray-400">
+                        <Users className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                        <p>You don't have any 3rd level downline referrals yet.</p>
+                        <p className="mt-2">
+                          Your direct referrals need to invite more people!
+                        </p>
+                      </div>
+                    ) : (
+                      <div className="space-y-6">
+                        {referralData?.downlineReferrals
+                          .filter((referral) => referral.referralCount > 0)
+                          .map((downlineReferral) => (
+                            <div key={downlineReferral.id} className="space-y-2">
+                              <div
+                                className="flex items-center justify-between p-3 bg-gray-800/50 rounded-lg cursor-pointer"
+                                onClick={() => toggleExpand(downlineReferral.id)}
+                              >
+                                <div className="flex items-center gap-2">
+                                  <ChevronDown
+                                    className={`h-5 w-5 transition-transform ${
+                                      isExpanded[downlineReferral.id]
+                                        ? "rotate-180"
+                                        : ""
+                                    }`}
+                                  />
+                                  <span className="font-medium">
+                                    {downlineReferral.username}'s Referrals (  
+                                    {downlineReferral.referralCount})
+                                  </span>
+                                </div>
+                                <Badge className="bg-purple-500/20 text-purple-400 border-purple-500/20">
+                                  $
+                                  {(downlineReferral.downlineBonus || 0).toFixed(
+                                    2
+                                  )}{" "}
+                                  earned
+                                </Badge>
+                              </div>
+
+                              {isExpanded[downlineReferral.id] && (
+                                <div className="pl-6 space-y-3">
+                                  {referralData?.secondDownlineReferrals
+                                    .filter(
+                                      (downline) =>
+                                        downline.referredBy ===
+                                        downlineReferral.id
+                                    )
+                                    .map((downline) => (
+                                      <div
+                                        key={downline.id}
+                                        className="p-3 rounded-lg bg-black/30 border border-white/5"
+                                      >
+                                        <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
+                                          <div>
+                                            <div className="flex items-center gap-2">
+                                              <h5 className="font-medium">
+                                                {downline.username}
+                                              </h5>
+                                              <Badge className="bg-green-500/20 text-green-400 border-green-500/20">
+                                                {downline.isActive
+                                                  ? "Active"
+                                                  : "Inactive"}
+                                              </Badge>
+                                            </div>
+                                            <div className="text-xs text-gray-400">
+                                              Joined on{" "}
+                                              {new Date(
+                                                downline.joinedAt
+                                              ).toLocaleDateString()}
+                                            </div>
+                                          </div>
+
+                                          <div className="flex items-center gap-4">
+                                            <div>
+                                              <div className="text-xs text-gray-400">
+                                                Total Staked
+                                              </div>
+                                              <div className="font-medium">
+                                                $
+                                                {downline.totalStaked.toFixed(
+                                                  2
+                                                )}
+                                              </div>
+                                            </div>
+                                            <div>
+                                              <div className="text-xs text-gray-400">
+                                                Your Bonus (Up to 7.5% their profits)
                                               </div>
                                               <div className="font-medium text-green-500">
                                                 $

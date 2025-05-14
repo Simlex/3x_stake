@@ -132,23 +132,23 @@ model EmailVerification {
 
 // Staking position model
 model StakingPosition {
-    id                String      @id @default(uuid())
+    id                String                       @id @default(uuid())
     userId            String
-    user              User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+    user              User                         @relation(fields: [userId], references: [id], onDelete: Cascade)
     planId            String
-    stakingPlan       StakingPlan @relation(fields: [planId], references: [id])
+    stakingPlan       StakingPlan                  @relation(fields: [planId], references: [id])
     amount            Float
     network           Network
-    startDate         DateTime    @default(now())
+    startDate         DateTime                     @default(now())
     endDate           DateTime?
     lastClaimedAt     DateTime?
     nextClaimDeadline DateTime?
-    isActive          Boolean     @default(true)
+    isActive          Boolean                      @default(true)
     depositStatus     StakingPositionDepositStatus @default(PENDING)
     rewards           Reward[]
-    apy               Decimal     @db.Decimal(10, 2)
-    createdAt         DateTime    @default(now())
-    updatedAt         DateTime    @updatedAt
+    apy               Decimal                      @db.Decimal(10, 2)
+    createdAt         DateTime                     @default(now())
+    updatedAt         DateTime                     @updatedAt
 
     @@index([userId])
     @@index([planId])
@@ -157,18 +157,21 @@ model StakingPosition {
 
 // Staking plan model
 model StakingPlan {
-    id        String            @id @default(uuid())
-    name      String
-    tier      String
-    minAmount Float
-    maxAmount Float
-    apr       Float
-    aprMax    Float
+    id                  String            @id @default(uuid())
+    name                String
+    tier                String
+    minAmount           Float
+    maxAmount           Float
+    apr                 Float
+    aprMax              Float
+    referralBonus       Float             @default(0)
+    firstDownlineBonus  Float             @default(0)
+    secondDownlineBonus Float             @default(0)
     //   features      String[]
-    popular   Boolean           @default(false)
-    createdAt DateTime          @default(now())
-    updatedAt DateTime          @updatedAt
-    positions StakingPosition[]
+    popular             Boolean           @default(false)
+    createdAt           DateTime          @default(now())
+    updatedAt           DateTime          @updatedAt
+    positions           StakingPosition[]
 
     @@map("staking_plans")
 }

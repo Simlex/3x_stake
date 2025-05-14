@@ -71,7 +71,7 @@ export function StakeModal({
 
   // Check if user is authenticated
   const router = useRouter();
-  const { user } = useAuthContext();
+  const { user, refreshUser } = useAuthContext();
   const [isAuthenticated, setIsAuthenticated] = useState(true); // Replace with actual auth check
 
   // In a real app, check authentication status
@@ -194,6 +194,8 @@ export function StakeModal({
         "Staking position created successfully. You can now view it in your dashboard.",
         { description: "Your staking position has been successfully created." }
       );
+
+      refreshUser();
 
       // setIsVerifying(false);
       setDepositVerified(true);

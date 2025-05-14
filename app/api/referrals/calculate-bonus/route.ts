@@ -21,7 +21,15 @@ export async function POST(req: NextRequest) {
       where: { id: rewardId },
       include: {
         user: true,
-        stakingPosition: true,
+        stakingPosition: {
+            select: {
+                stakingPlan: {
+                    select: {
+                        referralBonus: true,
+                    }
+                }
+            }
+        },
       },
     })
 
@@ -43,8 +51,8 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Referrer not found" }, { status: 404 })
     }
 
-    // Calculate and create level 1 bonus (10% of reward)
-    const level1BonusAmount = reward.amount * 0.1
+    // Calculate and create level 1 bonus (use the referral bonus percentage from the staking plan)
+    const level1BonusAmount = reward.amount * reward.stakingPosition.stakingPlan.referralBonus 
 
     const level1Bonus = await prisma.referralBonus.create({
       data: {
@@ -79,7 +87,7 @@ export async function POST(req: NextRequest) {
 
       if (level2Referrer) {
         // Calculate and create level 2 bonus (8% of reward)
-        const level2BonusAmount = reward.amount * 0.08
+        const level2BonusAmount = reward.amount * (reward.stakingPosition.stakingPlan.referralBonus / 2);
 
         const level2Bonus = await prisma.referralBonus.create({
           data: {

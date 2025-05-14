@@ -18,6 +18,8 @@ export interface DownlineReferral {
   totalStaked: number;
   bonusEarned: number;
   referredBy: string;
+  referralCount: number;
+  downlineBonus: number;
 }
 
 export interface ReferralData {
@@ -26,6 +28,7 @@ export interface ReferralData {
   totalBonus: number;
   directReferrals: DirectReferral[];
   downlineReferrals: DownlineReferral[];
+  secondDownlineReferrals: DownlineReferral[];
 }
 
 export interface ReferralStats {
