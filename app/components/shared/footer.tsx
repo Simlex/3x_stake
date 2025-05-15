@@ -6,7 +6,7 @@ export function Footer() {
   return (
     <footer className="border-t border-white/10 bg-black/30 backdrop-blur-md">
       <div className="container mx-auto px-4 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+        {/* <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div>
             <div className="flex items-center gap-2 mb-4">
               <div className="relative w-8 h-8">
@@ -62,9 +62,9 @@ export function Footer() {
               <FooterLink href="/compliance">Compliance</FooterLink>
             </ul>
           </div>
-        </div>
+        </div> */}
 
-        <div className="border-t border-white/10 mt-12 pt-6 flex flex-col md:flex-row justify-between items-center">
+        <div className="border-t border-white/10 mt-0 pt-6 flex flex-col md:flex-row justify-between items-center">
           <p className="text-gray-400 text-sm">© 2025 USDT Yield. All rights reserved.</p>
           <div className="flex items-center mt-4 md:mt-0">
             <div className="flex items-center gap-2 text-xs text-gray-400">

@@ -131,13 +131,13 @@ export function Navbar() {
                         <Wallet className="mr-2 h-4 w-4" />
                         <span>Stake</span>
                       </DropdownMenuItem>
-                      <DropdownMenuItem
+                      {/* <DropdownMenuItem
                         className="cursor-pointer"
                         onClick={() => router.push("/profile?tab=settings")}
                       >
                         <Settings className="mr-2 h-4 w-4" />
                         <span>Settings</span>
-                      </DropdownMenuItem>
+                      </DropdownMenuItem> */}
                       <DropdownMenuSeparator />
                       <DropdownMenuItem
                         className="cursor-pointer text-red-400 focus:text-red-400"

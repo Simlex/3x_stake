@@ -18,6 +18,7 @@ import { Button } from "../components/ui/button";
 import { Card, CardContent } from "../components/ui/card";
 import { profileApi } from "@/lib/profile";
 import { WithdrawModal } from "../components/modal/withdraw-modal";
+import { ZeroBalanceWithdrawModal } from "../components/modal/no-balance-withdraw-modal";
 
 export default function ProfilePage() {
   const { user, isLoading: authLoading } = useAuthContext();
@@ -27,6 +28,7 @@ export default function ProfilePage() {
 
   const [isLoading, setIsLoading] = useState(true);
   const [isWithdrawModalOpen, setIsWithdrawModalOpen] = useState(false);
+  const [isZeroWithdrawModalOpen, setIsZeroWithdrawModalOpen] = useState(false);
   const [activeTab, setActiveTab] = useState(tabParam || "overview");
   const [
     isFetchingUserWithdrawableBalance,
@@ -187,7 +189,7 @@ export default function ProfilePage() {
                     </div>
                     <div className="h-fit">
                       <Button
-                        onClick={() => setIsWithdrawModalOpen(true)}
+                        onClick={() => userWithdrawableBalance && userWithdrawableBalance > 0 ? setIsWithdrawModalOpen(true) : setIsZeroWithdrawModalOpen(true)}
                         disabled={isFetchingUserWithdrawableBalance}
                         variant="default"
                         className="bg-gradient-to-r from-pink-500 to-purple-600"
@@ -223,14 +225,21 @@ export default function ProfilePage() {
         </div>
       </div>
 
-      {userWithdrawableBalance && (
+      {userWithdrawableBalance ? (
         <WithdrawModal
           isOpen={isWithdrawModalOpen}
           onClose={() => setIsWithdrawModalOpen(false)}
           userBalance={Number(userWithdrawableBalance.toFixed(2))}
           postFn={handleFetchUserWithdrawableBalance}
         />
-      )}
+      ) : null}
+
+      {/* {isZeroWithdrawModalOpen ? (
+      ) : null} */}
+      <ZeroBalanceWithdrawModal
+        isOpen={isZeroWithdrawModalOpen}
+        onClose={() => setIsZeroWithdrawModalOpen(false)}
+      />
     </div>
   );
 }

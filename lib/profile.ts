@@ -156,6 +156,38 @@ export const profileApi = {
     }
   },
 
+  // Forgot password
+  forgotPassword: async (
+    email: string
+  ): Promise<{ success: boolean; message: string }> => {
+    try {
+      const response = await API.post<
+        ApiResponse<{ success: boolean; message: string }>
+      >("/profile/forgot-password", { email });
+      return response.data.data;
+    } catch (error) {
+      console.error("Failed to send password reset email:", error);
+      throw error;
+    }
+  },
+
+  // Reset password
+  resetPassword: async (
+    token: string,
+    newPassword: string
+  ): Promise<{ success: boolean }> => {
+    try {
+      const response = await API.post<ApiResponse<{ success: boolean }>>(
+        "/profile/reset-password",
+        { token, newPassword }
+      );
+      return response.data.data;
+    } catch (error) {
+      console.error("Failed to reset password:", error);
+      throw error;
+    }
+  },
+
   // Claim reward
   claimReward: async (rewardId: string): Promise<{ success: boolean }> => {
     try {
