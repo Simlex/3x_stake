@@ -195,8 +195,6 @@ export async function GET(req: NextRequest) {
             )
         );
       }, 0);
-      console.log("🚀 ~ downlineBonus ~ downlineUsers:", downlineUsers)
-      console.log("🚀 ~ downlineBonus ~ downlineBonus:", downlineBonus)
 
       // Update total bonus with downline bonus
       totalBonus += downlineBonus;
@@ -321,6 +319,25 @@ export async function GET(req: NextRequest) {
           (sum, pos) => sum + pos.amount,
           0
         );
+
+        // Calculate second downline bonus
+        // const secondLevelUsers = downlineReferrals.filter((s) => {
+        //   return referral.referredBy === s.referredBy;
+        // });
+
+        // const secondLevelBonus = secondLevelUsers.reduce((sum, s) => {
+        //   return (
+        //     sum +
+        //     s.stakingPositions
+        //       .filter((pos) => pos.isActive)
+        //       .reduce(
+        //         (posSum, pos) =>
+        //           posSum +
+        //           pos.amount * (pos.stakingPlan.secondDownlineBonus ?? 0),
+        //         0
+        //       )
+        //   );
+        // }, 0);
 
         return {
           id: referral.id,

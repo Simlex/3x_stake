@@ -46,7 +46,7 @@ export default function ReferralsPage() {
 
   //   const { referralData, isLoading, error, refreshReferrals } = useReferrals();
   const [referralData, setReferralData] = useState<ReferralData | null>(null);
-  console.log("🚀 ~ ReferralsPage ~ referralData:", referralData)
+  console.log("🚀 ~ ReferralsPage ~ referralData:", referralData);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -74,7 +74,7 @@ export default function ReferralsPage() {
     try {
       setIsLoading(true);
       const data = await referralApi.getReferralData();
-      console.log("🚀 ~ handleFetchReferrals ~ data:", data)
+      console.log("🚀 ~ handleFetchReferrals ~ data:", data);
       setReferralData(data);
       setError(null);
     } catch (err) {
@@ -277,8 +277,8 @@ export default function ReferralsPage() {
                         2
                       </span>
                       <span>
-                        When they stake USDR, you can earn up to 25% of their staking
-                        rewards
+                        When they stake USDR, you can earn up to 25% of their
+                        staking rewards
                       </span>
                     </li>
                     <li className="flex items-start gap-2">
@@ -318,7 +318,9 @@ export default function ReferralsPage() {
               <TabsList className="grid grid-cols-3 mb-8">
                 <TabsTrigger value="overview">Direct Referrals</TabsTrigger>
                 <TabsTrigger value="downline">Downline Referrals</TabsTrigger>
-                <TabsTrigger value="downline-2">3rd downline Referrals</TabsTrigger>
+                <TabsTrigger value="downline-2">
+                  3rd downline Referrals
+                </TabsTrigger>
               </TabsList>
 
               <TabsContent value="overview">
@@ -516,7 +518,8 @@ export default function ReferralsPage() {
                                             </div>
                                             <div>
                                               <div className="text-xs text-gray-400">
-                                                Your Bonus (Up to 15% their profits)
+                                                Your Bonus (Up to 15% their
+                                                profits)
                                               </div>
                                               <div className="font-medium text-green-500">
                                                 $
@@ -551,7 +554,9 @@ export default function ReferralsPage() {
                     {referralData?.secondDownlineReferrals.length === 0 ? (
                       <div className="text-center py-8 text-gray-400">
                         <Users className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                        <p>You don't have any 3rd level downline referrals yet.</p>
+                        <p>
+                          You don't have any 3rd level downline referrals yet.
+                        </p>
                         <p className="mt-2">
                           Your direct referrals need to invite more people!
                         </p>
@@ -561,10 +566,15 @@ export default function ReferralsPage() {
                         {referralData?.downlineReferrals
                           .filter((referral) => referral.referralCount > 0)
                           .map((downlineReferral) => (
-                            <div key={downlineReferral.id} className="space-y-2">
+                            <div
+                              key={downlineReferral.id}
+                              className="space-y-2"
+                            >
                               <div
                                 className="flex items-center justify-between p-3 bg-gray-800/50 rounded-lg cursor-pointer"
-                                onClick={() => toggleExpand(downlineReferral.id)}
+                                onClick={() =>
+                                  toggleExpand(downlineReferral.id)
+                                }
                               >
                                 <div className="flex items-center gap-2">
                                   <ChevronDown
@@ -575,17 +585,19 @@ export default function ReferralsPage() {
                                     }`}
                                   />
                                   <span className="font-medium">
-                                    {downlineReferral.username}'s Referrals (  
+                                    {downlineReferral.username}'s Referrals (
                                     {downlineReferral.referralCount})
                                   </span>
                                 </div>
-                                <Badge className="bg-purple-500/20 text-purple-400 border-purple-500/20">
-                                  $
-                                  {(downlineReferral.downlineBonus || 0).toFixed(
-                                    2
-                                  )}{" "}
-                                  earned
-                                </Badge>
+                                {downlineReferral.downlineBonus ? (
+                                  <Badge className="bg-purple-500/20 text-purple-400 border-purple-500/20">
+                                    $
+                                    {(
+                                      downlineReferral.downlineBonus || 0
+                                    ).toFixed(2)}{" "}
+                                    earned
+                                  </Badge>
+                                ) : null}
                               </div>
 
                               {isExpanded[downlineReferral.id] && (
@@ -635,7 +647,8 @@ export default function ReferralsPage() {
                                             </div>
                                             <div>
                                               <div className="text-xs text-gray-400">
-                                                Your Bonus (Up to 7.5% their profits)
+                                                Your Bonus (Up to 7.5% their
+                                                profits)
                                               </div>
                                               <div className="font-medium text-green-500">
                                                 $
