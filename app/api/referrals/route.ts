@@ -134,6 +134,7 @@ export async function GET(req: NextRequest) {
         stakingPositions: {
           select: {
             amount: true,
+            isActive: true,
             rewards: {
               select: {
                 amount: true,
@@ -158,50 +159,46 @@ export async function GET(req: NextRequest) {
 
     // Format direct referrals with calculated data
     const formattedDirectReferrals = directReferrals.map((referral, index) => {
+        console.log("🚀 ~ formattedDirectReferrals ~ referral:", referral)
       // Calculate total staked
       const totalStaked = referral.stakingPositions.reduce(
         (sum, pos) => sum + pos.amount,
         0
       );
 
-      // Calculate total rewards
-      const totalRewards = referral.stakingPositions.reduce((sum, pos) => {
-        return (
-          sum +
-          pos.rewards.reduce(
-            (rewardSum, reward) =>
-              rewardSum + reward.amount * pos.stakingPlan.referralBonus,
-            0
-          )
-        ); // Use referral bonus from staking plan to calculate rewards
-      }, 0);
+      // Calculate bonus earned
+      const bonusEarned = referral.stakingPositions
+        .filter((pos) => pos.isActive) // only approved positions
+        .reduce(
+          (sum, pos) => sum + pos.amount * pos.stakingPlan.referralBonus,
+          0
+        );
 
-      // Calculate bonus (relative % of their rewards)
-      const bonusEarned = totalRewards;
+      // Update total bonus
       totalBonus += bonusEarned;
 
       // Calculate downline bonus
       const downlineUsers = downlineReferrals.filter(
         (down) => down.referredBy === referral.id
       );
-      const downlineRewards = downlineUsers.reduce((sum, downUser) => {
+
+      const downlineBonus = downlineUsers.reduce((sum, downUser) => {
+        console.log("🚀 ~ downlineBonus ~ downUser:", downUser)
         return (
           sum +
-          downUser.stakingPositions.reduce((posSum, pos) => {
-            return (
-              posSum +
-              pos.rewards.reduce(
-                (rewardSum, reward) =>
-                  rewardSum +
-                  reward.amount * pos.stakingPlan.firstDownlineBonus,
-                0
-              )
-            );
-          }, 0)
+          downUser.stakingPositions
+            .filter((pos) => pos.isActive)
+            .reduce(
+              (posSum, pos) =>
+                posSum + pos.amount * pos.stakingPlan.firstDownlineBonus,
+              0
+            )
         );
       }, 0);
+      console.log("🚀 ~ downlineBonus ~ downlineUsers:", downlineUsers)
+      console.log("🚀 ~ downlineBonus ~ downlineBonus:", downlineBonus)
 
-      const downlineBonus = downlineRewards;
+      // Update total bonus with downline bonus
       totalBonus += downlineBonus;
 
       // Calculate second downline bonus (50% of downline bonus)
@@ -212,17 +209,14 @@ export async function GET(req: NextRequest) {
       const secondLevelBonus = secondLevelUsers.reduce((sum, s) => {
         return (
           sum +
-          s.stakingPositions.reduce((posSum, pos) => {
-            return (
-              posSum +
-              pos.rewards.reduce((rewardSum, reward) => {
-                return (
-                  rewardSum +
-                  reward.amount * pos.stakingPlan.secondDownlineBonus
-                );
-              }, 0)
-            );
-          }, 0)
+          s.stakingPositions
+            .filter((pos) => pos.isActive)
+            .reduce(
+              (posSum, pos) =>
+                posSum +
+                pos.amount * (pos.stakingPlan.secondDownlineBonus ?? 0),
+              0
+            )
         );
       }, 0);
 
@@ -266,35 +260,33 @@ export async function GET(req: NextRequest) {
         );
       }, 0);
 
-      // Calculate bonus (no longer 8% of their rewards)
-      const bonusEarned = totalRewards;
+      const bonusEarned = referral.stakingPositions
+        .filter((pos) => pos.isActive)
+        .reduce(
+          (sum, pos) => sum + pos.amount * pos.stakingPlan.firstDownlineBonus,
+          0
+        );
+
+      const downlineBonus = directReferrals
+        .filter((d) => d.referredBy === referral.id)
+        .reduce((sum, downUser) => {
+          return (
+            sum +
+            downUser.stakingPositions
+              .filter((pos) => pos.isActive)
+              .reduce(
+                (posSum, pos) =>
+                  posSum + pos.amount * pos.stakingPlan.referralBonus,
+                0
+              )
+          );
+        }, 0);
 
       // Determine if user is active (logged in within the last 30 days)
       const isActive = referral.lastLoginAt
         ? new Date(referral.lastLoginAt).getTime() >
           Date.now() - 30 * 24 * 60 * 60 * 1000
         : false;
-
-      // Calculate downline bonus
-      const downlineUsers = directReferrals.filter(
-        (down) => down.referredBy === referral.id
-      );
-      const downlineRewards = downlineUsers.reduce((sum, downUser) => {
-        return (
-          sum +
-          downUser.stakingPositions.reduce((posSum, pos) => {
-            return (
-              posSum +
-              pos.rewards.reduce(
-                (rewardSum, reward) =>
-                  rewardSum + reward.amount * pos.stakingPlan.referralBonus,
-                0
-              )
-            );
-          }, 0)
-        );
-      }, 0);
-      const downlineBonus = downlineRewards;
 
       return {
         id: referral.id,
