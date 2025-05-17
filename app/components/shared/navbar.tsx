@@ -84,7 +84,7 @@ export function Navbar() {
             <NavLink href="/">Home</NavLink>
             <NavLink href="#plans">Stake</NavLink>
             <NavLink href="#rewards">Rewards</NavLink>
-            <NavLink href="#referrals">Referrals</NavLink>
+            <NavLink href="/referrals">Referrals</NavLink>
             <NavLink href="#faq">FAQ</NavLink>
           </nav>
 
