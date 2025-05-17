@@ -66,16 +66,16 @@ export async function POST(
         },
       }),
       // Add the unstaked amount to the user's balance
-      prisma.user.update({
-        where: {
-          id: userId,
-        },
-        // data: {
-        //   balance: {
-        //     increment: position.amount,
-        //   },
-        // },
-      }),
+    //   prisma.user.update({
+    //     where: {
+    //       id: userId,
+    //     },
+    //     data: {
+    //       balance: {
+    //         increment: position.amount,
+    //       },
+    //     },
+    //   }),
       // Log the activity
       prisma.activity.create({
         data: {
