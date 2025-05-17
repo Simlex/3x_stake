@@ -161,7 +161,7 @@ export async function GET(req: NextRequest) {
     const formattedDirectReferrals = directReferrals.map((referral, index) => {
         console.log("🚀 ~ formattedDirectReferrals ~ referral:", referral)
       // Calculate total staked
-      const totalStaked = referral.stakingPositions.reduce(
+      const totalStaked = referral.stakingPositions.filter((pos) => pos.isActive).reduce(
         (sum, pos) => sum + pos.amount,
         0
       );
