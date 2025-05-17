@@ -70,11 +70,11 @@ export async function POST(
         where: {
           id: userId,
         },
-        data: {
-          balance: {
-            increment: position.amount,
-          },
-        },
+        // data: {
+        //   balance: {
+        //     increment: position.amount,
+        //   },
+        // },
       }),
       // Log the activity
       prisma.activity.create({
