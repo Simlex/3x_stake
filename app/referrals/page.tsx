@@ -319,7 +319,7 @@ export default function ReferralsPage() {
                 <TabsTrigger value="overview">Direct Referrals</TabsTrigger>
                 <TabsTrigger value="downline">Downline Referrals</TabsTrigger>
                 <TabsTrigger value="downline-2">
-                  3rd downline Referrals
+                  2nd downline Referrals
                 </TabsTrigger>
               </TabsList>
 
