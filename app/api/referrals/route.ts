@@ -103,6 +103,7 @@ export async function GET(req: NextRequest) {
             stakingPlan: {
               select: {
                 firstDownlineBonus: true,
+                referralBonus: true,
               },
             },
           },
@@ -159,12 +160,11 @@ export async function GET(req: NextRequest) {
 
     // Format direct referrals with calculated data
     const formattedDirectReferrals = directReferrals.map((referral, index) => {
-        console.log("🚀 ~ formattedDirectReferrals ~ referral:", referral)
+      console.log("🚀 ~ formattedDirectReferrals ~ referral:", referral);
       // Calculate total staked
-      const totalStaked = referral.stakingPositions.filter((pos) => pos.isActive).reduce(
-        (sum, pos) => sum + pos.amount,
-        0
-      );
+      const totalStaked = referral.stakingPositions
+        .filter((pos) => pos.isActive)
+        .reduce((sum, pos) => sum + pos.amount, 0);
 
       // Calculate bonus earned
       const bonusEarned = referral.stakingPositions
@@ -183,7 +183,7 @@ export async function GET(req: NextRequest) {
       );
 
       const downlineBonus = downlineUsers.reduce((sum, downUser) => {
-        console.log("🚀 ~ downlineBonus ~ downUser:", downUser)
+        console.log("🚀 ~ downlineBonus ~ downUser:", downUser);
         return (
           sum +
           downUser.stakingPositions
@@ -339,6 +339,21 @@ export async function GET(req: NextRequest) {
         //   );
         // }, 0);
 
+        const downlineBonus = downlineReferrals
+          .filter((d) => d.referredBy === referral.id)
+          .reduce((sum, downUser) => {
+            return (
+              sum +
+              downUser.stakingPositions
+                .filter((pos) => pos.isActive)
+                .reduce(
+                  (posSum, pos) =>
+                    posSum + pos.amount * pos.stakingPlan.referralBonus,
+                  0
+                )
+            );
+          }, 0);
+
         return {
           id: referral.id,
           referredBy: referral.referredBy,
@@ -346,6 +361,7 @@ export async function GET(req: NextRequest) {
           username: referral.username,
           joinedAt: referral.createdAt,
           totalStaked,
+          downlineBonus,
         };
       }
     );
