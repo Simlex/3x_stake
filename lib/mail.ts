@@ -2,6 +2,7 @@ import nodemailer from "nodemailer";
 import * as handlebars from "handlebars";
 import { accountCreationTemplate } from "./templates/accountCreation";
 import { verifyEmailTemplate } from "./templates/verifyAccount";
+import { resetPasswordTemplate } from "./templates/resetPassword";
 
 type Mail = {
   to: string;
@@ -99,6 +100,19 @@ export function compileVerifyEmailTemplate({
 }) {
   const template = handlebars.compile(verifyEmailTemplate);
   const htmlBody = template({ verificationUrl, userEmail });
+
+  return htmlBody;
+}
+
+export function compileResetEmailTemplate({
+  username,
+  resetLink,
+}: {
+  username: string;
+  resetLink: string;
+}) {
+  const template = handlebars.compile(resetPasswordTemplate);
+  const htmlBody = template({ username, resetLink });
 
   return htmlBody;
 }
