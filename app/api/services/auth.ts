@@ -69,7 +69,7 @@ export async function signUp({
     sendMail({
       to: user.email,
       name: "Account Created",
-      subject: "Welcome to Yieldra",
+      subject: "Reset Your Password",
       body: compileAccountCreationTemplate(`${user.username}`),
     }),
     sendVerificationEmail(user.email, verificationToken),
