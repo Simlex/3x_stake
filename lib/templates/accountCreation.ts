@@ -7,7 +7,7 @@ export const accountCreationTemplate = `
   <meta name="x-apple-disable-message-reformatting">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta content="telephone=no" name="format-detection">
-  <title>Welcome to 3xStake</title><!--[if (mso 16)]>
+  <title>Welcome to Yieldra</title><!--[if (mso 16)]>
     <style type="text/css">
     a {text-decoration: none;}
     </style>
@@ -70,8 +70,8 @@ a[x-apple-data-detectors] {
                    <table cellpadding="0" cellspacing="0" width="100%" role="presentation" style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px">
                      <tr>
                       <td align="left" class="es-m-txt-c" style="padding:0;Margin:0;font-size:0px">
-                      <a target="_blank" href="https://3xstake.com" style="-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;text-decoration:none;color:#3B8026;font-size:14px">
-                      <h2 style="color: #111; font-weight: bold;">3xStake</h2>
+                      <a target="_blank" href="https://yieldra.com" style="-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;text-decoration:none;color:#3B8026;font-size:14px">
+                      <h2 style="color: #111; font-weight: bold;">Yieldra</h2>
                   </a>
                     </td>
                      </tr>
@@ -102,7 +102,7 @@ a[x-apple-data-detectors] {
                             <br>
                         </p>
                         <p style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:'Josefin Sans', helvetica, arial, sans-serif;line-height:21px;color:#4b5563;font-size:14px">
-                            Welcome to 3xStake - your gateway to high-yield decentralized staking! We're thrilled to have you join our community of forward-thinking crypto enthusiasts.
+                            Welcome to Yieldra - your gateway to high-yield decentralized staking! We're thrilled to have you join our community of forward-thinking crypto enthusiasts.
                             <br><br>
                         </p>
                         <p style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:'Josefin Sans', helvetica, arial, sans-serif;line-height:21px;color:#4b5563;font-size:14px">
@@ -110,7 +110,7 @@ a[x-apple-data-detectors] {
                             <br><br>
                         </p>
                         <p style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:'Josefin Sans', helvetica, arial, sans-serif;line-height:21px;color:#4b5563;font-size:14px">
-                            Whether you're a seasoned DeFi user or just starting your staking journey, 3xStake provides the tools and security you need to grow your assets with confidence.
+                            Whether you're a seasoned DeFi user or just starting your staking journey, Yieldra provides the tools and security you need to grow your assets with confidence.
                             <br><br>
                         </p>
                         <p style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:'Josefin Sans', helvetica, arial, sans-serif;line-height:21px;color:#4b5563;font-size:14px">
@@ -121,15 +121,15 @@ a[x-apple-data-detectors] {
                      </tr>
                      <tr>
                       <td align="center" style="padding:0;Margin:0;padding-top:20px">
-                        <!--[if mso]><a href="https://3xstake.com" target="_blank" hidden>
-	<v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" esdevVmlButton href="https://3xstake.com" 
+                        <!--[if mso]><a href="https://yieldra.com" target="_blank" hidden>
+	<v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" esdevVmlButton href="https://yieldra.com" 
                 style="height:41px; v-text-anchor:middle; width:181px" arcsize="50%" stroke="f"  fillcolor="#9333ea">
 		<w:anchorlock></w:anchorlock>
 		<center style='color:#ffffff; font-family:"Josefin Sans", helvetica, arial, sans-serif; font-size:15px; font-weight:400; line-height:15px;  mso-text-raise:1px'>Start Staking</center>
 	</v:roundrect></a>
 <![endif]--><!--[if !mso]><!-- -->
 <span class="msohide es-button-border" style="border-style:solid;border-color:#111;background:#111;border-width:0px;display:inline-block;border-radius:30px;width:auto;mso-hide:all">
-    <a href="https://3xstake.com" class="es-button" target="_blank" style="mso-style-priority:100 !important;text-decoration:none;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;color:#FFFFFF;font-size:18px;display:inline-block;background:#111;border-radius:30px;font-family:'Josefin Sans', helvetica, arial, sans-serif;font-weight:normal;font-style:normal;line-height:22px;width:auto;text-align:center;padding:10px 20px 10px 20px;mso-padding-alt:0;mso-border-alt:10px solid #9333ea">
+    <a href="https://yieldra.com" class="es-button" target="_blank" style="mso-style-priority:100 !important;text-decoration:none;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;color:#FFFFFF;font-size:18px;display:inline-block;background:#111;border-radius:30px;font-family:'Josefin Sans', helvetica, arial, sans-serif;font-weight:normal;font-style:normal;line-height:22px;width:auto;text-align:center;padding:10px 20px 10px 20px;mso-padding-alt:0;mso-border-alt:10px solid #9333ea">
         Start Staking
     </a>
 </span>
