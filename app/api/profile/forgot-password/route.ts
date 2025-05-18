@@ -53,7 +53,7 @@ export async function POST(req: NextRequest) {
       sendMail({
         to: user.email,
         name: "Reset Password",
-        subject: "Welcome to Yieldra",
+        subject: "Reset Your Password",
         body: compileResetEmailTemplate({ username: user.username, resetLink }),
       }),
     ]);
