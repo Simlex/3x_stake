@@ -247,16 +247,16 @@ export async function GET(req: NextRequest) {
       );
 
       // Calculate total rewards
-      const totalRewards = referral.stakingPositions.reduce((sum, pos) => {
-        return (
-          sum +
-          pos.rewards.reduce(
-            (rewardSum, reward) =>
-              rewardSum + reward.amount * pos.stakingPlan.firstDownlineBonus,
-            0
-          )
-        );
-      }, 0);
+      //   const totalRewards = referral.stakingPositions.reduce((sum, pos) => {
+      //     return (
+      //       sum +
+      //       pos.rewards.reduce(
+      //         (rewardSum, reward) =>
+      //           rewardSum + reward.amount * pos.stakingPlan.firstDownlineBonus,
+      //         0
+      //       )
+      //     );
+      //   }, 0);
 
       const bonusEarned = referral.stakingPositions
         .filter((pos) => pos.isActive)
@@ -302,17 +302,13 @@ export async function GET(req: NextRequest) {
     // Format second downline referrals
     const formattedSecondDownlineReferrals = secondDownlineReferrals.map(
       (referral) => {
-        const totalRewards = referral.stakingPositions.reduce((sum, pos) => {
-          return (
-            sum +
-            pos.rewards.reduce(
-              (rewardSum, reward) =>
-                rewardSum +
-                reward.amount * (pos.stakingPlan.secondDownlineBonus ?? 0),
-              0
-            )
+        const bonusEarned = referral.stakingPositions
+          .filter((pos) => pos.isActive)
+          .reduce(
+            (sum, pos) =>
+              sum + pos.amount * pos.stakingPlan.secondDownlineBonus,
+            0
           );
-        }, 0);
 
         // Calculate total staked
         const totalStaked = referral.stakingPositions.reduce(
@@ -357,7 +353,7 @@ export async function GET(req: NextRequest) {
         return {
           id: referral.id,
           referredBy: referral.referredBy,
-          bonusEarned: totalRewards,
+          bonusEarned,
           username: referral.username,
           joinedAt: referral.createdAt,
           totalStaked,
