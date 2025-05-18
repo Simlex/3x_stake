@@ -18,7 +18,7 @@ export function Footer() {
                 </div>
               </div>
               <span className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-purple-600">
-                3x Stake
+                Yieldra
               </span>
             </div>
             <p className="text-gray-400 text-sm mb-4">

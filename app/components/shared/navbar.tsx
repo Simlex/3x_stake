@@ -76,7 +76,7 @@ export function Navbar() {
               </div>
             </div>
             <span className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-purple-600">
-              3x Stake
+              Yieldra
             </span>
           </Link>
 

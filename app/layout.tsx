@@ -13,7 +13,7 @@ import { authOptions } from "@/auth";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "3x Stake | Stake on your terms",
+  title: "Yieldra | Stake on your terms",
   description: "Stake USDT and earn rewards with our flexible staking plans"
 };
 
