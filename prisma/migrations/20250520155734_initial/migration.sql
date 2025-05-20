@@ -7,6 +7,7 @@ CREATE TABLE `users` (
     `firstName` VARCHAR(191) NULL,
     `lastName` VARCHAR(191) NULL,
     `profileImage` VARCHAR(191) NULL,
+    `balance` DOUBLE NOT NULL DEFAULT 0,
     `isEmailVerified` BOOLEAN NOT NULL DEFAULT false,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NOT NULL,
@@ -113,7 +114,10 @@ CREATE TABLE `staking_positions` (
     `network` ENUM('SOL', 'TRX', 'BEP20', 'TON') NOT NULL,
     `startDate` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `endDate` DATETIME(3) NULL,
+    `lastClaimedAt` DATETIME(3) NULL,
+    `nextClaimDeadline` DATETIME(3) NULL,
     `isActive` BOOLEAN NOT NULL DEFAULT true,
+    `depositStatus` ENUM('APPROVED', 'REJECTED', 'PENDING', 'CANCELED') NOT NULL DEFAULT 'PENDING',
     `apy` DECIMAL(10, 2) NOT NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NOT NULL,
@@ -132,6 +136,9 @@ CREATE TABLE `staking_plans` (
     `maxAmount` DOUBLE NOT NULL,
     `apr` DOUBLE NOT NULL,
     `aprMax` DOUBLE NOT NULL,
+    `referralBonus` DOUBLE NOT NULL DEFAULT 0,
+    `firstDownlineBonus` DOUBLE NOT NULL DEFAULT 0,
+    `secondDownlineBonus` DOUBLE NOT NULL DEFAULT 0,
     `popular` BOOLEAN NOT NULL DEFAULT false,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NOT NULL,
@@ -156,10 +163,27 @@ CREATE TABLE `rewards` (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
+CREATE TABLE `ReferralBonus` (
+    `id` VARCHAR(191) NOT NULL,
+    `userId` VARCHAR(191) NOT NULL,
+    `rewardId` VARCHAR(191) NOT NULL,
+    `referralLevel` INTEGER NOT NULL,
+    `amount` DOUBLE NOT NULL,
+    `status` ENUM('PENDING', 'CLAIMED', 'FAILED') NOT NULL DEFAULT 'PENDING',
+    `claimedAt` DATETIME(3) NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NOT NULL,
+
+    INDEX `ReferralBonus_userId_idx`(`userId`),
+    INDEX `ReferralBonus_rewardId_idx`(`rewardId`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
 CREATE TABLE `notifications` (
     `id` VARCHAR(191) NOT NULL,
     `userId` VARCHAR(191) NOT NULL,
-    `type` ENUM('REWARD', 'SYSTEM', 'STAKING', 'SECURITY', 'MARKETING') NOT NULL,
+    `type` ENUM('REWARD', 'SYSTEM', 'STAKING', 'SECURITY', 'MARKETING', 'REFERRAL') NOT NULL,
     `title` VARCHAR(191) NOT NULL,
     `message` VARCHAR(191) NOT NULL,
     `isRead` BOOLEAN NOT NULL DEFAULT false,
@@ -213,6 +237,40 @@ CREATE TABLE `permissions` (
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
+-- CreateTable
+CREATE TABLE `withdrawals` (
+    `id` VARCHAR(191) NOT NULL,
+    `userId` VARCHAR(191) NOT NULL,
+    `amount` DOUBLE NOT NULL,
+    `status` ENUM('PENDING', 'APPROVED', 'REJECTED', 'FAILED') NOT NULL DEFAULT 'PENDING',
+    `network` ENUM('SOL', 'TRX', 'BEP20', 'TON') NOT NULL,
+    `stakingPositionId` VARCHAR(191) NULL,
+    `wallet` VARCHAR(191) NOT NULL,
+    `transactionHash` VARCHAR(191) NULL,
+    `reason` VARCHAR(191) NULL,
+    `processedAt` DATETIME(3) NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NOT NULL,
+
+    UNIQUE INDEX `withdrawals_stakingPositionId_key`(`stakingPositionId`),
+    INDEX `withdrawals_userId_idx`(`userId`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `deposit_addresses` (
+    `id` VARCHAR(191) NOT NULL,
+    `network` ENUM('SOL', 'TRX', 'BEP20', 'TON') NOT NULL,
+    `address` VARCHAR(191) NOT NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+
+    UNIQUE INDEX `deposit_addresses_address_key`(`address`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- AddForeignKey
+ALTER TABLE `users` ADD CONSTRAINT `users_referredBy_fkey` FOREIGN KEY (`referredBy`) REFERENCES `users`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+
 -- AddForeignKey
 ALTER TABLE `sessions` ADD CONSTRAINT `sessions_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `users`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
@@ -238,6 +296,12 @@ ALTER TABLE `rewards` ADD CONSTRAINT `rewards_userId_fkey` FOREIGN KEY (`userId`
 ALTER TABLE `rewards` ADD CONSTRAINT `rewards_stakingPositionId_fkey` FOREIGN KEY (`stakingPositionId`) REFERENCES `staking_positions`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE `ReferralBonus` ADD CONSTRAINT `ReferralBonus_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `users`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `ReferralBonus` ADD CONSTRAINT `ReferralBonus_rewardId_fkey` FOREIGN KEY (`rewardId`) REFERENCES `rewards`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE `notifications` ADD CONSTRAINT `notifications_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `users`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
@@ -248,3 +312,9 @@ ALTER TABLE `user_preferences` ADD CONSTRAINT `user_preferences_userId_fkey` FOR
 
 -- AddForeignKey
 ALTER TABLE `permissions` ADD CONSTRAINT `permissions_adminId_fkey` FOREIGN KEY (`adminId`) REFERENCES `admin_users`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `withdrawals` ADD CONSTRAINT `withdrawals_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `users`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `withdrawals` ADD CONSTRAINT `withdrawals_stakingPositionId_fkey` FOREIGN KEY (`stakingPositionId`) REFERENCES `staking_positions`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;

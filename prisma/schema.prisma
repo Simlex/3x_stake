@@ -294,6 +294,14 @@ model Withdrawal {
     @@map("withdrawals")
 }
 
+model DepositAddresses {
+    id        String   @id @default(uuid())
+    network   Network
+    address   String   @unique
+    createdAt DateTime @default(now())
+    @@map("deposit_addresses")
+}
+
 // Enums
 enum AdminRole {
     SUPER_ADMIN

@@ -22,6 +22,8 @@ import QRCode from "react-qr-code";
 import { stakingApi } from "@/lib/staking";
 import { toast } from "sonner";
 import { Network as NetworkEnum, StakingPlan } from "@/app/model";
+import { depositAddressApi } from "@/lib/deposit-address";
+import { DepositAddress } from "@/app/model/IDepositAddress";
 
 type Network = "SOL" | "TRX" | "BEP20" | "TON";
 
@@ -60,6 +62,9 @@ export function StakeModal({
   const { setLoginModalVisibility } = useModalContext();
   const [amount, setAmount] = useState(plan.minAmount);
   const [network, setNetwork] = useState<Network>("BEP20");
+  const [depositAddresses, setDepositAddresses] = useState<
+    DepositAddress[] | null
+  >(null);
   const [step, setStep] = useState(1);
   const [isProcessing, setIsProcessing] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
@@ -108,11 +113,11 @@ export function StakeModal({
   }, [isOpen, plan]);
 
   // Generate wallet address when network changes or when moving to step 3
-  useEffect(() => {
-    if (step === 3) {
-      setWalletAddress(generateWalletAddress(network));
-    }
-  }, [network, step]);
+  //   useEffect(() => {
+  //     if (step === 3) {
+  //       setWalletAddress(generateWalletAddress(network));
+  //     }
+  //   }, [network, step]);
 
   // Countdown timer for deposit window
   useEffect(() => {
@@ -136,13 +141,28 @@ export function StakeModal({
     setNetwork(value as Network);
   };
 
+  const handleFetchDepositAddresses = async () => {
+    try {
+      const depositAddresses = await depositAddressApi.getAllDepositAddresses();
+
+      //   console.log(
+      //     "🚀 ~ handleFetchDepositAddresses ~ depositAddresses:",
+      //     depositAddresses
+      //   );
+
+      setDepositAddresses(depositAddresses);
+    } catch (err) {
+      console.error("Failed to fetch deposit addresses:", err);
+    }
+  };
+
   const handleCopyAddress = () => {
     navigator.clipboard.writeText(walletAddress);
     setIsCopied(true);
     setTimeout(() => setIsCopied(false), 2000);
   };
 
-  const handleSubmit = () => {
+  const handleGenerateAddress = () => {
     // Check if user is authenticated
     if (!user) {
       handleUnauthenticatedAction();
@@ -151,9 +171,31 @@ export function StakeModal({
 
     setIsProcessing(true);
 
+    // use the selected network to get the deposit address
+    const availableDepositAddresses = depositAddresses?.filter(
+      (address) => address.network == network
+    );
+    console.log("🚀 ~ handleGenerateAddress ~ network:", network)
+    console.log("🚀 ~ handleGenerateAddress ~ depositAddresses:", depositAddresses)
+    console.log("🚀 ~ handleGenerateAddress ~ availableDepositAddresses:", availableDepositAddresses)
+
+    // randomly select one of the available deposit addresses
+    const randomIndex = Math.floor(
+      Math.random() * (availableDepositAddresses?.length || 0)
+    );
+    const selectedDepositAddress =
+      availableDepositAddresses?.[randomIndex]?.address || "";
+
+    if (!selectedDepositAddress) {
+      setIsProcessing(false);
+      toast.error("Couldn't generate deposit address. Please try again.");
+      return;
+    }
+
     // Simulate processing
     setTimeout(() => {
       setIsProcessing(false);
+      setWalletAddress(selectedDepositAddress);
       // Move to deposit step instead of showing success
       setStep(3);
     }, 2000);
@@ -255,6 +297,12 @@ export function StakeModal({
     const remainingSeconds = seconds % 60;
     return `${minutes}:${remainingSeconds < 10 ? "0" : ""}${remainingSeconds}`;
   };
+
+  useEffect(() => {
+    if (isOpen) {
+      handleFetchDepositAddresses();
+    }
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
@@ -455,7 +503,7 @@ export function StakeModal({
                       "flex-1 bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700",
                       isProcessing && "opacity-80 pointer-events-none"
                     )}
-                    onClick={handleSubmit}
+                    onClick={handleGenerateAddress}
                     disabled={isProcessing || isSuccess}
                   >
                     {isProcessing ? (
@@ -512,11 +560,13 @@ export function StakeModal({
                       </div>
                     </div>
 
-                    <div className="flex justify-center">
-                      <div className="p-3 bg-white rounded-lg">
-                        <QRCode value={walletAddress} size={180} />
+                    {walletAddress ? (
+                      <div className="flex justify-center">
+                        <div className="p-3 bg-white rounded-lg">
+                          <QRCode value={walletAddress} size={180} />
+                        </div>
                       </div>
-                    </div>
+                    ) : null}
 
                     <div className="bg-gray-800/50 rounded-lg p-4">
                       <div className="flex items-center justify-between mb-2">
@@ -538,7 +588,7 @@ export function StakeModal({
                         </Button>
                       </div>
                       <div className="p-3 bg-gray-900/80 rounded-md text-xs font-mono break-all select-all">
-                        {walletAddress}
+                        {walletAddress || "Address not found!"}
                       </div>
                     </div>
 
@@ -553,8 +603,8 @@ export function StakeModal({
                         </p>
                       </div>
 
-                      <div className="flex items-center justify-between">
-                        <Button
+                      <div className="flex items-center justify-end">
+                        {/* <Button
                           variant="outline"
                           size="sm"
                           className="border-gray-700"
@@ -567,11 +617,11 @@ export function StakeModal({
                         >
                           <ExternalLink className="h-4 w-4 mr-1" />
                           View Explorer
-                        </Button>
+                        </Button> */}
 
                         <Button
                           onClick={handleVerifyDeposit}
-                          className="bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700"
+                          className="bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 w-full"
                           disabled={isVerifying}
                         >
                           {isVerifying ? (
