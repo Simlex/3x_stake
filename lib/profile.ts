@@ -87,6 +87,7 @@ export const profileApi = {
         "/profile/withdraw",
         data
       );
+      console.log("🚀 ~ response:", response)
       return response.data.data;
     } catch (error) {
       console.error("Failed to initiate withdrawal:", error);

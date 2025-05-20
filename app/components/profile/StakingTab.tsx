@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import {
   Card,
   CardContent,
@@ -20,14 +20,25 @@ import { toast } from "sonner";
 import { rewardApi } from "@/lib/reward";
 import { useAuthContext } from "@/app/context/AuthContext";
 import moment from "moment";
-import { StakingPositionDepositStatus } from "@prisma/client";
+import { StakingPositionDepositStatus, WithdrawalStatus } from "@prisma/client";
+import EarlyWithdrawModal from "../modal/early-withdraw-modal";
 
-const StakingTab = () => {
+type StakingTabProps = {
+  setIsEarlyWithdrawalModalOpen: (isOpen: boolean) => void;
+  isEarlyWithdrawalModalOpen: boolean;
+  setSelectedPosition: Dispatch<SetStateAction<StakingPosition | null>>;
+};
+
+const StakingTab = ({
+  setIsEarlyWithdrawalModalOpen,
+  isEarlyWithdrawalModalOpen,
+  setSelectedPosition,
+}: StakingTabProps) => {
   const { user, refreshUser } = useAuthContext();
   const [stakingPositions, setStakingPositions] = useState<StakingPosition[]>(
     []
   );
-  console.log("🚀 ~ StakingTab ~ stakingPositions:", stakingPositions);
+  console.log("🚀 ~ stakingPositions:", stakingPositions);
   const [isFetchingStakedPositions, setIsFetchingStakedPositions] =
     useState(true);
   const [isFetchingUserRewards, setIsFetchingUserRewards] = useState(true);
@@ -305,7 +316,7 @@ const StakingTab = () => {
                       </div>
                     </div>
 
-                    {position.isActive && (
+                    {position.isActive ? (
                       <div className="flex gap-2">
                         <div className="flex flex-row items-center space-x-2">
                           {/* <p className="text-xs">
@@ -363,6 +374,36 @@ const StakingTab = () => {
                           </Button>
                         )}
                       </div>
+                    ) : position.requestedWithdrawal &&
+                      position.withdrawalStatus == WithdrawalStatus.PENDING ? (
+                      <span className="border-yellow-500/50 text-yellow-400 hover:bg-yellow-950/20">
+                        Pending Withdrawal
+                      </span>
+                    ) : position.requestedWithdrawal &&
+                      position.withdrawalStatus == WithdrawalStatus.APPROVED ? (
+                      <span className="border-green-500/50 text-green-400 hover:bg-green-950/20">
+                        Approved for Withdrawal
+                      </span>
+                    ) : (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="border-red-500/50 text-red-400 hover:bg-red-950/20"
+                        onClick={() => {
+                          setSelectedPosition(position);
+                          setIsEarlyWithdrawalModalOpen(true);
+                        }}
+                      >
+                        {/* {false ? (
+                          <>
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />{" "}
+                            Unstaking...
+                          </>
+                        ) : (
+                          "Withdraw"
+                        )} */}
+                        Withdraw
+                      </Button>
                     )}
                   </div>
                 </div>

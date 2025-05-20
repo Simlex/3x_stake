@@ -19,6 +19,8 @@ import { Card, CardContent } from "../components/ui/card";
 import { profileApi } from "@/lib/profile";
 import { WithdrawModal } from "../components/modal/withdraw-modal";
 import { ZeroBalanceWithdrawModal } from "../components/modal/no-balance-withdraw-modal";
+import EarlyWithdrawModal from "../components/modal/early-withdraw-modal";
+import { StakingPosition } from "../model";
 
 export default function ProfilePage() {
   const { user, isLoading: authLoading } = useAuthContext();
@@ -38,6 +40,10 @@ export default function ProfilePage() {
     useState<number>();
   const [userPendingWithdrawals, setuserPendingWithdrawals] =
     useState<number>();
+  const [selectedPosition, setSelectedPosition] =
+    useState<StakingPosition | null>(null);
+  const [isEarlyWithdrawalModalOpen, setIsEarlyWithdrawalModalOpen] =
+    useState(false);
 
   const handleFetchUserWithdrawableBalance = async () => {
     try {
@@ -170,18 +176,19 @@ export default function ProfilePage() {
                       <h2 className="text-4xl font-bold">
                         ${(user?.balance || 0).toLocaleString()}
                       </h2>
-                      {userWithdrawableBalance || userWithdrawableBalance == 0 ? (
+                      {userWithdrawableBalance ||
+                      userWithdrawableBalance == 0 ? (
                         <p className="text-white/60">
-                          Withdrawable:{" "}
-                          ${userWithdrawableBalance.toLocaleString()}
+                          Withdrawable: $
+                          {userWithdrawableBalance.toLocaleString()}
                         </p>
                       ) : (
                         <></>
                       )}
                       {userPendingWithdrawals || userPendingWithdrawals == 0 ? (
                         <p className="text-white/60">
-                          Pending Withdrawals:{" "}
-                          ${userPendingWithdrawals.toLocaleString()}
+                          Pending Withdrawals: $
+                          {userPendingWithdrawals.toLocaleString()}
                         </p>
                       ) : (
                         <></>
@@ -189,7 +196,11 @@ export default function ProfilePage() {
                     </div>
                     <div className="h-fit">
                       <Button
-                        onClick={() => userWithdrawableBalance && userWithdrawableBalance > 0 ? setIsWithdrawModalOpen(true) : setIsZeroWithdrawModalOpen(true)}
+                        onClick={() =>
+                          userWithdrawableBalance && userWithdrawableBalance > 0
+                            ? setIsWithdrawModalOpen(true)
+                            : setIsZeroWithdrawModalOpen(true)
+                        }
                         disabled={isFetchingUserWithdrawableBalance}
                         variant="default"
                         className="bg-gradient-to-r from-pink-500 to-purple-600"
@@ -206,7 +217,11 @@ export default function ProfilePage() {
               </TabsContent>
 
               <TabsContent value="staking" key={"staking"}>
-                <StakingTab />
+                <StakingTab
+                  isEarlyWithdrawalModalOpen={isEarlyWithdrawalModalOpen}
+                  setIsEarlyWithdrawalModalOpen={setIsEarlyWithdrawalModalOpen}
+                  setSelectedPosition={setSelectedPosition}
+                />
               </TabsContent>
 
               <TabsContent value="activity" key={"activity"}>
@@ -230,6 +245,15 @@ export default function ProfilePage() {
           isOpen={isWithdrawModalOpen}
           onClose={() => setIsWithdrawModalOpen(false)}
           userBalance={Number(userWithdrawableBalance.toFixed(2))}
+          postFn={handleFetchUserWithdrawableBalance}
+        />
+      ) : null}
+
+      {isEarlyWithdrawalModalOpen ? (
+        <EarlyWithdrawModal
+          isOpen={isEarlyWithdrawalModalOpen}
+          onClose={() => setIsEarlyWithdrawalModalOpen(false)}
+          position={selectedPosition}
           postFn={handleFetchUserWithdrawableBalance}
         />
       ) : null}

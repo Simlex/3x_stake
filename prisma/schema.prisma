@@ -147,6 +147,7 @@ model StakingPosition {
     depositStatus     StakingPositionDepositStatus @default(PENDING)
     rewards           Reward[]
     apy               Decimal                      @db.Decimal(10, 2)
+    withdrawal        Withdrawal?
     createdAt         DateTime                     @default(now())
     updatedAt         DateTime                     @updatedAt
 
@@ -274,18 +275,20 @@ model Permission {
 }
 
 model Withdrawal {
-    id              String           @id @default(uuid())
-    userId          String
-    user            User             @relation(fields: [userId], references: [id], onDelete: Cascade)
-    amount          Float
-    status          WithdrawalStatus @default(PENDING)
-    network         Network
-    wallet          String // destination wallet address
-    transactionHash String? // blockchain transaction hash, if available
-    reason          String? // optional note from user
-    processedAt     DateTime? // when admin processed it
-    createdAt       DateTime         @default(now())
-    updatedAt       DateTime         @updatedAt
+    id                String           @id @default(uuid())
+    userId            String
+    user              User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+    amount            Float
+    status            WithdrawalStatus @default(PENDING)
+    network           Network
+    stakingPositionId String?          @unique
+    stakingPosition   StakingPosition? @relation(fields: [stakingPositionId], references: [id], onDelete: Cascade)
+    wallet            String // destination wallet address
+    transactionHash   String? // blockchain transaction hash, if available
+    reason            String? // optional note from user
+    processedAt       DateTime? // when admin processed it
+    createdAt         DateTime         @default(now())
+    updatedAt         DateTime         @updatedAt
 
     @@index([userId])
     @@map("withdrawals")

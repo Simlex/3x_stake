@@ -1,6 +1,6 @@
 // Core models for the application
 
-import { StakingPositionDepositStatus } from "@prisma/client";
+import { StakingPositionDepositStatus, WithdrawalStatus } from "@prisma/client";
 
 // User model
 export interface User {
@@ -24,6 +24,8 @@ export interface StakingPosition {
   planName: string;
   amount: number;
   network: Network;
+  requestedWithdrawal: boolean;
+  withdrawalStatus: WithdrawalStatus | null;
   startDate: string;
   endDate?: string;
   lastClaimedAt?: string;

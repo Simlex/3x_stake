@@ -30,11 +30,13 @@ export async function GET(req: NextRequest) {
       },
       include: {
         stakingPlan: true,
+        withdrawal: true
       },
       orderBy: {
         createdAt: "desc",
       },
     })
+    console.log("🚀 ~ GET ~ stakingPositions:", stakingPositions)
 
     // Calculate rewards for each position
     const positionsWithRewards = await Promise.all(
@@ -64,6 +66,8 @@ export async function GET(req: NextRequest) {
           rewards: rewards._sum.amount || 0,
           isActive: position.isActive,
           depositStatus: position.depositStatus,
+          requestedWithdrawal: position.withdrawal ? true : false,
+          withdrawalStatus: position.withdrawal?.status || null,
           createdAt: position.createdAt.toISOString(),
           updatedAt: position.updatedAt.toISOString(),
         }
