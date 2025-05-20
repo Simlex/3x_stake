@@ -1,6 +1,7 @@
 import { API } from "@/app/api/apiClient";
 import { ApiResponse } from "@/app/model";
 import { AdminDashboardStats, UserStakingPosition } from "@/app/model/IAdmin";
+import { Withdrawal } from "@/app/model/IWithdrawal";
 
 // API functions for admin-related data
 export const adminApi = {
@@ -86,6 +87,28 @@ export const adminApi = {
             return response.data.data;
         } catch (error) {
             console.error("Failed to approve deposit:", error);
+            throw error;
+        }
+    },
+    getAllWithdrawals: async () => {
+        try {
+            const response = await API.get<ApiResponse<Withdrawal[]>>(
+                "/admin/withdrawals"
+            );
+            return response.data.data;
+        } catch (error) {
+            console.error("Failed to fetch all withdrawals:", error);
+            throw error;
+        }
+    },
+    approveWithdrawal: async (withdrawalId: string) => {
+        try {
+            const response = await API.post<ApiResponse<any>>(
+                `/admin/withdrawals/approve/${withdrawalId}`
+            );  
+            return response.data.data;
+        } catch (error) {
+            console.error("Failed to approve withdrawal:", error);
             throw error;
         }
     }

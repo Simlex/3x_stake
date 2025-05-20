@@ -11,6 +11,7 @@ import {
   Settings,
   LogOut,
   Shield,
+  CreditCardIcon,
 } from "lucide-react";
 import { useAuthContext } from "@/app/context/AuthContext";
 
@@ -46,6 +47,11 @@ export function AdminSidebar() {
       title: "Deposits",
       href: "/admin/deposits",
       icon: CreditCard,
+    },
+    {
+      title: "Withdrawals",
+      href: "/admin/withdrawals",
+      icon: CreditCardIcon,
     },
     // {
     //   title: "Settings",

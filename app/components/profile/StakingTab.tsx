@@ -382,7 +382,7 @@ const StakingTab = ({
                     ) : position.requestedWithdrawal &&
                       position.withdrawalStatus == WithdrawalStatus.APPROVED ? (
                       <span className="border-green-500/50 text-green-400 hover:bg-green-950/20">
-                        Approved for Withdrawal
+                        Withdrawal Approved
                       </span>
                     ) : (
                       <Button
