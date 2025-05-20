@@ -173,7 +173,7 @@ export function StakingPlans() {
                 <Card
                   className={`border ${plan.borderColor} ${plan.bgColor} overflow-hidden relative h-full flex flex-col`}
                 >
-                  {fetchedPlan.popular && (
+                  {fetchedPlan?.popular && (
                     <div className="absolute top-0 right-0">
                       <Badge className="bg-gradient-to-r from-pink-500 to-purple-600 text-white border-0 rounded-tl-none rounded-br-none rounded-tr-none px-3 py-1.5">
                         Popular
