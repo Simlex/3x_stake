@@ -197,149 +197,15 @@ export const apiClient = {
       throw error;
     }
   },
-
-  // Admin authentication
-  adminLogin: async (data: LoginRequest): Promise<any> => {
-    try {
-      const response = await API.post(ApiRoutes.AdminLogin, data);
-      return response.data;
-    } catch (error) {
-      throw error;
-    }
-  },
-
-  // User profile
-  getUserProfile: async (): Promise<any> => {
-    try {
-      const response = await API.get(ApiRoutes.UserProfile);
-      return response.data;
-    } catch (error) {
-      throw error;
-    }
-  },
-
-  updateUserProfile: async (data: any): Promise<any> => {
-    try {
-      const response = await API.put(ApiRoutes.UpdateProfile, data);
-      return response.data;
-    } catch (error) {
-      throw error;
-    }
-  },
-
-  getUserProfileSummary: async (): Promise<any> => {
-    try {
-      const response = await API.post(ApiRoutes.UserProfileSummary);
-      return response.data;
-    } catch (error) {
-      throw error;
-    }
-  },
-
-  // User preferences
-  getUserPreferences: async (): Promise<any> => {
-    try {
-      const response = await API.get(ApiRoutes.UserPreferences);
-      return response.data;
-    } catch (error) {
-      throw error;
-    }
-  },
-
-  updateUserPreferences: async (data: any): Promise<any> => {
-    try {
-      const response = await API.put(ApiRoutes.UpdatePreferences, data);
-      return response.data;
-    } catch (error) {
-      throw error;
-    }
-  },
-
-  // Staking
-  getStakingPlans: async (): Promise<any> => {
-    try {
-      const response = await API.get(ApiRoutes.StakingPlans);
-      return response.data;
-    } catch (error) {
-      throw error;
-    }
-  },
-
-  getStakingPositions: async (): Promise<any> => {
-    try {
-      const response = await API.get(ApiRoutes.StakingPositions);
-      return response.data;
-    } catch (error) {
-      throw error;
-    }
-  },
-
-  createStakingPosition: async (data: any): Promise<any> => {
-    try {
-      const response = await API.post(ApiRoutes.CreateStakingPosition, data);
-      return response.data;
-    } catch (error) {
-      throw error;
-    }
-  },
-
-  // Rewards
-  getRewards: async (): Promise<any> => {
-    try {
-      const response = await API.get(ApiRoutes.Rewards);
-      return response.data;
-    } catch (error) {
-      throw error;
-    }
-  },
-
-  claimReward: async (id: string): Promise<any> => {
-    try {
-      const url = ApiRoutes.ClaimReward.replace(":id", id);
-      const response = await API.post(url);
-      return response.data;
-    } catch (error) {
-      throw error;
-    }
-  },
 };
 
 // React hooks for API calls
 export function useAuth() {
   return {
-    login: apiClient.login,
     signup: apiClient.signup,
-    logout: apiClient.logout,
     forgotPassword: apiClient.forgotPassword,
     resetPassword: apiClient.resetPassword,
     verifyEmail: apiClient.verifyEmail,
-    resendVerificationEmail: apiClient.resendVerificationEmail,
-    validateSession: apiClient.validateSession,
-  };
-}
-
-export function useUser() {
-  return {
-    getProfile: apiClient.getUserProfile,
-    updateProfile: apiClient.updateUserProfile,
-    getPreferences: apiClient.getUserPreferences,
-    updatePreferences: apiClient.updateUserPreferences,
-    getUserProfileSummary: apiClient.getUserProfileSummary,
-  };
-}
-
-export function useStaking() {
-  return {
-    getPlans: apiClient.getStakingPlans,
-    getPositions: apiClient.getStakingPositions,
-    createPosition: apiClient.createStakingPosition,
-    getRewards: apiClient.getRewards,
-    claimReward: apiClient.claimReward,
-  };
-}
-
-export function useAdmin() {
-  return {
-    login: apiClient.adminLogin,
+    resendVerificationEmail: apiClient.resendVerificationEmail
   };
 }
