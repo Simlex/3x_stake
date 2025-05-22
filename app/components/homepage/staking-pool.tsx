@@ -67,7 +67,7 @@ export function StakingPool() {
           >
             <span className="gradient-text">Staking Pool</span>
           </motion.h2>
-          <motion.p
+          {/* <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={controls}
             variants={{
@@ -76,7 +76,7 @@ export function StakingPool() {
             className="text-xl text-gray-400 max-w-2xl mx-auto"
           >
             Progress towards our 50,000 USDT goal by May 22, 2026
-          </motion.p>
+          </motion.p> */}
         </div>
 
         <motion.div
@@ -115,7 +115,7 @@ export function StakingPool() {
                 <div className="absolute bottom-8 left-0 right-0 flex justify-center">
                   <div className="bg-black/40 backdrop-blur-sm px-4 py-2 rounded-full">
                     <span className="text-lg font-bold text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-purple-600">
-                      ${Math.floor((1000/100) + currentUSDT).toLocaleString()} USDT
+                      ${Math.floor(1000 + currentUSDT).toLocaleString()} USDT
                     </span>
                   </div>
                 </div>
