@@ -91,7 +91,8 @@ export function FAQ() {
           <p className="text-gray-400">
             Still have questions?{" "}
             <a
-              href="#"
+              href="https://t.me/Y_Support1"
+              target="_blank"
               className="text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-purple-600 font-medium"
             >
               Contact our support team

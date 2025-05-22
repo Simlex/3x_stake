@@ -166,7 +166,7 @@ export default function ReferralsPage() {
             transition={{ duration: 0.5 }}
             className="mb-8"
           >
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <Card className="border-0 glass-effect">
                 <CardContent className="p-6">
                   <div className="flex items-center gap-4">
@@ -201,7 +201,7 @@ export default function ReferralsPage() {
                 </CardContent>
               </Card>
 
-              <Card className="border-0 glass-effect">
+              {/* <Card className="border-0 glass-effect">
                 <CardContent className="p-6">
                   <div className="flex items-center gap-4">
                     <div className="flex items-center justify-center w-12 h-12 rounded-full bg-gradient-to-br from-amber-500 to-orange-600">
@@ -215,7 +215,7 @@ export default function ReferralsPage() {
                     </div>
                   </div>
                 </CardContent>
-              </Card>
+              </Card> */}
             </div>
           </motion.div>
 

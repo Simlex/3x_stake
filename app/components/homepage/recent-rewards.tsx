@@ -25,7 +25,7 @@ const generateRandomUsers = (count: number) => {
 }
 
 export function RecentRewards() {
-  const [users, setUsers] = useState(generateRandomUsers(10))
+  const [users, setUsers] = useState(generateRandomUsers(100))
   const [visibleUsers, setVisibleUsers] = useState<typeof users>([])
   const [currentIndex, setCurrentIndex] = useState(0)
 
@@ -102,7 +102,7 @@ export function RecentRewards() {
                       </div>
                       <div>
                         <p className="text-sm font-medium">{user.address}</p>
-                        <p className="text-xs text-gray-400">Balance: ${user.balance.toLocaleString()}</p>
+                        <p className="text-xs text-gray-400">Stakings: ${user.balance.toLocaleString()}</p>
                       </div>
                     </div>
                     <div className="flex items-center text-green-500">

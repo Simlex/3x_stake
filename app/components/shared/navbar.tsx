@@ -71,7 +71,7 @@ export function Navbar() {
               <div className="absolute inset-0 bg-gradient-to-r from-pink-500 to-purple-600 rounded-full blur-sm"></div>
               <div className="absolute inset-0.5 bg-black rounded-full flex items-center justify-center">
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-purple-600 font-bold">
-                  3
+                  Y
                 </span>
               </div>
             </div>
@@ -82,9 +82,10 @@ export function Navbar() {
 
           <nav className="hidden md:flex items-center gap-6">
             <NavLink href="/">Home</NavLink>
+            <NavLink href="/about-us">About Us</NavLink>
             <NavLink href="#plans">Stake</NavLink>
             <NavLink href="#rewards">Rewards</NavLink>
-            <NavLink href="/referrals">Referrals</NavLink>
+            {user && <NavLink href="/referrals">Referrals</NavLink>}
             <NavLink href="#faq">FAQ</NavLink>
           </nav>
 

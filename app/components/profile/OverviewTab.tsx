@@ -165,7 +165,7 @@ const OverviewTab = () => {
                   <span className="font-medium">{profileData?.referrals}</span>
                 )}
               </div>
-              <div className="flex justify-between">
+              {/* <div className="flex justify-between">
                 <span className="text-gray-400">APR Boost</span>
                 {isLoading ? (
                   <Skeleton className="h-6 w-24" />
@@ -174,7 +174,7 @@ const OverviewTab = () => {
                     +{((profileData?.referrals || 0) * 0.01).toFixed(2)}%
                   </span>
                 )}
-              </div>
+              </div> */}
               <div className="flex justify-between">
                 <span className="text-gray-400">Referral Code</span>
                 {isLoading ? (

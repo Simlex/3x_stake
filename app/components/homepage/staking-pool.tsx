@@ -5,24 +5,37 @@ import { motion, useAnimation } from "framer-motion"
 import { Card, CardContent, CardHeader, CardTitle } from "@/app/components/ui/card"
 
 export function StakingPool() {
-  const [poolFill, setPoolFill] = useState(65)
   const [isVisible, setIsVisible] = useState(false)
+  const [now, setNow] = useState(Date.now())
   const controls = useAnimation()
   const ref = useRef<HTMLDivElement>(null)
 
-  // Simulate pool filling up over time
+  // Date setup (May 22, 2025 to May 22, 2026 UTC)
+  const startDate = new Date(Date.UTC(2025, 4, 22))
+  const endDate = new Date(Date.UTC(2025, 11, 22))
+  const totalDuration = endDate.getTime() - startDate.getTime()
+
+  // Update time every second
   useEffect(() => {
     const interval = setInterval(() => {
-      setPoolFill((prev) => {
-        const newValue = prev + Math.random() * 0.5
-        return newValue > 100 ? 65 : newValue
-      })
-    }, 5000)
-
+      setNow(Date.now())
+    }, 1000)
     return () => clearInterval(interval)
   }, [])
 
-  // Animation when component comes into view
+  // Calculate current USDT and fill percentage
+  const elapsed = now - startDate.getTime()
+  let currentUSDT = 0
+  if (elapsed <= 0) {
+    currentUSDT = 0
+  } else if (elapsed >= totalDuration) {
+    currentUSDT = 100000
+  } else {
+    currentUSDT = (elapsed / totalDuration) * 100000
+  }
+  const poolFill = (currentUSDT / 100000) * 100
+
+  // Visibility animation
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -34,14 +47,9 @@ export function StakingPool() {
       { threshold: 0.1 },
     )
 
-    if (ref.current) {
-      observer.observe(ref.current)
-    }
-
+    if (ref.current) observer.observe(ref.current)
     return () => {
-      if (ref.current) {
-        observer.unobserve(ref.current)
-      }
+      if (ref.current) observer.unobserve(ref.current)
     }
   }, [controls])
 
@@ -67,7 +75,7 @@ export function StakingPool() {
             }}
             className="text-xl text-gray-400 max-w-2xl mx-auto"
           >
-            Watch our staking pool grow in real-time as new deposits are added.
+            Progress towards our 50,000 USDT goal by May 22, 2026
           </motion.p>
         </div>
 
@@ -85,17 +93,14 @@ export function StakingPool() {
             </CardHeader>
             <CardContent className="p-6">
               <div className="relative h-64 bg-gradient-to-b from-gray-900 to-gray-950 rounded-lg border border-white/10 overflow-hidden">
-                {/* Water fill animation */}
                 <div
                   className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-purple-600 to-pink-500 transition-all duration-1000 ease-in-out"
-                  style={{ height: `${poolFill}%` }}
+                  style={{ height: `${poolFill + (1000/100)}%` }}
                 >
-                  {/* Animated water surface */}
                   <div className="absolute top-0 left-0 right-0 h-4 bg-gradient-to-r from-purple-400 to-pink-400 opacity-50">
                     <div className="absolute top-0 left-0 right-0 h-2 bg-white/20"></div>
                   </div>
 
-                  {/* Bubbles */}
                   {isVisible && (
                     <>
                       <Bubble size={8} left={15} delay={0} duration={4} />
@@ -107,20 +112,17 @@ export function StakingPool() {
                   )}
                 </div>
 
-                {/* Pool stats */}
                 <div className="absolute bottom-8 left-0 right-0 flex justify-center">
                   <div className="bg-black/40 backdrop-blur-sm px-4 py-2 rounded-full">
                     <span className="text-lg font-bold text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-purple-600">
-                      ${Math.floor(20000 + (poolFill - 65) * 1000).toLocaleString()} USDT
+                      ${Math.floor((1000/100) + currentUSDT).toLocaleString()} USDT
                     </span>
                   </div>
                 </div>
 
-                {/* Tap/faucet */}
                 <div className="absolute top-0 left-1/2 transform -translate-x-1/2">
                   <div className="w-8 h-12 bg-gradient-to-b from-gray-400 to-gray-600 rounded-b-lg"></div>
                   <div className="w-4 h-2 bg-gray-300 mx-auto rounded-b-lg relative">
-                    {/* Dripping animation */}
                     {isVisible && (
                       <div className="absolute top-full left-1/2 transform -translate-x-1/2">
                         <motion.div
@@ -138,16 +140,11 @@ export function StakingPool() {
                     )}
                   </div>
                 </div>
-
-                {/* Percentage indicator */}
-                {/* <div className="absolute bottom-4 right-4 bg-black/60 backdrop-blur-sm px-3 py-1 rounded-full text-sm">
-                  {Math.floor(poolFill)}% Full
-                </div> */}
               </div>
 
-              <div className="mt-6 text-center text-sm text-gray-400">
-                New deposits are automatically added to the staking pool and start earning rewards immediately.
-              </div>
+              {/* <div className="mt-6 text-center text-sm text-gray-400">
+                The pool increases linearly until reaching 50,000 USDT on May 22, 2026
+              </div> */}
             </CardContent>
           </Card>
         </motion.div>
@@ -156,6 +153,7 @@ export function StakingPool() {
   )
 }
 
+// Bubble component remains the same
 function Bubble({
   size,
   left,
