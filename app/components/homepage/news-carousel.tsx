@@ -8,6 +8,7 @@ import { Button } from "@/app/components/ui/button";
 import { Badge } from "@/app/components/ui/badge";
 import { Article, ArticleItem } from "@/app/model/IArticle";
 import Link from "next/link";
+import moment from "moment";
 
 // Sample news data
 const NEWS_ITEMS = [
@@ -150,7 +151,7 @@ export function NewsCarousel() {
                           {item.CATEGORY_DATA[0].NAME}
                         </Badge>
                         <span className="text-sm text-gray-400">
-                          {item.PUBLISHED_ON}
+                          {moment.unix(item.PUBLISHED_ON).format('YYYY-MM-DD')}
                         </span>
                       </div>
                       <h3 className="text-xl font-bold mb-3">{item.TITLE}</h3>
