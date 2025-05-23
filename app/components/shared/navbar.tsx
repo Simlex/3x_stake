@@ -27,6 +27,7 @@ import {
 import { useRouter } from "next/navigation";
 import { useModalContext } from "@/app/context/ModalContext";
 import { useAuthContext } from "@/app/context/AuthContext";
+import Image from "next/image";
 
 export function Navbar() {
   const {
@@ -55,7 +56,7 @@ export function Navbar() {
     return user.username.substring(0, 2).toUpperCase();
   };
 
-  if (user?.isAdmin) return <></>
+  if (user?.isAdmin) return <></>;
 
   return (
     <>
@@ -67,14 +68,14 @@ export function Navbar() {
       >
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2">
-            <div className="relative w-8 h-8">
-              <div className="absolute inset-0 bg-gradient-to-r from-pink-500 to-purple-600 rounded-full blur-sm"></div>
-              <div className="absolute inset-0.5 bg-black rounded-full flex items-center justify-center">
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-purple-600 font-bold">
-                  Y
-                </span>
-              </div>
-            </div>
+            <span className="w-10 h-10 rounded-full relative overflow-hidden">
+              <Image
+                alt="logo"
+                src={"/logo.jpg"}
+                fill
+                className="w-full h-full object-cover"
+              />
+            </span>
             <span className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-purple-600">
               Yieldra
             </span>

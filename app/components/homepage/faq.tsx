@@ -34,7 +34,7 @@ const FAQ_ITEMS = [
   {
     question: "How does the referral program work?",
     answer:
-      "Our referral program allows you to earn additional rewards by inviting friends to the platform. For each referral who deposits funds, you receive a 0.01% increase in your APR, up to a maximum of 10,000 referrals (or a 10% increase).",
+      "Our referral program allows you to earn additional rewards by inviting others to Yieldra. For every user you directly refer, you'll receive a percentage of their staked amount. Plus, our system includes two additional downline levels. In total, you can earn up to 25% in referral bonuses—automatically and passively—as your network grows.",
   },
   {
     question: "Is my staked USDT safe?",

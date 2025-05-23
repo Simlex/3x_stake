@@ -1,6 +1,7 @@
 import type React from "react";
 import Link from "next/link";
-import { Github, Twitter, Linkedin, Instagram } from "lucide-react";
+import { Github, Twitter, Linkedin, Instagram, Send } from "lucide-react";
+import Image from "next/image";
 
 export function Footer() {
   return (
@@ -9,14 +10,9 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div>
             <div className="flex items-center gap-2 mb-4">
-              <div className="relative w-8 h-8">
-                <div className="absolute inset-0 bg-gradient-to-r from-pink-500 to-purple-600 rounded-full blur-sm"></div>
-                <div className="absolute inset-0.5 bg-black rounded-full flex items-center justify-center">
-                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-purple-600 font-bold">
-                    Y
+              <span className="w-10 h-10 rounded-full relative overflow-hidden">
+                    <Image alt="logo" src={"/logo.jpg"} fill className="w-full h-full object-cover" /> 
                   </span>
-                </div>
-              </div>
               <span className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-purple-600">
                 Yieldra
               </span>
@@ -26,10 +22,8 @@ export function Footer() {
               competitive APR rates and instant rewards.
             </p>
             <div className="flex space-x-4">
-              <SocialLink href="#" icon={<Twitter className="h-5 w-5" />} />
-              <SocialLink href="#" icon={<Github className="h-5 w-5" />} />
-              <SocialLink href="#" icon={<Linkedin className="h-5 w-5" />} />
-              <SocialLink href="#" icon={<Instagram className="h-5 w-5" />} />
+              <SocialLink href="https://t.me/Yieldraa" icon={<Send className="h-5 w-5" />} />
+              <SocialLink href="https://x.com/Yieldra" icon={<Twitter className="h-5 w-5" />} />
             </div>
           </div>
 
@@ -71,7 +65,7 @@ export function Footer() {
           <div className="flex items-center mt-4 md:mt-0">
             <div className="flex items-center gap-2 text-xs text-gray-400">
                 <Link
-                href={"/complianace"}
+                href={"/terms-and-conditions"}
                 className="text-gray-400 hover:text-white transition-colors duration-200"
                 >
                     Terms & Conditions
