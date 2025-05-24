@@ -32,9 +32,27 @@ export function SignupModal({
 
   const auth = useAuth();
 
+  const trustedDomains = [
+    "gmail.com",
+    "yahoo.com",
+    "outlook.com",
+    "hotmail.com",
+    "icloud.com",
+    "protonmail.com",
+    "aol.com",
+    "live.com",
+    "me.com",
+    // Add more legit ones if needed
+  ];
+
+  const isFromTrustedDomain = (email: string) => {
+    const domain = email.split("@")[1]?.toLowerCase();
+    return trustedDomains.includes(domain);
+  };
+
   const validateEmail = (email: string) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
+    return emailRegex.test(email) && isFromTrustedDomain(email);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {

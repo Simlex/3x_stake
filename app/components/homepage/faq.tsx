@@ -46,6 +46,11 @@ const FAQ_ITEMS = [
     answer:
       "Rewards are calculated daily and can be claimed at any time through the 'Claim' button on your user dashboard. There are no minimum claim amounts or waiting periods.",
   },
+  {
+    question: "When and how can I withdraw my staking rewards, and are there any fees or penalties involved?",
+    answer:
+      `You can withdraw your staking rewards after a 30-day period directly from your profile. Once this period has passed, your rewards will be available in the "Withdrawable" section. Please note, a 5% fee applies to all withdrawals made after 30 days. Early withdrawals made before the 30-day period are subject to a 60% penalty.`,
+  },
 ]
 
 export function FAQ() {

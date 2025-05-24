@@ -56,6 +56,8 @@ export function Navbar() {
     return user.username.substring(0, 2).toUpperCase();
   };
 
+  const { push } = useRouter();
+
   if (user?.isAdmin) return <></>;
 
   return (
@@ -84,10 +86,10 @@ export function Navbar() {
           <nav className="hidden md:flex items-center gap-6">
             <NavLink href="/">Home</NavLink>
             <NavLink href="/about-us">About Us</NavLink>
-            <NavLink href="#plans">Stake</NavLink>
-            <NavLink href="#rewards">Rewards</NavLink>
+            <Button onClick={() => push("/#plans")}>Stake</Button>
+            <Button onClick={() => push("/#rewards")}>Rewards</Button>
             {user && <NavLink href="/referrals">Referrals</NavLink>}
-            <NavLink href="#faq">FAQ</NavLink>
+            <Button onClick={() => push("/#faq")}>FAQ</Button>
           </nav>
 
           {/* <div className="hidden md:flex items-center gap-4">
@@ -277,13 +279,16 @@ export function Navbar() {
 function NavLink({
   href,
   children,
+  onClick,
 }: {
   href: string;
   children: React.ReactNode;
+  onClick?: React.MouseEventHandler<HTMLAnchorElement> | undefined;
 }) {
   return (
     <Link
       href={href}
+      onClick={onClick}
       className="relative text-sm font-medium text-gray-200 hover:text-white dark:text-gray-200 dark:hover:text-white transition-colors duration-200 group"
     >
       {children}

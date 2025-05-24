@@ -13,7 +13,7 @@ type Props = {}
 
 export default function HomePage({}: Props) {
   return (
-    <div className="">
+    <div className="scroll-smooth">
       <Hero />
       <Stats />
       <StakingPlans />
