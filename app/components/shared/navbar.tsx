@@ -233,18 +233,44 @@ export function Navbar() {
               <MobileNavLink href="/" onClick={() => setIsOpen(false)}>
                 Home
               </MobileNavLink>
-              <MobileNavLink href="/#plans" onClick={() => setIsOpen(false)}>
+              <MobileNavLink href="/about-us" onClick={() => setIsOpen(false)}>
+                About Us
+              </MobileNavLink>
+              <Button
+                className="text-lg text-left justify-start pl-0"
+                onClick={() => {
+                  setIsOpen(false);
+                  push("/#plans");
+                }}
+              >
                 Stake
-              </MobileNavLink>
-              <MobileNavLink href="/rewards" onClick={() => setIsOpen(false)}>
+              </Button>
+              <Button
+                className="text-lg text-left justify-start pl-0"
+                onClick={() => {
+                  setIsOpen(false);
+                  push("/#rewards");
+                }}
+              >
                 Rewards
-              </MobileNavLink>
-              <MobileNavLink href="/referrals" onClick={() => setIsOpen(false)}>
-                Referrals
-              </MobileNavLink>
-              <MobileNavLink href="/faq" onClick={() => setIsOpen(false)}>
+              </Button>
+              {user && (
+                <MobileNavLink
+                  href="/referrals"
+                  onClick={() => setIsOpen(false)}
+                >
+                  Referrals
+                </MobileNavLink>
+              )}
+              <Button
+                className="text-lg text-left justify-start pl-0"
+                onClick={() => {
+                  setIsOpen(false);
+                  push("/#faq");
+                }}
+              >
                 FAQ
-              </MobileNavLink>
+              </Button>
               {/* <Button
               variant="outline"
               className="border-purple-500/50 hover:border-purple-500 text-white dark:text-white w-full mt-2"
