@@ -85,16 +85,21 @@ export async function POST(
         id: stakingPositionId,
       },
       data: {
-        depositStatus: StakingPositionDepositStatus.APPROVED,
-        isActive: true,
-        endDate: new Date(new Date().setDate(new Date().getDate() + 30)),
-        startDate: new Date(),
+        depositStatus: StakingPositionDepositStatus.REJECTED,
+        isActive: false,
+        user: {
+            update: {
+                balance: {
+                    decrement: stakingPosition.amount
+                }
+            }
+        }
       },
     });
 
     return NextResponse.json({ success: true, data: updatedStakingPosition });
   } catch (error) {
-    console.error("Error disapproving deposit:", error);
+    console.error("Error fetching deposits data:", error);
     return NextResponse.json(
       { success: false, message: "Internal server error" },
       { status: 500 }

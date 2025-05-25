@@ -46,6 +46,7 @@ export default function AdminDepositsPage() {
   const [isApprovalOpen, setIsApprovalOpen] = useState(false);
   const { user, isLoading: authLoading } = useAuthContext();
   const [isApprovingDeposit, setIsApprovingDeposit] = useState(false);
+  const [isDisapprovingDeposit, setIsDisapprovingDeposit] = useState(false);
 
   const handleFetchDeposits = async () => {
     if (authLoading || !user) return;
@@ -63,11 +64,6 @@ export default function AdminDepositsPage() {
       setIsLoading(false);
     }
   };
-
-//   const handleApproveDeposit = (deposit: any) => {
-//     setSelectedDeposit(deposit);
-//     setIsApprovalOpen(true);
-//   };
 
   const handleApproveDeposit = async (depositId: string) => {
     if (isApprovingDeposit) return;
@@ -92,6 +88,32 @@ export default function AdminDepositsPage() {
       setError("Failed to approve deposit");
     } finally {
       setIsApprovingDeposit(false);
+    }
+  };
+  
+  const handleDisapproveDeposit = async (depositId: string) => {
+    if (isDisapprovingDeposit) return;
+
+    setIsDisapprovingDeposit(true);
+    try {
+      const response = await adminApi.disapproveDeposit(depositId);
+      console.log("🚀 ~ handleDisapproveDeposit ~ response:", response);
+      setDeposits((prev) =>
+        prev.map((deposit) =>
+          deposit.id === depositId
+            ? { ...deposit, depositStatus: StakingPositionDepositStatus.REJECTED }
+            : deposit
+        )
+      );
+      toast.success("Deposit disapproved successfully", {
+        description: "The deposit has been disapproved.",
+      });
+      setIsApprovalOpen(false);
+    } catch (err) {
+      console.error("Failed to disapproved deposit:", err);
+      setError("Failed to disapproved deposit");
+    } finally {
+      setIsDisapprovingDeposit(false);
     }
   };
 
@@ -231,6 +253,9 @@ export default function AdminDepositsPage() {
                 getStatusBadge={getStatusBadge}
                 handleViewDetails={handleViewDetails}
                 handleApproveDeposit={handleApproveDeposit}
+                handleDisapproveDeposit={handleDisapproveDeposit}
+                isApprovingDeposit={isApprovingDeposit}
+                isDisapprovingDeposit={isDisapprovingDeposit}
               />
             </TabsContent>
             <TabsContent value="pending" className="mt-6">
@@ -241,6 +266,9 @@ export default function AdminDepositsPage() {
                 getStatusBadge={getStatusBadge}
                 handleViewDetails={handleViewDetails}
                 handleApproveDeposit={handleApproveDeposit}
+                handleDisapproveDeposit={handleDisapproveDeposit}
+                isApprovingDeposit={isApprovingDeposit}
+                isDisapprovingDeposit={isDisapprovingDeposit}
               />
             </TabsContent>
             <TabsContent value="approved" className="mt-6">
@@ -251,6 +279,9 @@ export default function AdminDepositsPage() {
                 getStatusBadge={getStatusBadge}
                 handleViewDetails={handleViewDetails}
                 handleApproveDeposit={handleApproveDeposit}
+                handleDisapproveDeposit={handleDisapproveDeposit}
+                isApprovingDeposit={isApprovingDeposit}
+                isDisapprovingDeposit={isDisapprovingDeposit}
               />
             </TabsContent>
             <TabsContent value="rejected" className="mt-6">
@@ -261,6 +292,9 @@ export default function AdminDepositsPage() {
                 getStatusBadge={getStatusBadge}
                 handleViewDetails={handleViewDetails}
                 handleApproveDeposit={handleApproveDeposit}
+                handleDisapproveDeposit={handleDisapproveDeposit}
+                isApprovingDeposit={isApprovingDeposit}
+                isDisapprovingDeposit={isDisapprovingDeposit}
               />
             </TabsContent>
           </Tabs>
@@ -299,6 +333,9 @@ function DepositTable({
   getStatusBadge,
   handleViewDetails,
   handleApproveDeposit,
+  handleDisapproveDeposit,
+  isApprovingDeposit,
+  isDisapprovingDeposit
 }: {
   deposits: UserStakingPosition[];
   isLoading: boolean;
@@ -306,6 +343,9 @@ function DepositTable({
   getStatusBadge: (status: StakingPositionDepositStatus) => JSX.Element;
   handleViewDetails: (deposit: any) => void;
   handleApproveDeposit: (deposit: any) => void;
+  handleDisapproveDeposit: (deposit: any) => void;
+  isApprovingDeposit: boolean
+  isDisapprovingDeposit: boolean
 }) {
   return (
     <div className="overflow-x-auto">
@@ -414,17 +454,19 @@ function DepositTable({
                             size="icon"
                             className="h-8 w-8 text-green-400 hover:text-green-300 hover:bg-green-900/20"
                             onClick={() => handleApproveDeposit(deposit.id)}
+                            disabled={isApprovingDeposit || isDisapprovingDeposit}
                           >
                             <CheckCircle className="h-4 w-4" />
                           </Button>
-                          {/* <Button
+                          <Button
                             variant="ghost"
                             size="icon"
                             className="h-8 w-8 text-red-400 hover:text-red-300 hover:bg-red-900/20"
-                            onClick={() => handleApproveDeposit(deposit)}
+                            onClick={() => handleDisapproveDeposit(deposit.id)}
+                            disabled={isApprovingDeposit || isDisapprovingDeposit}
                           >
                             <XCircle className="h-4 w-4" />
-                          </Button> */}
+                          </Button>
                         </>
                       )}
                       <Button

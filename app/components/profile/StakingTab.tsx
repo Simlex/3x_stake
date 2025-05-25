@@ -261,15 +261,26 @@ const StakingTab = ({
                         <h4 className="font-medium">
                           {position.planName} Plan
                         </h4>
-                        <Badge
-                          className={
-                            position.isActive
-                              ? "bg-green-500/20 text-green-400 border-green-500/20"
-                              : "bg-gray-500/20 text-gray-400 border-gray-500/20"
-                          }
-                        >
-                          {position.isActive ? "Active" : "Unstaked"}
-                        </Badge>
+                        {position.depositStatus ==
+                        StakingPositionDepositStatus.REJECTED ? (
+                          <Badge
+                            className={
+                              "bg-red-500/20 text-red-400 border-red-500/20"
+                            }
+                          >
+                            Rejected
+                          </Badge>
+                        ) : (
+                          <Badge
+                            className={
+                              position.isActive
+                                ? "bg-green-500/20 text-green-400 border-green-500/20"
+                                : "bg-gray-500/20 text-gray-400 border-gray-500/20"
+                            }
+                          >
+                            {position.isActive ? "Active" : "Unstaked"}
+                          </Badge>
+                        )}
                       </div>
 
                       {position.depositStatus ===
@@ -306,95 +317,101 @@ const StakingTab = ({
 
                   <Separator className="my-4" />
 
-                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                    <div>
-                      <div className="text-sm text-gray-400">
-                        Rewards earned
+                  {position.depositStatus ==
+                  StakingPositionDepositStatus.REJECTED ? null : (
+                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                      <div>
+                        <div className="text-sm text-gray-400">
+                          Rewards earned
+                        </div>
+                        <div className="text-lg font-medium text-green-500">
+                          ${position.rewards.toLocaleString()}
+                        </div>
                       </div>
-                      <div className="text-lg font-medium text-green-500">
-                        ${position.rewards.toLocaleString()}
-                      </div>
-                    </div>
 
-                    {position.isActive ? (
-                      <div className="flex gap-2">
-                        <div className="flex flex-row items-center space-x-2">
-                          {/* <p className="text-xs">
+                      {position.isActive ? (
+                        <div className="flex gap-2">
+                          <div className="flex flex-row items-center space-x-2">
+                            {/* <p className="text-xs">
                             {
                               getTimeRemainingToClaim(
                                 new Date(position.nextClaimDeadline as string)
                               ).hours
                             }
                           </p> */}
+                            {position.depositStatus ===
+                            StakingPositionDepositStatus.PENDING ? (
+                              <p className="text-sm text-white/70">
+                                {`Pending approval`}
+                              </p>
+                            ) : !hasClaimsBegun(position.startDate) ? (
+                              <p className="text-sm text-white/70">
+                                {`Claiming starts on ${moment(
+                                  position.startDate
+                                )
+                                  .add(1, "day")
+                                  .format("MMM D, YYYY | hh:mm a")}`}
+                              </p>
+                            ) : (
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => {
+                                  setSelectedPositionId(position);
+                                  handleClaimRewards(position.id);
+                                }}
+                                //   disabled={position.rewards <= 0} "Cannot claim yet."
+                              >
+                                {isClaimingReward &&
+                                selectedPositionId!.id == position.id
+                                  ? "Claiming Rewards"
+                                  : "Claim Rewards"}
+                              </Button>
+                            )}
+                          </div>
                           {position.depositStatus ===
-                          StakingPositionDepositStatus.PENDING ? (
-                            <p className="text-sm text-white/70">
-                              {`Pending approval`}
-                            </p>
-                          ) : !hasClaimsBegun(position.startDate) ? (
-                            <p className="text-sm text-white/70">
-                              {`Claiming starts on ${moment(position.startDate)
-                                .add(1, "day")
-                                .format("MMM D, YYYY | hh:mm a")}`}
-                            </p>
-                          ) : (
+                            StakingPositionDepositStatus.APPROVED && (
                             <Button
                               variant="outline"
                               size="sm"
-                              onClick={() => {
-                                setSelectedPositionId(position);
-                                handleClaimRewards(position.id);
-                              }}
-                              //   disabled={position.rewards <= 0} "Cannot claim yet."
+                              className="border-red-500/50 text-red-400 hover:bg-red-950/20"
+                              onClick={() => handleUnstake(position.id)}
+                              disabled={processingPositions[position.id]}
                             >
-                              {isClaimingReward &&
-                              selectedPositionId!.id == position.id
-                                ? "Claiming Rewards"
-                                : "Claim Rewards"}
+                              {processingPositions[position.id] ? (
+                                <>
+                                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />{" "}
+                                  Unstaking...
+                                </>
+                              ) : (
+                                "Unstake"
+                              )}
                             </Button>
                           )}
                         </div>
-                        {position.depositStatus ===
-                          StakingPositionDepositStatus.APPROVED && (
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            className="border-red-500/50 text-red-400 hover:bg-red-950/20"
-                            onClick={() => handleUnstake(position.id)}
-                            disabled={processingPositions[position.id]}
-                          >
-                            {processingPositions[position.id] ? (
-                              <>
-                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />{" "}
-                                Unstaking...
-                              </>
-                            ) : (
-                              "Unstake"
-                            )}
-                          </Button>
-                        )}
-                      </div>
-                    ) : position.requestedWithdrawal &&
-                      position.withdrawalStatus == WithdrawalStatus.PENDING ? (
-                      <span className="border-yellow-500/50 text-yellow-400 hover:bg-yellow-950/20">
-                        Pending Withdrawal
-                      </span>
-                    ) : position.requestedWithdrawal &&
-                      position.withdrawalStatus == WithdrawalStatus.APPROVED ? (
-                      <span className="border-green-500/50 text-green-400 hover:bg-green-950/20">
-                        Withdrawal Approved
-                      </span>
-                    ) : (
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="border-red-500/50 text-red-400 hover:bg-red-950/20"
-                        onClick={() => {
-                          setSelectedPosition(position);
-                          setIsEarlyWithdrawalModalOpen(true);
-                        }}
-                      >
-                        {/* {false ? (
+                      ) : position.requestedWithdrawal &&
+                        position.withdrawalStatus ==
+                          WithdrawalStatus.PENDING ? (
+                        <span className="border-yellow-500/50 text-yellow-400 hover:bg-yellow-950/20">
+                          Pending Withdrawal
+                        </span>
+                      ) : position.requestedWithdrawal &&
+                        position.withdrawalStatus ==
+                          WithdrawalStatus.APPROVED ? (
+                        <span className="border-green-500/50 text-green-400 hover:bg-green-950/20">
+                          Withdrawal Approved
+                        </span>
+                      ) : (
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="border-red-500/50 text-red-400 hover:bg-red-950/20"
+                          onClick={() => {
+                            setSelectedPosition(position);
+                            setIsEarlyWithdrawalModalOpen(true);
+                          }}
+                        >
+                          {/* {false ? (
                           <>
                             <Loader2 className="mr-2 h-4 w-4 animate-spin" />{" "}
                             Unstaking...
@@ -402,10 +419,11 @@ const StakingTab = ({
                         ) : (
                           "Withdraw"
                         )} */}
-                        Withdraw
-                      </Button>
-                    )}
-                  </div>
+                          Withdraw
+                        </Button>
+                      )}
+                    </div>
+                  )}
                 </div>
               ))
             ) : (

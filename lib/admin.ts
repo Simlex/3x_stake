@@ -90,6 +90,17 @@ export const adminApi = {
             throw error;
         }
     },
+    disapproveDeposit: async (depositId: string) => {
+        try {
+            const response = await API.post<ApiResponse<any>>(
+                `/admin/deposits/disapprove/${depositId}`
+            );
+            return response.data.data;
+        } catch (error) {
+            console.error("Failed to disapprove deposit:", error);
+            throw error;
+        }
+    },
     getAllWithdrawals: async () => {
         try {
             const response = await API.get<ApiResponse<Withdrawal[]>>(

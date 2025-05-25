@@ -86,7 +86,7 @@ model AdminSession {
     id        String   @id @default(uuid())
     adminId   String
     admin     Admin    @relation(fields: [adminId], references: [id], onDelete: Cascade)
-    token     String   @unique
+    token     String   @db.LongText()
     userAgent String?
     ipAddress String?
     expiresAt DateTime
@@ -94,6 +94,7 @@ model AdminSession {
     updatedAt DateTime @updatedAt
 
     @@index([adminId])
+    @@unique([token(length: 191)])
     @@map("admin_sessions")
 }
 
