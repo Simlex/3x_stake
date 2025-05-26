@@ -33,6 +33,7 @@ export class ApiRoutes {
     static RequestCredentialToken = "auth/request-token"
     static Login = "auth/login"
     static Signup = "auth/signup"
+    static PreSignupEmailVerification = "auth/pre-signup-verify-email/send"
     static Logout = "auth/logout"
     static ForgotPassword = "auth/forgot-password"
     static ResetPassword = "auth/reset-password"

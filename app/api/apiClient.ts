@@ -23,6 +23,7 @@ export interface SignupRequest {
   username: string;
   email: string;
   password: string;
+  verificationCode: string;
   referralCode?: string; // Optional referral code
 }
 
@@ -130,6 +131,15 @@ export const apiClient = {
     }
   },
 
+  preSignupEmailVerification: async (data: {email: string}): Promise<any> => {
+    try {
+      const response = await API.post<any>(ApiRoutes.PreSignupEmailVerification, data);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
+
   logout: async (): Promise<void> => {
     try {
       await API.post(ApiRoutes.Logout);
@@ -203,6 +213,7 @@ export const apiClient = {
 export function useAuth() {
   return {
     signup: apiClient.signup,
+    preSignupEmailVerification: apiClient.preSignupEmailVerification,
     forgotPassword: apiClient.forgotPassword,
     resetPassword: apiClient.resetPassword,
     verifyEmail: apiClient.verifyEmail,

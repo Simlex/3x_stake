@@ -72,15 +72,15 @@ export async function sendMail({
   }
 }
 
-export async function sendVerificationEmail(email: string, token: string) {
-  const verificationUrl = `${process.env.NEXTAUTH_URL}/auth/verify?vrtkn=${token}`;
+export async function sendVerificationEmail(email: string, code: string) {
+//   const verificationUrl = `${process.env.NEXTAUTH_URL}/auth/verify?vrtkn=${token}`;
 
   // Send email to the new customer
   await sendMail({
     to: email,
     name: "Verify Email",
     subject: "Verify your email address",
-    body: compileVerifyEmailTemplate({ verificationUrl, userEmail: email }),
+    body: compileVerifyEmailTemplate({ code, userEmail: email }),
   });
 }
 
@@ -92,14 +92,14 @@ export function compileAccountCreationTemplate(name: string) {
 }
 
 export function compileVerifyEmailTemplate({
-  verificationUrl,
+  code,
   userEmail,
 }: {
-  verificationUrl: string;
+  code: string;
   userEmail: string;
 }) {
   const template = handlebars.compile(verifyEmailTemplate);
-  const htmlBody = template({ verificationUrl, userEmail });
+  const htmlBody = template({ code, userEmail });
 
   return htmlBody;
 }

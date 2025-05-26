@@ -8,6 +8,7 @@ import { Input } from "@/app/components/ui/input";
 import { Label } from "@/app/components/ui/label";
 import { cn } from "@/lib/utils";
 import { SignupRequest, useAuth } from "@/app/api/apiClient";
+import { toast } from "sonner";
 
 interface SignupModalProps {
   isOpen: boolean;
@@ -28,7 +29,12 @@ export function SignupModal({
   const [agreedToTerms, setAgreedToTerms] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+  const [verificationError, setVerificationError] = useState("");
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isVerifyingEmail, setIsVerifyingEmail] = useState(false);
+  const [isVerificationCodeVisible, setIsVerificationCodeVisible] =
+    useState(false);
+  const [verificationCode, setVerificationCode] = useState("");
 
   const auth = useAuth();
 
@@ -55,12 +61,37 @@ export function SignupModal({
     return emailRegex.test(email) && isFromTrustedDomain(email);
   };
 
+  const handleVerifyEmail = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setVerificationError("");
+
+    setIsVerifyingEmail(true);
+
+    try {
+      const data = { email };
+
+      await auth.preSignupEmailVerification(data);
+
+      setIsVerificationCodeVisible(true);
+    } catch (error: any) {
+      setVerificationError(error.message || "An error occurred during signup");
+    } finally {
+      setIsVerifyingEmail(false);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
 
     // Validate all fields
-    if (!username || !email || !password || !confirmPassword) {
+    if (
+      !username ||
+      !email ||
+      !password ||
+      !confirmPassword ||
+      !verificationCode
+    ) {
       setError("Please fill in all fields");
       return;
     }
@@ -92,6 +123,7 @@ export function SignupModal({
         username: username.toLowerCase(),
         email,
         password,
+        verificationCode,
         referralCode, // Include referral code in the request
       };
 
@@ -160,21 +192,67 @@ export function SignupModal({
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="signup-email">Email Address</Label>
-                  <Input
-                    id="signup-email"
-                    type="email"
-                    placeholder="Enter your email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="bg-gray-800/50 border-gray-700 focus:border-purple-500"
-                  />
+                  <div className="space-y-2">
+                    <Label htmlFor="signup-email">Email Address</Label>
+                    <div className="flex space-x-3">
+                      <Input
+                        id="signup-email"
+                        type="email"
+                        placeholder="Enter your email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        className="bg-gray-800/50 border-gray-700 focus:border-purple-500"
+                      />
+                      {email && validateEmail(email) && (
+                        <Button
+                          type="button"
+                          className={cn(
+                            "bg-gray-700 hover:bg-gray-900",
+                            isVerifyingEmail && "opacity-80 pointer-events-none"
+                          )}
+                          onClick={handleVerifyEmail}
+                          disabled={isVerifyingEmail}
+                        >
+                          {isVerifyingEmail ? (
+                            <>
+                              <Loader2 className="mr-2 h-4 w-4 animate-spin" />{" "}
+                              Verifying...
+                            </>
+                          ) : (
+                            "Verify"
+                          )}
+                        </Button>
+                      )}
+                    </div>
+                  </div>
                   {email && !validateEmail(email) && (
                     <p className="text-xs text-red-400">
                       Please enter a valid email address
                     </p>
                   )}
+                  {verificationError && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="p-3 bg-red-900/30 border border-red-500/20 rounded-lg text-sm text-red-200"
+                    >
+                      {error}
+                    </motion.div>
+                  )}
                 </div>
+
+                {isVerificationCodeVisible && (
+                  <div className="space-y-2">
+                    <Label htmlFor="signup-code">Verification code</Label>
+                    <Input
+                      id="signup-code"
+                      placeholder="Enter verification code"
+                      value={verificationCode}
+                      onChange={(e) => setVerificationCode(e.target.value)}
+                      className="bg-gray-800/50 border-gray-700 focus:border-purple-500"
+                    />
+                  </div>
+                )}
 
                 <div className="space-y-2">
                   <Label htmlFor="signup-password">Password</Label>

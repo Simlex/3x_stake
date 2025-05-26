@@ -1,26 +1,124 @@
-"use server"
+"use server";
 
 import { PrismaClient } from "@prisma/client";
 import { hash, compare } from "bcryptjs";
 import { SignJWT, jwtVerify } from "jose";
 import crypto from "crypto";
-import { compileAccountCreationTemplate, sendMail, sendVerificationEmail } from "../../../lib/mail";
+import {
+  compileAccountCreationTemplate,
+  sendMail,
+  sendVerificationEmail,
+} from "../../../lib/mail";
+import { NextResponse } from "next/server";
 
 const prisma = new PrismaClient();
 const JWT_SECRET = process.env.JWT_SECRET || "your-secret-key";
 
+// Generate new 6 characters code
+function generate6CharCode() {
+  return crypto.randomBytes(3).toString("hex").toUpperCase();
+}
+
+type TempUser = {
+  email: string;
+  verificationCode: string;
+  expiresAt: Date;
+  createdAt: Date;
+};
+
 // User authentication
+export async function sendPreSignupCode({ email }: { email: string }) {
+  // Check if user already exists as a temporary user
+  const existingTempUser = await prisma.temporaryUser.findFirst({
+    where: {
+      email,
+    },
+  });
+
+  // Check if user already exists as a user
+  const existingUser = await prisma.user.findFirst({
+    where: {
+      email,
+    },
+  });
+
+  if (existingUser) {
+    return NextResponse.json(
+      { success: false, message: "User with this email exists" },
+      { status: 409 }
+    );
+  }
+
+  const verificationCode = generate6CharCode();
+  const expiresAt = new Date(Date.now() + 10 * 60 * 1000);
+
+  let user: TempUser | null = null;
+
+  if (existingTempUser) {
+    // Update user
+    user = await prisma.temporaryUser.update({
+      where: {
+        email: existingTempUser.email,
+      },
+      data: {
+        verificationCode,
+        expiresAt,
+      },
+    });
+  } else {
+    // Create user
+    user = await prisma.temporaryUser.create({
+      data: {
+        email,
+        verificationCode,
+        expiresAt,
+      },
+    });
+  }
+
+  // Send email to the new customer & send verification email concurrently
+  await Promise.all([
+    // sendMail({
+    //   to: user.email,
+    //   name: "Account Created",
+    //   subject: "Welcome to Yieldra",
+    //   body: compileAccountCreationTemplate(`${user.username}`),
+    // }),
+    sendVerificationEmail(user.email, verificationCode),
+  ]);
+
+  return { message: "Successfully sent!" };
+}
+
 export async function signUp({
   username,
   email,
   password,
+  verificationCode,
   referralCode,
 }: {
   username: string;
   email: string;
   password: string;
+  verificationCode: string;
   referralCode: string;
 }) {
+  console.log("🚀 ~ verificationCode:", verificationCode)
+  // Check if user exists as a temporary user, and hasn't expired.
+  const temporaryUser = await prisma.temporaryUser.findFirst({
+    where: {
+    AND: [
+      { email },
+      { verificationCode },
+      { expiresAt: { gt: new Date() } }, // Check if the code hasn't expired
+    ],
+  },
+  });
+
+  if (!temporaryUser || !verificationCode) {
+    throw new Error("Invalid or expired verification code");
+  }
+
   // Check if user already exists
   const existingUser = await prisma.user.findFirst({
     where: {
@@ -35,17 +133,17 @@ export async function signUp({
   // Hash password
   const hashedPassword = await hash(password, 10);
 
-      // Check if referral code is valid
-      let referrerId = null
-      if (referralCode) {
-        const referrer = await prisma.user.findUnique({
-          where: { referralCode },
-        })
-  
-        if (referrer) {
-          referrerId = referrer.id
-        }
-      }
+  // Check if referral code is valid
+  let referrerId = null;
+  if (referralCode) {
+    const referrer = await prisma.user.findUnique({
+      where: { referralCode },
+    });
+
+    if (referrer) {
+      referrerId = referrer.id;
+    }
+  }
 
   // Create user
   const user = await prisma.user.create({
@@ -58,11 +156,15 @@ export async function signUp({
     },
   });
 
-  // Create email verification
-  const verificationToken = await createEmailVerification(email);
+  // Delete temporary user
+  await prisma.temporaryUser.delete({
+    where: {
+      email: temporaryUser.email,
+    },
+  })
 
-  // Send verification email (implementation depends on your email service)
-  // await sendVerificationEmail(email, verificationToken)
+  // Create email verification
+  //   const verificationToken = await createEmailVerification(email);
 
   // Send email to the new customer & send verification email concurrently
   await Promise.all([
@@ -72,7 +174,7 @@ export async function signUp({
       subject: "Welcome to Yieldra",
       body: compileAccountCreationTemplate(`${user.username}`),
     }),
-    sendVerificationEmail(user.email, verificationToken),
+    // sendVerificationEmail(user.email, verificationToken),
   ]);
 
   return { userId: user.id };
@@ -146,7 +248,7 @@ export async function signIn({
         id: adminUser.id,
         username: adminUser.username,
         email: adminUser.email,
-        isAdmin: true
+        isAdmin: true,
       },
     };
   }
@@ -427,7 +529,7 @@ export async function validateSession(token: string) {
             username: true,
             email: true,
             isEmailVerified: true,
-            balance: true
+            balance: true,
           },
         },
       },

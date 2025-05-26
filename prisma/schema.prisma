@@ -98,6 +98,16 @@ model AdminSession {
     @@map("admin_sessions")
 }
 
+// Temporary user model
+model TemporaryUser {
+    email String @unique
+    verificationCode String
+    expiresAt DateTime
+    createdAt DateTime  @default(now())
+
+    @@map("temporary_users")
+}
+
 // Password reset model
 model PasswordReset {
     id        String    @id @default(uuid())
