@@ -95,8 +95,8 @@ export default function ReferralsPage() {
     if (navigator.share) {
       try {
         await navigator.share({
-          title: "Join USDR Yield Staking",
-          text: "Stake USDR and earn rewards with flexible staking plans. Use my referral link:",
+          title: "Join USDT Yield Staking",
+          text: "Stake USDT and earn rewards with flexible staking plans. Use my referral link:",
           url: referralLink,
         });
       } catch (error) {
@@ -277,7 +277,7 @@ export default function ReferralsPage() {
                         2
                       </span>
                       <span>
-                        When they stake USDR, you can earn up to 25% of their
+                        When they stake USDT, you can earn up to 25% of their
                         staking rewards
                       </span>
                     </li>

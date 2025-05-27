@@ -169,7 +169,7 @@ export function WithdrawModal({
 
       // Show success toast
       toast.success("Withdrawal initiated successfully!", {
-        description: `${withdrawalAmount} USDR is being sent to your wallet.`,
+        description: `${withdrawalAmount} USDT is being sent to your wallet.`,
       });
 
       // Close modal after success
@@ -258,7 +258,7 @@ export function WithdrawModal({
                   Withdrawal Initiated!
                 </h2>
                 <p className="text-gray-400 mb-2">
-                  {withdrawalAmount} USDR is being sent to your wallet.
+                  {withdrawalAmount} USDT is being sent to your wallet.
                 </p>
                 <p className="text-gray-400 mb-6 text-sm">
                   Transaction ID:{" "}
@@ -319,7 +319,7 @@ export function WithdrawModal({
                     <div className="space-y-4">
                       <div className="space-y-2">
                         <Label htmlFor="withdrawalAmount">
-                          Withdrawal Amount (USDR)
+                          Withdrawal Amount (USDT)
                         </Label>
                         <div className="relative">
                           <Input
@@ -446,7 +446,7 @@ export function WithdrawModal({
                           Amount to withdraw:
                         </span>
                         <span className="font-medium">
-                          {Number(withdrawalAmount).toLocaleString()} USDR
+                          {Number(withdrawalAmount).toLocaleString()} USDT
                         </span>
                       </div>
                       <Separator className="bg-gray-700" />
@@ -459,13 +459,13 @@ export function WithdrawModal({
                       <Separator className="bg-gray-700" />
                       <div className="flex justify-between">
                         <span className="text-gray-400">Network fee:</span>
-                        <span className="font-medium">$0.00 USDR</span>
+                        <span className="font-medium">$0.00 USDT</span>
                       </div>
                       <Separator className="bg-gray-700" />
                       <div className="flex justify-between">
                         <span className="font-medium">Total to receive:</span>
                         <span className="font-bold text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-purple-600">
-                          {Number(withdrawalAmount).toLocaleString()} USDR
+                          {Number(withdrawalAmount).toLocaleString()} USDT
                         </span>
                       </div>
                     </div>

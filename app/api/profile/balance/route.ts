@@ -1,10 +1,11 @@
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 
 import { type NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { validateSession } from "@/app/api/services/auth";
 import { cookies } from "next/headers";
 import { subDays, isAfter } from "date-fns";
+import { RewardStatus } from "@/app/model";
 
 export async function GET(req: NextRequest) {
   try {
@@ -40,7 +41,7 @@ export async function GET(req: NextRequest) {
             amount: true,
             startDate: true,
             rewards: {
-              where: { status: "PENDING" }, // unclaimed rewards
+              where: { status: RewardStatus.CLAIMED }, // unclaimed rewards
               select: { amount: true, createdAt: true },
             },
           },
@@ -61,19 +62,23 @@ export async function GET(req: NextRequest) {
 
     for (const position of user.stakingPositions) {
       const isLocked = isAfter(subDays(now, 30), position.startDate) === false;
+      console.log("🚀 ~ GET ~ isLocked:", isLocked)
       if (isLocked) {
+        console.log("🚀 ~ GET ~ position:", position);
+        console.log("🚀 ~ GET ~ position.rewards:", position.rewards)
         lockedAmount += position.amount;
 
         for (const reward of position.rewards) {
+          console.log("🚀 ~ GET ~ reward:", reward)
           // Also consider unclaimable profit if within 30 days
           lockedAmount += reward.amount;
         }
       }
     }
-    console.log("🚀 ~ GET ~ lockedAmount:", lockedAmount)
+    console.log("🚀 ~ GET ~ lockedAmount:", lockedAmount);
 
     const withdrawableBalance = Math.max(user.balance - lockedAmount, 0);
-    
+
     // fetch the sum amount of all pending withdrawals
     const pendingWithdrawals = await prisma.withdrawal.aggregate({
       where: {

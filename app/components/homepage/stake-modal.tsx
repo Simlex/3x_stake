@@ -649,7 +649,7 @@ export function StakeModal({
                       Deposit Confirmed!
                     </h2>
                     <p className="text-gray-400 mb-6">
-                      Your stake of {formatCurrency(amount)} USDR has been
+                      Your stake of {formatCurrency(amount)} USDT has been
                       successfully processed.
                     </p>
                     <div className="w-full bg-gray-800/50 h-2 rounded-full overflow-hidden">

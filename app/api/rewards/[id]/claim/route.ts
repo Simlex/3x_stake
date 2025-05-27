@@ -125,7 +125,7 @@ export async function POST(
           type: "REWARD",
           amount: rewardAmount,
           data: {
-            details: `Claimed ${rewardAmount} USDR reward`,
+            details: `Claimed ${rewardAmount} USDT reward`,
             //   relatedId: rewardId,
           },
         },
@@ -163,7 +163,7 @@ export async function POST(
     //     type: "REWARD",
     //     amount: stakingPosition.amount,
     //     data: {
-    //       details: `Claimed ${stakingPosition.amount} USDR reward`,
+    //       details: `Claimed ${stakingPosition.amount} USDT reward`,
     //       //   relatedId: rewardId,
     //     },
     //   },

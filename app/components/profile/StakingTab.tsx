@@ -440,7 +440,7 @@ const StakingTab = ({
                 asChild
               >
                 <Link href="/" scroll>
-                  Stake More USDR
+                  Stake More USDT
                 </Link>
               </Button>
             </div>

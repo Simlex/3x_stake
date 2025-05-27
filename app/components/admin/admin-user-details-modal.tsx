@@ -68,21 +68,21 @@ export function AdminUserDetailsModal({
   //       type: "STAKE",
   //       amount: 2500,
   //       date: "2023-02-10T00:00:00Z",
-  //       details: "Staked 2500 USDR in Silver Plan",
+  //       details: "Staked 2500 USDT in Silver Plan",
   //     },
   //     {
   //       id: "act-2",
   //       type: "STAKE",
   //       amount: 1000,
   //       date: "2023-03-05T00:00:00Z",
-  //       details: "Staked 1000 USDR in Bronze Plan",
+  //       details: "Staked 1000 USDT in Bronze Plan",
   //     },
   //     {
   //       id: "act-3",
   //       type: "REWARD",
   //       amount: 75,
   //       date: "2023-04-01T00:00:00Z",
-  //       details: "Claimed 75 USDR rewards",
+  //       details: "Claimed 75 USDT rewards",
   //     },
   //   ];
 

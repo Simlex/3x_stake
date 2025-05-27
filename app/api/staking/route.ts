@@ -80,7 +80,7 @@ export async function POST(req: NextRequest) {
         type: "STAKE",
         amount,
         data: {
-          details: `Staked ${amount} USDR`,
+          details: `Staked ${amount} USDT`,
           relatedId: stakingPosition.id,
         },
       },

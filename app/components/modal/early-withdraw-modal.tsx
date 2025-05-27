@@ -141,7 +141,7 @@ export default function EarlyWithdrawModal({
 
       // Show success toast
       toast.success("Withdrawal initiated successfully!", {
-        description: `${withdrawalAmount} USDR is being sent to your wallet.`,
+        description: `${withdrawalAmount} USDT is being sent to your wallet.`,
       });
 
       // Close modal after success
@@ -213,7 +213,7 @@ export default function EarlyWithdrawModal({
         >
           {/* Header */}
           <div className="flex items-center justify-between p-4 border-b border-white/10">
-            <h3 className="text-lg font-medium">Withdraw Staked USDR</h3>
+            <h3 className="text-lg font-medium">Withdraw Staked USDT</h3>
             <Button
               variant="ghost"
               size="icon"
@@ -457,8 +457,8 @@ export default function EarlyWithdrawModal({
                 </h2>
                 <p className="text-gray-400 mb-6">
                   {isEarlyWithdrawal
-                    ? `${withdrawalAmount.toLocaleString()} USDR has been sent to your wallet.`
-                    : `${position.amount.toLocaleString()} USDR has been sent to your wallet.`}
+                    ? `${withdrawalAmount.toLocaleString()} USDT has been sent to your wallet.`
+                    : `${position.amount.toLocaleString()} USDT has been sent to your wallet.`}
                 </p>
                 <div className="w-full bg-gray-800/50 h-2 rounded-full overflow-hidden">
                   <motion.div

@@ -83,7 +83,7 @@ export async function POST(
           type: "UNSTAKE",
           amount: position.amount,
           data: {
-            details: `Unstaked ${position.amount} USDR`,
+            details: `Unstaked ${position.amount} USDT`,
             relatedId: positionId,
           },
         },
@@ -120,7 +120,7 @@ export async function POST(
     //     type: "UNSTAKE",
     //     amount: position.amount,
     //     data: {
-    //       details: `Unstaked ${position.amount} USDR`,
+    //       details: `Unstaked ${position.amount} USDT`,
     //       relatedId: positionId,
     //     },
     //   },
