@@ -103,16 +103,16 @@ export async function signUp({
   verificationCode: string;
   referralCode: string;
 }) {
-  console.log("🚀 ~ verificationCode:", verificationCode)
+  console.log("🚀 ~ verificationCode:", verificationCode);
   // Check if user exists as a temporary user, and hasn't expired.
   const temporaryUser = await prisma.temporaryUser.findFirst({
     where: {
-    AND: [
-      { email },
-      { verificationCode },
-      { expiresAt: { gt: new Date() } }, // Check if the code hasn't expired
-    ],
-  },
+      AND: [
+        { email },
+        { verificationCode },
+        { expiresAt: { gt: new Date() } }, // Check if the code hasn't expired
+      ],
+    },
   });
 
   if (!temporaryUser || !verificationCode) {
@@ -161,7 +161,7 @@ export async function signUp({
     where: {
       email: temporaryUser.email,
     },
-  })
+  });
 
   // Create email verification
   //   const verificationToken = await createEmailVerification(email);
