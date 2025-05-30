@@ -45,6 +45,7 @@ export async function POST(req: NextRequest) {
     // Parse the request body to get withdrawal details
     const { amount, address, network, stakingPositionId } = await req.json();
 
+    console.log("🚀 ~ POST ~ stakingPositionId:", stakingPositionId);
     if (!amount || !address || !network) {
       return NextResponse.json(
         { success: false, message: "Invalid request data" },
@@ -65,8 +66,8 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    await prisma.$transaction([
-      prisma.stakingPosition.update({
+    if (stakingPositionId) {
+      await prisma.stakingPosition.update({
         where: {
           id: stakingPositionId,
         },
@@ -77,8 +78,10 @@ export async function POST(req: NextRequest) {
             },
           },
         },
-      }),
+      });
+    }
 
+    await prisma.$transaction([
       // Log the activity
       prisma.activity.create({
         data: {

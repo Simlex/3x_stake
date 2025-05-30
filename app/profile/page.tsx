@@ -197,7 +197,12 @@ export default function ProfilePage() {
                     <div className="h-fit">
                       <Button
                         onClick={() =>
-                          userWithdrawableBalance && userWithdrawableBalance > 0
+                          userWithdrawableBalance &&
+                          userPendingWithdrawals &&
+                          userWithdrawableBalance > 0 &&
+                          Number(userWithdrawableBalance.toFixed(2)) -
+                            Number(userPendingWithdrawals.toFixed(2)) >
+                            0
                             ? setIsWithdrawModalOpen(true)
                             : setIsZeroWithdrawModalOpen(true)
                         }

@@ -149,18 +149,18 @@ export function WithdrawModal({
     const data: RequestWithdrawal = {
       amount: Number(withdrawalAmount),
       address: withdrawalAddress,
-      network: network as Network,
+      network: network as Network
     };
 
     try {
       const response = await profileApi.initiateWithdrawal(data);
       console.log("🚀 ~ handleConfirmWithdraw ~ response:", response);
 
-      if (!response) {
-        toast.error("Withdrawal failed", {
-            description: "Failed to initiate withdrawal. Please try again.",
-        })
-      }
+    //   if (!response) {
+    //     toast.error("Withdrawal failed", {
+    //         description: "Failed to initiate withdrawal. Please try again.",
+    //     })
+    //   }
 
       postFn && (await postFn());
 
