@@ -251,6 +251,7 @@ export function SignupModal({
                       onChange={(e) => setVerificationCode(e.target.value)}
                       className="bg-gray-800/50 border-gray-700 focus:border-purple-500"
                     />
+                    <span className="text-sm py-1 text-gray-400">Please also check your spam folder.</span>
                   </div>
                 )}
 
