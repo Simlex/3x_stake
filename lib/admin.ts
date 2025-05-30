@@ -122,5 +122,16 @@ export const adminApi = {
             console.error("Failed to approve withdrawal:", error);
             throw error;
         }
-    }
+    },
+    disapproveWithdrawal: async (withdrawalId: string) => {
+        try {
+            const response = await API.post<ApiResponse<any>>(
+                `/admin/withdrawals/disapprove/${withdrawalId}`
+            );
+            return response.data.data;
+        } catch (error) {
+            console.error("Failed to disapprove withdrawal:", error);
+            throw error;
+        }
+    },
 }

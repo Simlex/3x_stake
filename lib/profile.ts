@@ -216,4 +216,19 @@ export const profileApi = {
       throw error;
     }
   },
+
+  // Restake position
+  restakePosition: async (
+    positionId: string
+  ): Promise<{ success: boolean }> => {
+    try {
+      const response = await API.post<ApiResponse<{ success: boolean }>>(
+        `/staking/${positionId}/restake`
+      );
+      return response.data.data;
+    } catch (error) {
+      console.error("Failed to restake position:", error);
+      throw error;
+    }
+  },
 };

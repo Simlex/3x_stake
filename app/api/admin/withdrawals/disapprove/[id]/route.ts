@@ -65,19 +65,19 @@ export async function POST(
       );
     }
 
-    // Reject the withdrawal
+    // Approve the withdrawal
     const updatedWithdrawal = await prisma.withdrawal.update({
       where: {
         id: withdrawalId,
       },
       data: {
-        status: WithdrawalStatus.REJECTED,
+        status: WithdrawalStatus.APPROVED,
       },
     });
 
     return NextResponse.json({ success: true, data: updatedWithdrawal });
   } catch (error) {
-    console.error("Error rejecting withdrawal:", error);
+    console.error("Error approving withdrawal:", error);
     return NextResponse.json(
       { success: false, message: "Internal server error" },
       { status: 500 }

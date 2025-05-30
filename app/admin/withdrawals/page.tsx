@@ -45,9 +45,10 @@ export default function AdminWithdrawalsPage() {
   const [selectedWithdrawal, setSelectedWithdrawal] =
     useState<Withdrawal | null>(null);
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
-  const [isApprovalOpen, setIsApprovalOpen] = useState(false);
+//   const [isApprovalOpen, setIsApprovalOpen] = useState(false);
   const { user, isLoading: authLoading } = useAuthContext();
   const [isApprovingWithdrawal, setIsApprovingWithdrawal] = useState(false);
+  const [isDisapprovingWithdrawal, setIsDisapprovingWithdrawal] = useState(false);
 
   const handleFetchWithdrawals = async () => {
     if (authLoading || !user) return;
@@ -66,6 +67,32 @@ export default function AdminWithdrawalsPage() {
     }
   };
 
+  const handleDisapproveWithdrawal = async (withdrawalId: string) => {
+    if (isDisapprovingWithdrawal) return;
+
+    setIsDisapprovingWithdrawal(true);
+
+    try {
+      const response = await adminApi.disapproveWithdrawal(withdrawalId);
+      console.log("🚀 ~ handleApproveWithdrawal ~ response:", response);
+      setWithdrawals((prev) =>
+        prev.map((withdrawal) =>
+          withdrawal.id === withdrawalId
+            ? { ...withdrawal, status: WithdrawalStatus.REJECTED }
+            : withdrawal
+        )
+      );
+      toast.success("Withdrawal disapproved successfully", {
+        description: "The withdrawal has been disapproved.",
+      });
+    } catch (err) {
+      console.error("Failed to disapprove withdrawal:", err);
+      setError("Failed to disapprove withdrawal");
+    } finally {
+      setIsDisapprovingWithdrawal(false);
+    }
+}
+
   const handleApproveWithdrawal = async (withdrawalId: string) => {
     if (isApprovingWithdrawal) return;
 
@@ -83,7 +110,6 @@ export default function AdminWithdrawalsPage() {
       toast.success("Withdrawal approved successfully", {
         description: "The withdrawal has been approved.",
       });
-      setIsApprovalOpen(false);
     } catch (err) {
       console.error("Failed to approve withdrawal:", err);
       setError("Failed to approve withdrawal");
@@ -216,7 +242,8 @@ export default function AdminWithdrawalsPage() {
                 formatDate={formatDate}
                 getStatusBadge={getStatusBadge}
                 handleViewDetails={handleViewDetails}
-                handleApproveDeposit={handleApproveWithdrawal}
+                handleApproveWithdrawal={handleApproveWithdrawal}
+                handleDisapproveWithdrawal={handleDisapproveWithdrawal}
               />
             </TabsContent>
             <TabsContent value="pending" className="mt-6">
@@ -226,7 +253,8 @@ export default function AdminWithdrawalsPage() {
                 formatDate={formatDate}
                 getStatusBadge={getStatusBadge}
                 handleViewDetails={handleViewDetails}
-                handleApproveDeposit={handleApproveWithdrawal}
+                handleApproveWithdrawal={handleApproveWithdrawal}
+                handleDisapproveWithdrawal={handleDisapproveWithdrawal}
               />
             </TabsContent>
             <TabsContent value="approved" className="mt-6">
@@ -236,7 +264,8 @@ export default function AdminWithdrawalsPage() {
                 formatDate={formatDate}
                 getStatusBadge={getStatusBadge}
                 handleViewDetails={handleViewDetails}
-                handleApproveDeposit={handleApproveWithdrawal}
+                handleApproveWithdrawal={handleApproveWithdrawal}
+                handleDisapproveWithdrawal={handleDisapproveWithdrawal}
               />
             </TabsContent>
             <TabsContent value="rejected" className="mt-6">
@@ -246,7 +275,8 @@ export default function AdminWithdrawalsPage() {
                 formatDate={formatDate}
                 getStatusBadge={getStatusBadge}
                 handleViewDetails={handleViewDetails}
-                handleApproveDeposit={handleApproveWithdrawal}
+                handleApproveWithdrawal={handleApproveWithdrawal}
+                handleDisapproveWithdrawal={handleDisapproveWithdrawal}
               />
             </TabsContent>
           </Tabs>
@@ -284,14 +314,16 @@ function WithdrawalTable({
   formatDate,
   getStatusBadge,
   handleViewDetails,
-  handleApproveDeposit,
+  handleApproveWithdrawal,
+  handleDisapproveWithdrawal,
 }: {
   withdrawals: Withdrawal[];
   isLoading: boolean;
   formatDate: (date: string) => string;
   getStatusBadge: (status: WithdrawalStatus) => JSX.Element;
-  handleViewDetails: (deposit: any) => void;
-  handleApproveDeposit: (deposit: any) => void;
+  handleViewDetails: (withdrawal: any) => void;
+  handleApproveWithdrawal: (withdrawal: any) => void;
+  handleDisapproveWithdrawal: (withdrawal: any) => void;
 }) {
   return (
     <div className="overflow-x-auto">
@@ -398,18 +430,18 @@ function WithdrawalTable({
                             variant="ghost"
                             size="icon"
                             className="h-8 w-8 text-green-400 hover:text-green-300 hover:bg-green-900/20"
-                            onClick={() => handleApproveDeposit(withdrawal.id)}
+                            onClick={() => handleApproveWithdrawal(withdrawal.id)}
                           >
                             <CheckCircle className="h-4 w-4" />
                           </Button>
-                          {/* <Button
+                          <Button
                             variant="ghost"
                             size="icon"
                             className="h-8 w-8 text-red-400 hover:text-red-300 hover:bg-red-900/20"
-                            onClick={() => handleApproveDeposit(deposit)}
+                            onClick={() => handleDisapproveWithdrawal(withdrawal.id)}
                           >
                             <XCircle className="h-4 w-4" />
-                          </Button> */}
+                          </Button>
                         </>
                       )}
                       {/* <Button

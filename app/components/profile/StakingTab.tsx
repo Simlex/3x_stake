@@ -100,11 +100,26 @@ const StakingTab = ({
     return isMoreThanOneDay;
   };
 
-  const handleClaimRewards = async (positionId: string) => {
+  const handleClaimRewards = async (position: StakingPosition) => {
+    // check if we are at least a day beyond the last claimed date
+    const lastClaimed = position.lastClaimedAt
+      ? new Date(position.lastClaimedAt)
+      : new Date(position.startDate);
+    const now = new Date();
+    const diffMs = now.getTime() - lastClaimed.getTime();
+    const diffDays = diffMs / (1000 * 60 * 60 * 24);
+    if (diffDays < 1) {
+      toast.error("You can only claim rewards once every 24 hours.", {
+        description:
+          "Please wait until 24 hours have passed since your last claim.",
+      });
+      return;
+    }
+
     setIsClaimingReward(true);
 
     try {
-      const fetchedStakingPlans = await rewardApi.claimReward(positionId);
+      const fetchedStakingPlans = await rewardApi.claimReward(position.id);
 
       setIsClaimingReward(false);
 
@@ -125,7 +140,7 @@ const StakingTab = ({
       toast.error("Failed to claim reward", {
         description: "An error occurred while claiming rewards.",
       });
-      setError("Failed to claim reward. Please try again.");
+      //   setError("Failed to claim reward. Please try again.");
     } finally {
       setIsClaimingReward(false);
     }
@@ -177,6 +192,34 @@ const StakingTab = ({
       toast.error("Failed to unstake position", {
         description:
           "An error occurred while unstaking your position. Please try again.",
+      });
+    } finally {
+      setProcessingPositions((prev) => ({ ...prev, [positionId]: false }));
+    }
+  };
+
+  const handleRestake = async (positionId: string) => {
+    try {
+      setProcessingPositions((prev) => ({ ...prev, [positionId]: true }));
+
+      await profileApi.restakePosition(positionId);
+
+      // Update the local state to reflect the change
+      setStakingPositions((prev) =>
+        prev.map((pos) =>
+          pos.id === positionId ? { ...pos, isActive: true } : pos
+        )
+      );
+      
+      refreshUser();
+      toast.success("Position restaked successfully!", {
+        description: "Your staking position has been successfully restaked.",
+      });
+    } catch (err) {
+      console.error("Failed to restake position:", err);
+      toast.error("Failed to restake position", {
+        description:
+          "An error occurred while restaking your position. Please try again.",
       });
     } finally {
       setProcessingPositions((prev) => ({ ...prev, [positionId]: false }));
@@ -358,7 +401,7 @@ const StakingTab = ({
                                 size="sm"
                                 onClick={() => {
                                   setSelectedPositionId(position);
-                                  handleClaimRewards(position.id);
+                                  handleClaimRewards(position);
                                 }}
                                 //   disabled={position.rewards <= 0} "Cannot claim yet."
                               >
@@ -402,25 +445,31 @@ const StakingTab = ({
                           Withdrawal Approved
                         </span>
                       ) : (
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className="border-red-500/50 text-red-400 hover:bg-red-950/20"
-                          onClick={() => {
-                            setSelectedPosition(position);
-                            setIsEarlyWithdrawalModalOpen(true);
-                          }}
-                        >
-                          {/* {false ? (
-                          <>
-                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />{" "}
-                            Unstaking...
-                          </>
-                        ) : (
-                          "Withdraw"
-                        )} */}
-                          Withdraw
-                        </Button>
+                        <div className="flex flex-row space-x-2">
+                          {!position.isActive && (
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="border-yellow-500/50 text-yellow-400 hover:bg-yellow-950/20"
+                              onClick={() => {
+                                handleRestake(position.id)
+                              }}
+                            >
+                              Restake
+                            </Button>
+                          )}
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="border-red-500/50 text-red-400 hover:bg-red-950/20"
+                            onClick={() => {
+                              setSelectedPosition(position);
+                              setIsEarlyWithdrawalModalOpen(true);
+                            }}
+                          >
+                            Withdraw
+                          </Button>
+                        </div>
                       )}
                     </div>
                   )}
