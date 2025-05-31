@@ -114,7 +114,7 @@ export function Stats() {
           <span className="animate-ping-slow absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
           <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
         </span>
-        <span>{Math.floor(Math.random() * 50) + 30} users online</span>
+        <span>{Math.floor(Math.random() * 500) + 100} users online</span>
       </div>
     </section>
   )
