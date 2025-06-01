@@ -10,7 +10,7 @@ import { useModalContext } from "@/app/context/ModalContext";
 import { AuthGuard } from "./auth-guard";
 import { Navbar } from "./navbar";
 import { useAuthContext } from "@/app/context/AuthContext";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Toaster } from "sonner";
 
 interface LayoutProps {
@@ -28,6 +28,10 @@ export default function LayoutWrapper({ children, session }: LayoutProps) {
     setSignupModalVisibility,
   } = useModalContext();
   const { user } = useAuthContext();
+  const searchParams = useSearchParams();
+
+  // Get the referral code from the search params
+  const referralCode = searchParams.get("ref");
 
   // Check for login requirement header
   useEffect(() => {
@@ -44,6 +48,15 @@ export default function LayoutWrapper({ children, session }: LayoutProps) {
       router.push("/admin");
     }
   }, [user, pathname]);
+
+  useEffect(() => {
+    if (referralCode) {
+      // save the referral code to localstorage
+      localStorage.setItem("ref", JSON.stringify(referralCode));
+
+      setSignupModalVisibility(true);
+    }
+  }, [referralCode]);
 
   return (
     <>

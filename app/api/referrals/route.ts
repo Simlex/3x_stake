@@ -4,6 +4,7 @@ import { type NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { validateSession } from "@/app/api/services/auth";
 import { cookies } from "next/headers";
+import { StakingPositionDepositStatus } from "@prisma/client";
 
 export async function GET(req: NextRequest) {
   try {
@@ -60,6 +61,7 @@ export async function GET(req: NextRequest) {
           select: {
             amount: true,
             isActive: true,
+            depositStatus: true,
             stakingPlan: {
               select: {
                 referralBonus: true,
@@ -95,6 +97,7 @@ export async function GET(req: NextRequest) {
           select: {
             amount: true,
             isActive: true,
+            depositStatus: true,
             rewards: {
               select: {
                 amount: true,
@@ -136,6 +139,7 @@ export async function GET(req: NextRequest) {
           select: {
             amount: true,
             isActive: true,
+            depositStatus: true,
             rewards: {
               select: {
                 amount: true,
@@ -163,12 +167,12 @@ export async function GET(req: NextRequest) {
       console.log("🚀 ~ formattedDirectReferrals ~ referral:", referral);
       // Calculate total staked
       const totalStaked = referral.stakingPositions
-        .filter((pos) => pos.isActive)
+        .filter((pos) => pos.isActive && pos.depositStatus == StakingPositionDepositStatus.APPROVED)
         .reduce((sum, pos) => sum + pos.amount, 0);
 
       // Calculate bonus earned
       const bonusEarned = referral.stakingPositions
-        .filter((pos) => pos.isActive) // only approved positions
+        .filter((pos) => pos.isActive && pos.depositStatus == StakingPositionDepositStatus.APPROVED) // only approved positions
         .reduce(
           (sum, pos) => sum + pos.amount * pos.stakingPlan.referralBonus,
           0
@@ -187,7 +191,7 @@ export async function GET(req: NextRequest) {
         return (
           sum +
           downUser.stakingPositions
-            .filter((pos) => pos.isActive)
+            .filter((pos) => pos.isActive && pos.depositStatus == StakingPositionDepositStatus.APPROVED)
             .reduce(
               (posSum, pos) =>
                 posSum + pos.amount * pos.stakingPlan.firstDownlineBonus,
@@ -208,7 +212,7 @@ export async function GET(req: NextRequest) {
         return (
           sum +
           s.stakingPositions
-            .filter((pos) => pos.isActive)
+            .filter((pos) => pos.isActive && pos.depositStatus == StakingPositionDepositStatus.APPROVED)
             .reduce(
               (posSum, pos) =>
                 posSum +
@@ -259,7 +263,7 @@ export async function GET(req: NextRequest) {
       //   }, 0);
 
       const bonusEarned = referral.stakingPositions
-        .filter((pos) => pos.isActive)
+        .filter((pos) => pos.isActive && pos.depositStatus == StakingPositionDepositStatus.APPROVED)
         .reduce(
           (sum, pos) => sum + pos.amount * pos.stakingPlan.firstDownlineBonus,
           0
@@ -271,7 +275,7 @@ export async function GET(req: NextRequest) {
           return (
             sum +
             downUser.stakingPositions
-              .filter((pos) => pos.isActive)
+              .filter((pos) => pos.isActive && pos.depositStatus == StakingPositionDepositStatus.APPROVED)
               .reduce(
                 (posSum, pos) =>
                   posSum + pos.amount * pos.stakingPlan.referralBonus,
@@ -303,7 +307,7 @@ export async function GET(req: NextRequest) {
     const formattedSecondDownlineReferrals = secondDownlineReferrals.map(
       (referral) => {
         const bonusEarned = referral.stakingPositions
-          .filter((pos) => pos.isActive)
+          .filter((pos) => pos.isActive && pos.depositStatus == StakingPositionDepositStatus.APPROVED)
           .reduce(
             (sum, pos) =>
               sum + pos.amount * pos.stakingPlan.secondDownlineBonus,
@@ -325,7 +329,7 @@ export async function GET(req: NextRequest) {
         //   return (
         //     sum +
         //     s.stakingPositions
-        //       .filter((pos) => pos.isActive)
+        //       .filter((pos) => pos.isActive && pos.depositStatus == StakingPositionDepositStatus.APPROVED)
         //       .reduce(
         //         (posSum, pos) =>
         //           posSum +
@@ -341,7 +345,7 @@ export async function GET(req: NextRequest) {
             return (
               sum +
               downUser.stakingPositions
-                .filter((pos) => pos.isActive)
+                .filter((pos) => pos.isActive && pos.depositStatus == StakingPositionDepositStatus.APPROVED)
                 .reduce(
                   (posSum, pos) =>
                     posSum + pos.amount * pos.stakingPlan.referralBonus,

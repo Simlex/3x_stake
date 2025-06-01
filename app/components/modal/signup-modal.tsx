@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Loader2, Eye, EyeOff, Check } from "lucide-react";
 import { Button } from "@/app/components/ui/button";
@@ -9,6 +9,7 @@ import { Label } from "@/app/components/ui/label";
 import { cn } from "@/lib/utils";
 import { SignupRequest, useAuth } from "@/app/api/apiClient";
 import { toast } from "sonner";
+import { useSearchParams } from "next/navigation";
 
 interface SignupModalProps {
   isOpen: boolean;
@@ -35,6 +36,11 @@ export function SignupModal({
   const [isVerificationCodeVisible, setIsVerificationCodeVisible] =
     useState(false);
   const [verificationCode, setVerificationCode] = useState("");
+  const searchParams = useSearchParams();
+
+  // Get the referral code from the search params
+  const _referralCode = searchParams.get("ref");
+  console.log("🚀 ~ _referralCode:", _referralCode)
 
   const auth = useAuth();
 
@@ -148,6 +154,15 @@ export function SignupModal({
     }
   };
 
+  useEffect(() => {
+    const savedRefCode = localStorage.getItem("ref");
+    if (_referralCode || savedRefCode) {
+        console.log("🚀 ~ useEffect ~ _referralCode:", _referralCode)
+        console.log("🚀 ~ useEffect ~ savedRefCode:", savedRefCode)
+        setReferralCode(_referralCode || savedRefCode || "");
+    }
+  }, [_referralCode])
+
   if (!isOpen) return null;
 
   return (
@@ -160,7 +175,7 @@ export function SignupModal({
         onClick={onClose}
       >
         <motion.div
-          className="w-full max-w-md bg-gradient-to-b from-gray-900 to-black border border-white/10 rounded-2xl overflow-hidden"
+          className="w-full max-w-md bg-gradient-to-b from-gray-900 to-black border border-white/10 rounded-2xl overflow-hidden max-h-screen overflow-y-auto"
           onClick={(e) => e.stopPropagation()}
         >
           {/* Header */}
@@ -251,7 +266,9 @@ export function SignupModal({
                       onChange={(e) => setVerificationCode(e.target.value)}
                       className="bg-gray-800/50 border-gray-700 focus:border-purple-500"
                     />
-                    <span className="text-sm py-1 text-gray-400">Please also check your spam folder.</span>
+                    <span className="text-sm py-1 text-gray-400">
+                      Please also check your spam folder.
+                    </span>
                   </div>
                 )}
 
