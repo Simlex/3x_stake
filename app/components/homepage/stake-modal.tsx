@@ -428,9 +428,9 @@ export function StakeModal({
                   <div className="flex justify-between">
                     <span className="text-gray-400">Daily Rewards:</span>
                     <span className="font-medium">
-                      ${calculateReward()} USDT ~ ${calculateReward(true)} USDT
+                      {calculateReward()} % ~ {calculateReward(true)} %
                     </span>
-                  </div>
+                  </div>    
                 </div>
 
                 <Button
