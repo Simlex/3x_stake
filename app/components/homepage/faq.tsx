@@ -22,9 +22,9 @@ const FAQ_ITEMS = [
       "The minimum staking amount is $100 USDT, and the maximum is $10,000 USDT per stake. These limits help ensure the platform remains accessible to small investors while maintaining stability for larger investments.",
   },
   {
-    question: "How long is the staking period?",
+    question: "How does the staking rewards system work?",
     answer:
-      "Our platform offers flexible staking with no lock-up period. You can unstake your USDT tokens at any time without penalties, giving you complete control over your assets.",
+      "When you stake USDT, you earn rewards every 24 hours. To receive them, you must log in and claim within each 24-hour window. Missed claims expire, but your staked funds keep earning in the next cycle.",
   },
   {
     question: "Which networks are supported for staking?",
